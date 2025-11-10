@@ -10,7 +10,7 @@ import clientesRouter from "./routes/clientes";
 import pedidosRouter from "./routes/pedidos";
 import produtosRouter from "./routes/produtos";
 import aiRouter from "./routes/ai";
-import ticketsRouter from "./routes/tickets";
+// import ticketsRouter from "./routes/tickets";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -32,7 +32,7 @@ async function startServer() {
   app.use("/api/pedidos", pedidosRouter);
   app.use("/api/produtos", produtosRouter);
   app.use("/api/ai", aiRouter);
-  app.use("/api/tickets", ticketsRouter);
+  // app.use("/api/tickets", ticketsRouter);
 
   // Health check
   app.get("/api/health", (_req, res) => {
