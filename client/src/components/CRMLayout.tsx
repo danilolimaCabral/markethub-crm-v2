@@ -146,6 +146,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
     {
       title: "Administração",
       items: [
+        { path: "/admin-master", icon: <Users size={20} />, label: "Painel Master", color: "text-pink-500" },
         { path: "/usuarios", icon: <Users size={20} />, label: "Usuários", color: "text-purple-500" },
         { path: "/configuracoes", icon: <Settings size={20} />, label: "Configurações", color: "text-slate-500" },
       ]
