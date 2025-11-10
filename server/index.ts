@@ -11,6 +11,7 @@ import pedidosRouter from "./routes/pedidos";
 import produtosRouter from "./routes/produtos";
 import aiRouter from "./routes/ai";
 import mercadolivreRouter from "./routes/mercadolivre";
+import superadminRouter from "./routes/superadmin";
 // import ticketsRouter from "./routes/tickets";
 
 // Carregar variáveis de ambiente
@@ -34,6 +35,7 @@ async function startServer() {
   app.use("/api/produtos", produtosRouter);
   app.use("/api/ai", aiRouter);
   app.use("/api/integrations/mercadolivre", mercadolivreRouter);
+  app.use("/api/superadmin", superadminRouter);
   // app.use("/api/tickets", ticketsRouter);
 
   // Health check

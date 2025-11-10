@@ -41,6 +41,8 @@ import Onboarding from './pages/Onboarding';
 import WebhookSimulator from './pages/WebhookSimulator';
 import AdminMaster from './pages/AdminMaster';
 import Anuncios from './pages/Anuncios';
+import SuperAdminLogin from './pages/SuperAdminLogin';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import { isAuthenticated } from "./lib/auth";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
@@ -67,6 +69,19 @@ function Router() {
       clearInterval(interval);
     };
   }, []);
+
+  // Super Admin routes (separate from CRM)
+  const isSuperAdminRoute = window.location.pathname.startsWith('/super-admin');
+  
+  if (isSuperAdminRoute) {
+    return (
+      <Switch>
+        <Route path="/super-admin/login" component={SuperAdminLogin} />
+        <Route path="/super-admin/dashboard" component={SuperAdminDashboard} />
+        <Route path="/super-admin" component={SuperAdminLogin} />
+      </Switch>
+    );
+  }
 
   // Public routes (no authentication required)
   if (!authenticated) {
