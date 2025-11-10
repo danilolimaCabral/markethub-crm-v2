@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Check, Calculator, TrendingUp, Bell, Shield, Zap, Users, BarChart3, ArrowRight, Star, Instagram, Facebook, Linkedin, Youtube, Twitter } from 'lucide-react';
 import { useLocation } from 'wouter';
-import ChatbotIA from '@/components/ChatbotIA';
+import ChatGemini from '@/components/ChatGemini';
 import { useEffect, useRef } from 'react';
 
 export default function LandingPage() {
@@ -32,8 +32,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Chatbot IA */}
-      <ChatbotIA />
+      {/* Chat com Gemini AI */}
+      <ChatGemini autoOpen={true} />
       
       {/* Header/Navbar */}
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b shadow-sm">

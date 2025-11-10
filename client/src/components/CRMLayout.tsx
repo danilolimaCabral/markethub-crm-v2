@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useState, useEffect } from 'react';
 import GlobalSearch from './GlobalSearch';
-import AssistenteIAFloat from './AssistenteIAFloat';
+import ChatGemini from './ChatGemini';
 import Notifications from './Notifications';
 import { usePermissions } from '@/hooks/usePermissions';
 import { 
@@ -287,7 +287,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
       {/* Assistente IA Flutuante */}
-      <AssistenteIAFloat />
+      <ChatGemini />
     </div>
   );
 }
