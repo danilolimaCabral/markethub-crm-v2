@@ -86,6 +86,8 @@ function Router() {
     <CRMLayout>
       <Switch>
         <Route path={"/"} component={DashboardCRM} />
+        <Route path="/home" component={LandingPage} />
+        <Route path="/landing" component={LandingPage} />
           <Route path="/chat" component={ChatIA} />
           <Route path="/pos-vendas" component={PosVendas} />
         <Route path="/callback" component={Callback} />
