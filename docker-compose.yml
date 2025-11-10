@@ -1,0 +1,102 @@
+# ============================================================================
+# MarketHub CRM - Docker Compose
+# Orquestração de containers para deploy completo
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # MarketHub CRM - Aplicação Principal
+  # ============================================================================
+  markethub-crm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: markethub-crm:latest
+    container_name: markethub-crm
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Variáveis de ambiente opcionais (descomente e configure conforme necessário)
+      # - VITE_APP_TITLE=MarketHub CRM
+      # - VITE_APP_LOGO=/logo-final.png
+      # - VITE_ASAAS_API_URL=https://api-sandbox.asaas.com/v3
+      # - VITE_ASAAS_API_KEY=your_asaas_api_key
+      # - GEMINI_API_KEY=your_gemini_api_key
+    networks:
+      - markethub-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.markethub.description=MarketHub CRM - Sistema de gestão multi-tenant"
+      - "com.markethub.version=1.0.0"
+
+  # ============================================================================
+  # PostgreSQL - Banco de Dados (Opcional - para migração futura)
+  # ============================================================================
+  # Descomente esta seção quando migrar para PostgreSQL
+  #
+  # postgres:
+  #   image: postgres:14-alpine
+  #   container_name: markethub-postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_DB=markethub
+  #     - POSTGRES_USER=markethub
+  #     - POSTGRES_PASSWORD=your_secure_password_here
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #     - ./database:/docker-entrypoint-initdb.d:ro
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - markethub-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U markethub"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  # ============================================================================
+  # Nginx - Reverse Proxy (Opcional - para produção)
+  # ============================================================================
+  # Descomente para usar Nginx como reverse proxy com SSL
+  #
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: markethub-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - markethub-crm
+  #   networks:
+  #     - markethub-network
+
+# ============================================================================
+# Volumes - Persistência de Dados
+# ============================================================================
+volumes:
+  # Descomente quando usar PostgreSQL
+  # postgres-data:
+  #   driver: local
+
+# ============================================================================
+# Networks - Rede Interna
+# ============================================================================
+networks:
+  markethub-network:
+    driver: bridge
+    name: markethub-network

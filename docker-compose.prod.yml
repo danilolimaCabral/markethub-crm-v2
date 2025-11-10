@@ -1,0 +1,78 @@
+# ============================================================================
+# MarketHub CRM - Docker Compose para Produção
+# Domínio: markethubcrm.manus.space
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ============================================================================
+  # MarketHub CRM - Aplicação Principal
+  # ============================================================================
+  markethub-crm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: markethub-crm:latest
+    container_name: markethub-crm
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - VITE_APP_TITLE=MarketHub CRM
+      - VITE_APP_LOGO=/logo-final.png
+      # Adicione outras variáveis de ambiente conforme necessário
+    networks:
+      - markethub-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.markethub.description=MarketHub CRM - Sistema de gestão multi-tenant"
+      - "com.markethub.version=1.0.0"
+      - "com.markethub.domain=markethubcrm.manus.space"
+
+  # ============================================================================
+  # Nginx - Reverse Proxy com SSL
+  # ============================================================================
+  nginx:
+    image: nginx:alpine
+    container_name: markethub-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    depends_on:
+      - markethub-crm
+    networks:
+      - markethub-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    labels:
+      - "com.markethub.service=nginx"
+      - "com.markethub.domain=markethubcrm.manus.space"
+
+# ============================================================================
+# Volumes - Persistência de Dados
+# ============================================================================
+volumes:
+  nginx-logs:
+    driver: local
+
+# ============================================================================
+# Networks - Rede Interna
+# ============================================================================
+networks:
+  markethub-network:
+    driver: bridge
+    name: markethub-network
