@@ -12,19 +12,21 @@ router.post('/chat', async (req, res) => {
       return res.status(400).json({ error: 'Mensagem é obrigatória' });
     }
 
-    // Verificar se API Key está configurada
-    console.log('🔍 DEBUG: Verificando GEMINI_API_KEY...');
+    // Verificar se API Key está configurada (tentar GOOGLE_AI_KEY primeiro, depois GEMINI_API_KEY)
+    const apiKey = process.env.GOOGLE_AI_KEY || process.env.GEMINI_API_KEY;
+    console.log('🔍 DEBUG: Verificando API Keys...');
+    console.log('🔍 DEBUG: GOOGLE_AI_KEY existe?', !!process.env.GOOGLE_AI_KEY);
     console.log('🔍 DEBUG: GEMINI_API_KEY existe?', !!process.env.GEMINI_API_KEY);
-    console.log('🔍 DEBUG: GEMINI_API_KEY primeiros 10 chars:', process.env.GEMINI_API_KEY?.substring(0, 10));
+    console.log('🔍 DEBUG: API Key selecionada primeiros 10 chars:', apiKey?.substring(0, 10));
     
-    if (!process.env.GEMINI_API_KEY) {
-      console.error('❌ ERRO: GEMINI_API_KEY não está configurada!');
+    if (!apiKey) {
+      console.error('❌ ERRO: Nenhuma API Key configurada (GOOGLE_AI_KEY ou GEMINI_API_KEY)!');
       return res.status(500).json({ error: 'API Key do Gemini não configurada' });
     }
 
     // Inicializar Gemini AI (dentro da rota para garantir que .env foi carregado)
     console.log('🚀 DEBUG: Inicializando GoogleGenerativeAI...');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(apiKey);
     console.log('🚀 DEBUG: Obtendo modelo gemini-2.5-flash...');
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
