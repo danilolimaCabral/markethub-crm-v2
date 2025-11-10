@@ -10,6 +10,7 @@ import clientesRouter from "./routes/clientes";
 import pedidosRouter from "./routes/pedidos";
 import produtosRouter from "./routes/produtos";
 import aiRouter from "./routes/ai";
+import mercadolivreRouter from "./routes/mercadolivre";
 // import ticketsRouter from "./routes/tickets";
 
 // Carregar variáveis de ambiente
@@ -32,6 +33,7 @@ async function startServer() {
   app.use("/api/pedidos", pedidosRouter);
   app.use("/api/produtos", produtosRouter);
   app.use("/api/ai", aiRouter);
+  app.use("/api/integrations/mercadolivre", mercadolivreRouter);
   // app.use("/api/tickets", ticketsRouter);
 
   // Health check

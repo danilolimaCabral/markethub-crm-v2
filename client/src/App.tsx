@@ -32,6 +32,7 @@ import ContasReceber from './pages/ContasReceber';
 import FluxoCaixa from './pages/FluxoCaixa';
 import Users from './pages/Users';
 import MercadoLivre from './pages/MercadoLivre';
+import IntegracaoMercadoLivre from './pages/IntegracaoMercadoLivre';
 import ImportacaoFinanceira from './pages/ImportacaoFinanceira';
 import CalculadoraTaxasML from './pages/CalculadoraTaxasML';
 import Forbidden from './pages/Forbidden';
@@ -112,6 +113,7 @@ function Router() {
         <Route path="/metricas" component={Metricas} />
         <Route path="/usuarios" component={Users} />
         <Route path="/mercado-livre" component={MercadoLivre} />
+        <Route path="/integracoes/mercadolivre" component={IntegracaoMercadoLivre} />
         <Route path="/importacao-financeira" component={ImportacaoFinanceira} />
         <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
         <Route path="/webhook-simulator" component={WebhookSimulator} />
