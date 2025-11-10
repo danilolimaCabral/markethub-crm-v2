@@ -522,8 +522,18 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            © 2025 MarketHub CRM. Todos os direitos reservados.
+          <div className="border-t border-gray-800 mt-8 pt-8 flex items-center justify-between">
+            <div className="text-sm text-gray-400">
+              © 2025 MarketHub CRM. Todos os direitos reservados.
+            </div>
+            <button
+              onClick={() => setLocation('/super-admin')}
+              className="text-xs text-gray-600 hover:text-purple-400 transition-colors duration-200 flex items-center gap-1 opacity-50 hover:opacity-100"
+              title="Super Admin Panel"
+            >
+              <Shield className="w-3 h-3" />
+              Admin
+            </button>
           </div>
         </div>
       </footer>
