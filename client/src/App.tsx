@@ -39,6 +39,7 @@ import Cadastro from './pages/Cadastro';
 import Onboarding from './pages/Onboarding';
 import WebhookSimulator from './pages/WebhookSimulator';
 import AdminMaster from './pages/AdminMaster';
+import Anuncios from './pages/Anuncios';
 import { isAuthenticated } from "./lib/auth";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
@@ -93,7 +94,7 @@ function Router() {
         <Route path="/callback" component={Callback} />
         <Route path="/pedidos" component={Pedidos} />
         <Route path="/produtos" component={Produtos} />
-        <Route path={"/anuncios"} component={API} />
+        <Route path={"/anuncios"} component={Anuncios} />
         <Route path={"/clientes"} component={API} />
           <Route path="/entregas" component={Entregas} />
           <Route path="/notas-fiscais" component={NotasFiscais} />
