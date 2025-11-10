@@ -1,0 +1,98 @@
+erDiagram
+    USUARIOS ||--o{ USUARIOS_PERMISSOES : tem
+    USUARIOS ||--o{ LOGS_AUDITORIA : gera
+    USUARIOS ||--o{ NOTIFICACOES : recebe
+    
+    PRODUTOS ||--o{ PRODUTOS_MARKETPLACES : sincroniza
+    PRODUTOS ||--o{ MOVIMENTACOES_ESTOQUE : tem
+    PRODUTOS ||--o{ ITENS_PEDIDO : contem
+    
+    PEDIDOS ||--|{ ITENS_PEDIDO : contem
+    PEDIDOS }o--|| CLIENTES : pertence
+    PEDIDOS ||--o{ PAGAMENTOS : tem
+    PEDIDOS ||--o{ ENTREGAS : tem
+    
+    MARKETPLACES ||--o{ PRODUTOS_MARKETPLACES : lista
+    MARKETPLACES ||--o{ PEDIDOS_MARKETPLACES : origina
+    
+    CUSTOS_VARIAVEIS ||--o{ CATEGORIAS_CUSTO : categoriza
+    
+    USUARIOS {
+        int id PK
+        string email
+        string senha_hash
+        string nome
+        boolean ativo
+        string totp_secret
+        boolean mfa_habilitado
+        timestamp criado_em
+    }
+    
+    USUARIOS_PERMISSOES {
+        int id PK
+        int usuario_id FK
+        string modulo
+        boolean ativo
+    }
+    
+    PRODUTOS {
+        int id PK
+        string sku UK
+        string nome
+        text descricao
+        decimal preco
+        int estoque
+        string categoria
+        string imagem_url
+        timestamp criado_em
+    }
+    
+    PEDIDOS {
+        int id PK
+        int cliente_id FK
+        string numero_pedido UK
+        decimal valor_total
+        string status
+        timestamp data_pedido
+        timestamp criado_em
+    }
+    
+    CLIENTES {
+        int id PK
+        string nome
+        string email
+        string telefone
+        string cpf_cnpj
+        text endereco
+        timestamp criado_em
+    }
+    
+    MARKETPLACES {
+        int id PK
+        string nome
+        string tipo
+        string access_token
+        string refresh_token
+        timestamp token_expira_em
+        boolean ativo
+    }
+    
+    CUSTOS_VARIAVEIS {
+        int id PK
+        string nome
+        string categoria
+        string tipo
+        decimal valor
+        boolean ativo
+        timestamp criado_em
+    }
+    
+    LOGS_AUDITORIA {
+        int id PK
+        int usuario_id FK
+        string acao
+        string tabela
+        text dados_antigos
+        text dados_novos
+        timestamp criado_em
+    }

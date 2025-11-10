@@ -1,0 +1,47 @@
+flowchart TD
+    Start([Sistema Iniciado]) --> Load[Carregar Notificações<br/>do localStorage]
+    Load --> Display[Exibir Badge<br/>com Contador]
+    
+    Display --> Interval[Verificação Automática<br/>a cada 30s]
+    
+    Interval --> CheckStock[Verificar Estoque<br/>de Produtos]
+    CheckStock --> LowStock{Produtos com<br/>Estoque < 10?}
+    
+    LowStock -->|Sim| CreateNotif[Criar Notificação<br/>de Estoque Baixo]
+    CreateNotif --> SaveNotif[Salvar no localStorage]
+    SaveNotif --> UpdateBadge[Atualizar Badge]
+    UpdateBadge --> ShowToast[Exibir Toast]
+    ShowToast --> Interval
+    
+    LowStock -->|Não| Interval
+    
+    Display --> UserClick{Usuário Clica<br/>no Sino?}
+    
+    UserClick -->|Sim| OpenPanel[Abrir Painel<br/>de Notificações]
+    OpenPanel --> ShowList[Exibir Lista<br/>de Notificações]
+    
+    ShowList --> UserAction{Ação do<br/>Usuário?}
+    
+    UserAction -->|Clicar Notificação| MarkRead[Marcar como Lida]
+    MarkRead --> UpdateStorage[Atualizar localStorage]
+    UpdateStorage --> RefreshBadge[Atualizar Badge]
+    RefreshBadge --> ShowList
+    
+    UserAction -->|Marcar Todas| MarkAllRead[Marcar Todas<br/>como Lidas]
+    MarkAllRead --> UpdateStorage
+    
+    UserAction -->|Limpar Todas| ClearAll[Limpar Todas<br/>as Notificações]
+    ClearAll --> RemoveStorage[Remover do localStorage]
+    RemoveStorage --> RefreshBadge
+    
+    UserAction -->|Fechar Painel| Display
+    
+    UserClick -->|Não| Display
+    
+    style Start fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style CreateNotif fill:#F59E0B,stroke:#D97706,color:#fff
+    style ShowToast fill:#10B981,stroke:#059669,color:#fff
+    style OpenPanel fill:#3B82F6,stroke:#2563EB,color:#fff
+    style MarkRead fill:#10B981,stroke:#059669,color:#fff
+    style MarkAllRead fill:#10B981,stroke:#059669,color:#fff
+    style ClearAll fill:#EF4444,stroke:#DC2626,color:#fff

@@ -1,0 +1,84 @@
+graph LR
+    subgraph "MÓDULO CMV"
+        CMV[CMV Central]
+        CMV_CALC[Cálculo CMV]
+        CMV_REPORT[Relatórios]
+        CMV_ALERT[Alertas]
+    end
+    
+    subgraph "MÓDULO PRODUTOS"
+        PROD[Cadastro Produtos]
+        COST[Custo Produtos]
+        PRICE[Preço Venda]
+        STOCK[Estoque]
+    end
+    
+    subgraph "MÓDULO PEDIDOS"
+        PED[Pedidos]
+        PED_ITEMS[Itens Vendidos]
+        PED_STATUS[Status Venda]
+    end
+    
+    subgraph "MÓDULO FINANCEIRO"
+        FIN[Gestão Financeira]
+        PAX[Custos Variáveis PAX]
+        DRE[DRE Simplificado]
+        MARGIN[Análise Margem]
+    end
+    
+    subgraph "MÓDULO COMPRAS"
+        COMP[Compras]
+        COMP_ITEMS[Itens Comprados]
+        FORN[Fornecedores]
+    end
+    
+    subgraph "RELATÓRIOS INTEGRADOS"
+        REP1[Lucratividade por Produto]
+        REP2[Performance por Categoria]
+        REP3[Análise de Margem]
+        REP4[Simulador de Preços]
+    end
+    
+    PROD --> CMV
+    COST --> CMV_CALC
+    PRICE --> CMV_CALC
+    STOCK --> CMV_CALC
+    
+    PED --> CMV
+    PED_ITEMS --> CMV_CALC
+    PED_STATUS --> CMV_CALC
+    
+    COMP --> CMV
+    COMP_ITEMS --> CMV_CALC
+    FORN --> CMV
+    
+    CMV_CALC --> CMV_REPORT
+    CMV_CALC --> CMV_ALERT
+    
+    CMV --> FIN
+    CMV_CALC --> PAX
+    CMV_CALC --> DRE
+    CMV_CALC --> MARGIN
+    
+    CMV_REPORT --> REP1
+    CMV_REPORT --> REP2
+    MARGIN --> REP3
+    CMV_CALC --> REP4
+    
+    PAX --> REP1
+    DRE --> REP2
+    
+    style CMV fill:#EF4444,stroke:#DC2626,color:#fff
+    style CMV_CALC fill:#F59E0B,stroke:#D97706,color:#fff
+    style CMV_REPORT fill:#3B82F6,stroke:#2563EB,color:#fff
+    style CMV_ALERT fill:#F59E0B,stroke:#D97706,color:#fff
+    
+    style PROD fill:#10B981,stroke:#059669,color:#fff
+    style PED fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style FIN fill:#EC4899,stroke:#DB2777,color:#fff
+    style COMP fill:#6366F1,stroke:#4F46E5,color:#fff
+    
+    style REP1 fill:#14B8A6,stroke:#0D9488,color:#fff
+    style REP2 fill:#14B8A6,stroke:#0D9488,color:#fff
+    style REP3 fill:#14B8A6,stroke:#0D9488,color:#fff
+    style REP4 fill:#14B8A6,stroke:#0D9488,color:#fff

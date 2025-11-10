@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant User as Usuário
+    participant UI as Interface Chat
+    participant API as API Backend
+    participant Context as Context Builder
+    participant DB as PostgreSQL
+    participant Cache as Redis Cache
+    participant OpenAI as OpenAI GPT-4
+    participant Mod as Moderation API
+    
+    User->>UI: Digite pergunta
+    UI->>API: POST /ai/chat
+    
+    API->>Mod: Verificar conteúdo
+    Mod-->>API: Conteúdo aprovado
+    
+    API->>Cache: Verificar resposta em cache
+    
+    alt Resposta em cache
+        Cache-->>API: Retorna resposta
+        API-->>UI: Resposta (cached)
+        UI-->>User: Exibe resposta
+    else Não está em cache
+        API->>Context: Construir contexto
+        Context->>DB: Buscar dados relevantes
+        DB-->>Context: Produtos, pedidos, métricas
+        Context-->>API: Contexto completo
+        
+        API->>OpenAI: Enviar prompt + contexto
+        Note over OpenAI: Modelo: gpt-4-turbo<br/>Max tokens: 4096<br/>Temperature: 0.7
+        OpenAI-->>API: Resposta gerada
+        
+        API->>Cache: Salvar resposta
+        API-->>UI: Resposta
+        UI-->>User: Exibe resposta
+    end
+    
+    User->>UI: Feedback (👍/👎)
+    UI->>API: POST /ai/feedback
+    API->>DB: Salvar feedback

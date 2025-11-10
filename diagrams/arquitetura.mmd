@@ -1,0 +1,62 @@
+graph TB
+    subgraph Frontend["Frontend - React 19"]
+        UI[Interface do Usuário]
+        AUTH[Autenticação 2FA]
+        DASH[Dashboard]
+        PROD[Módulo Produtos]
+        PED[Módulo Pedidos]
+        FIN[Módulo Financeiro]
+        REL[Módulo Relatórios]
+        USER[Gestão Usuários]
+        PERM[Sistema Permissões]
+    end
+    
+    subgraph Backend["Backend - Node.js + Express"]
+        API[API REST]
+        JWT[JWT Auth]
+        OAUTH[OAuth2 Handler]
+        SYNC[Sincronização]
+        JOBS[Background Jobs]
+    end
+    
+    subgraph Database["Banco de Dados"]
+        PG[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+    end
+    
+    subgraph External["Integrações Externas"]
+        ML[Mercado Livre API]
+        AMAZON[Amazon SP-API]
+        SHOPEE[Shopee API]
+    end
+    
+    subgraph Storage["Armazenamento"]
+        S3[AWS S3 - Imagens Produtos]
+    end
+    
+    UI --> AUTH
+    AUTH --> API
+    DASH --> API
+    PROD --> API
+    PED --> API
+    FIN --> API
+    REL --> API
+    USER --> API
+    PERM --> API
+    
+    API --> JWT
+    API --> PG
+    API --> REDIS
+    API --> S3
+    
+    OAUTH --> ML
+    OAUTH --> AMAZON
+    OAUTH --> SHOPEE
+    
+    SYNC --> ML
+    SYNC --> AMAZON
+    SYNC --> SHOPEE
+    SYNC --> PG
+    
+    JOBS --> SYNC
+    JOBS --> PG

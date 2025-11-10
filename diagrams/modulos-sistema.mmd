@@ -1,0 +1,62 @@
+graph LR
+    subgraph "MÓDULOS PRINCIPAIS"
+        M1[1. Autenticação e Segurança]
+        M2[2. Dashboard e Métricas]
+        M3[3. Gestão de Produtos]
+        M4[4. Gestão de Pedidos]
+        M5[5. Gestão Financeira]
+        M6[6. Relatórios e Análises]
+        M7[7. Integrações Marketplaces]
+        M8[8. Configurações]
+    end
+    
+    M1 --> M1A[Login/Logout]
+    M1 --> M1B[2FA - TOTP]
+    M1 --> M1C[Permissões]
+    M1 --> M1D[Sessões]
+    
+    M2 --> M2A[Métricas Tempo Real]
+    M2 --> M2B[Gráficos Vendas]
+    M2 --> M2C[Notificações]
+    M2 --> M2D[Alertas Estoque]
+    
+    M3 --> M3A[CRUD Produtos]
+    M3 --> M3B[Categorias]
+    M3 --> M3C[Upload Imagens]
+    M3 --> M3D[Controle Estoque]
+    M3 --> M3E[Preços e Margens]
+    
+    M4 --> M4A[CRUD Pedidos]
+    M4 --> M4B[Status Tracking]
+    M4 --> M4C[Integração ML/Amazon/Shopee]
+    M4 --> M4D[Conferência]
+    
+    M5 --> M5A[Contas a Pagar]
+    M5 --> M5B[Contas a Receber]
+    M5 --> M5C[Fluxo de Caixa]
+    M5 --> M5D[Custos Variáveis PAX]
+    M5 --> M5E[DRE Simplificado]
+    
+    M6 --> M6A[Análise de Vendas]
+    M6 --> M6B[Performance Produtos]
+    M6 --> M6C[Inteligência Mercado]
+    M6 --> M6D[Exportação Dados]
+    
+    M7 --> M7A[Mercado Livre OAuth]
+    M7 --> M7B[Amazon SP-API]
+    M7 --> M7C[Shopee Open API]
+    M7 --> M7D[Sync Automático]
+    
+    M8 --> M8A[Perfil Usuário]
+    M8 --> M8B[Configurar 2FA]
+    M8 --> M8C[Integrações]
+    M8 --> M8D[Preferências]
+    
+    style M1 fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style M2 fill:#3B82F6,stroke:#2563EB,color:#fff
+    style M3 fill:#10B981,stroke:#059669,color:#fff
+    style M4 fill:#F59E0B,stroke:#D97706,color:#fff
+    style M5 fill:#EF4444,stroke:#DC2626,color:#fff
+    style M6 fill:#EC4899,stroke:#DB2777,color:#fff
+    style M7 fill:#6366F1,stroke:#4F46E5,color:#fff
+    style M8 fill:#14B8A6,stroke:#0D9488,color:#fff

@@ -1,0 +1,64 @@
+flowchart TD
+    Start([Página de Produtos]) --> Load[Carregar Produtos<br/>do localStorage]
+    Load --> Display[Exibir Lista<br/>de Produtos]
+    
+    Display --> Stats[Calcular Estatísticas:<br/>Total, Disponíveis,<br/>Estoque Baixo, Valor Total]
+    Stats --> ShowStats[Exibir Cards<br/>de Estatísticas]
+    
+    ShowStats --> UserAction{Ação do<br/>Usuário?}
+    
+    UserAction -->|Buscar| Search[Campo de Busca]
+    Search --> Filter[Filtrar por Nome/SKU]
+    Filter --> Display
+    
+    UserAction -->|Filtrar| FilterCat[Filtro por Categoria]
+    FilterCat --> FilterStatus[Filtro por Status]
+    FilterStatus --> Display
+    
+    UserAction -->|Adicionar| OpenAdd[Abrir Modal<br/>Adicionar Produto]
+    OpenAdd --> FormAdd[Preencher Formulário:<br/>Nome, SKU, Categoria,<br/>Preço, Estoque, Descrição]
+    FormAdd --> UploadImg[Upload de Imagem]
+    UploadImg --> ValidateAdd{Dados<br/>Válidos?}
+    
+    ValidateAdd -->|Não| ErrorAdd[Exibir Erros]
+    ErrorAdd --> FormAdd
+    
+    ValidateAdd -->|Sim| SaveAdd[Salvar no localStorage]
+    SaveAdd --> ToastAdd[Toast: Produto Adicionado]
+    ToastAdd --> Reload[Recarregar Lista]
+    Reload --> Display
+    
+    UserAction -->|Editar| OpenEdit[Abrir Modal<br/>Editar Produto]
+    OpenEdit --> LoadData[Carregar Dados<br/>do Produto]
+    LoadData --> FormEdit[Editar Campos]
+    FormEdit --> ValidateEdit{Dados<br/>Válidos?}
+    
+    ValidateEdit -->|Não| ErrorEdit[Exibir Erros]
+    ErrorEdit --> FormEdit
+    
+    ValidateEdit -->|Sim| UpdateProd[Atualizar no localStorage]
+    UpdateProd --> ToastEdit[Toast: Produto Atualizado]
+    ToastEdit --> Reload
+    
+    UserAction -->|Excluir| ConfirmDel{Confirmar<br/>Exclusão?}
+    
+    ConfirmDel -->|Não| Display
+    
+    ConfirmDel -->|Sim| DeleteProd[Remover do localStorage]
+    DeleteProd --> ToastDel[Toast: Produto Excluído]
+    ToastDel --> Reload
+    
+    UserAction -->|Visualizar| OpenView[Abrir Modal<br/>Detalhes do Produto]
+    OpenView --> ShowDetails[Exibir Todas<br/>as Informações]
+    ShowDetails --> CloseView{Fechar<br/>Modal?}
+    CloseView -->|Sim| Display
+    
+    style Start fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style SaveAdd fill:#10B981,stroke:#059669,color:#fff
+    style UpdateProd fill:#3B82F6,stroke:#2563EB,color:#fff
+    style DeleteProd fill:#EF4444,stroke:#DC2626,color:#fff
+    style ToastAdd fill:#10B981,stroke:#059669,color:#fff
+    style ToastEdit fill:#3B82F6,stroke:#2563EB,color:#fff
+    style ToastDel fill:#EF4444,stroke:#DC2626,color:#fff
+    style ErrorAdd fill:#F59E0B,stroke:#D97706,color:#fff
+    style ErrorEdit fill:#F59E0B,stroke:#D97706,color:#fff

@@ -1,0 +1,101 @@
+graph TB
+    subgraph "FRONTEND - React 19"
+        UI[Interface do Usuário]
+        UI --> Auth[Módulo de Autenticação]
+        UI --> Dashboard[Dashboard]
+        UI --> Produtos[Gestão de Produtos]
+        UI --> Pedidos[Gestão de Pedidos]
+        UI --> Financeiro[Gestão Financeira]
+        UI --> Relatorios[Relatórios e Análises]
+        UI --> Config[Configurações]
+        
+        Auth --> Login[Login/Logout]
+        Auth --> TwoFA[2FA - TOTP]
+        Auth --> Permissions[Controle de Permissões]
+        
+        Dashboard --> Metrics[Métricas em Tempo Real]
+        Dashboard --> Charts[Gráficos Interativos]
+        Dashboard --> Notifications[Sistema de Notificações]
+        
+        Produtos --> CRUD_Prod[CRUD Produtos]
+        Produtos --> Upload[Upload de Imagens]
+        Produtos --> Categories[Categorias]
+        
+        Pedidos --> CRUD_Ped[CRUD Pedidos]
+        Pedidos --> Status[Controle de Status]
+        Pedidos --> Tracking[Rastreamento]
+        
+        Financeiro --> ContasPagar[Contas a Pagar]
+        Financeiro --> ContasReceber[Contas a Receber]
+        Financeiro --> FluxoCaixa[Fluxo de Caixa]
+        Financeiro --> PAX[Custos Variáveis - PAX]
+        
+        Relatorios --> Vendas[Análise de Vendas]
+        Relatorios --> Estoque[Relatório de Estoque]
+        Relatorios --> Inteligencia[Inteligência de Mercado]
+    end
+    
+    subgraph "CAMADA DE DADOS"
+        LocalStorage[(localStorage<br/>Atual)]
+        PostgreSQL[(PostgreSQL<br/>Futuro)]
+        
+        LocalStorage --> ProdutosData[Produtos]
+        LocalStorage --> PedidosData[Pedidos]
+        LocalStorage --> FinanceiroData[Financeiro]
+        LocalStorage --> ConfigData[Configurações]
+        LocalStorage --> UsersData[Usuários]
+    end
+    
+    subgraph "INTEGRAÇÕES EXTERNAS"
+        ML_API[Mercado Livre API]
+        Amazon_API[Amazon SP-API]
+        Shopee_API[Shopee Open API]
+        
+        ML_API --> OAuth2_ML[OAuth 2.0]
+        Amazon_API --> OAuth2_AMZ[LWA OAuth]
+        Shopee_API --> OAuth2_SHP[Shopee Auth]
+    end
+    
+    subgraph "API REST - FUTURA"
+        API_Gateway[API Gateway]
+        API_Gateway --> Auth_API[auth - Autenticação]
+        API_Gateway --> Products_API[products - Produtos]
+        API_Gateway --> Orders_API[orders - Pedidos]
+        API_Gateway --> Financial_API[financial - Financeiro]
+        API_Gateway --> Reports_API[reports - Relatórios]
+        API_Gateway --> Webhooks[webhooks - Eventos]
+        
+        Auth_API --> JWT[JWT Tokens]
+        Webhooks --> Events[Event Bus]
+    end
+    
+    subgraph "INTEGRAÇÃO ERP"
+        ERP_Connector[Conector ERP]
+        ERP_Connector --> Bling_Int[Bling ERP]
+        ERP_Connector --> Tiny_Int[Tiny ERP]
+        ERP_Connector --> TOTVS_Int[TOTVS]
+        ERP_Connector --> SAP_Int[SAP]
+        ERP_Connector --> Custom_Int[ERPs Customizados]
+    end
+    
+    UI -.->|Leitura/Escrita| LocalStorage
+    UI -.->|HTTP Requests| ML_API
+    UI -.->|HTTP Requests| Amazon_API
+    UI -.->|HTTP Requests| Shopee_API
+    
+    API_Gateway -.->|CRUD Operations| PostgreSQL
+    API_Gateway -.->|Sync Data| ML_API
+    API_Gateway -.->|Sync Data| Amazon_API
+    API_Gateway -.->|Sync Data| Shopee_API
+    
+    ERP_Connector -.->|REST API| API_Gateway
+    ERP_Connector -.->|Bidirectional Sync| PostgreSQL
+    
+    style UI fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style LocalStorage fill:#3B82F6,stroke:#2563EB,color:#fff
+    style PostgreSQL fill:#10B981,stroke:#059669,color:#fff
+    style API_Gateway fill:#F59E0B,stroke:#D97706,color:#fff
+    style ERP_Connector fill:#EF4444,stroke:#DC2626,color:#fff
+    style ML_API fill:#FFE600,stroke:#FCD34D,color:#000
+    style Amazon_API fill:#FF9900,stroke:#F59E0B,color:#fff
+    style Shopee_API fill:#EE4D2D,stroke:#DC2626,color:#fff

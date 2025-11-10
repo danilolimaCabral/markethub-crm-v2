@@ -1,0 +1,47 @@
+flowchart TD
+    Start([Usuário Acessa Sistema]) --> Login[Tela de Login]
+    Login --> ValidaCred{Credenciais<br/>Válidas?}
+    
+    ValidaCred -->|Não| ErroLogin[Exibir Erro]
+    ErroLogin --> Login
+    
+    ValidaCred -->|Sim| Check2FA{2FA<br/>Habilitado?}
+    
+    Check2FA -->|Não| Dashboard[Dashboard]
+    
+    Check2FA -->|Sim| Verify2FA[Tela de Verificação 2FA]
+    Verify2FA --> InputCode[Usuário Insere Código]
+    InputCode --> ValidaCode{Código<br/>Válido?}
+    
+    ValidaCode -->|Não| ErroCode[Exibir Erro]
+    ErroCode --> Verify2FA
+    
+    ValidaCode -->|Sim| Dashboard
+    
+    Dashboard --> Config[Configurações]
+    Config --> Enable2FA{Ativar<br/>2FA?}
+    
+    Enable2FA -->|Sim| Setup2FA[Página Setup 2FA]
+    Setup2FA --> Step1[1. Gerar Secret + QR Code]
+    Step1 --> Step2[2. Escanear com App Autenticador]
+    Step2 --> Step3[3. Validar Código TOTP]
+    Step3 --> ValidaSetup{Código<br/>Correto?}
+    
+    ValidaSetup -->|Não| ErroSetup[Erro na Validação]
+    ErroSetup --> Step3
+    
+    ValidaSetup -->|Sim| Step4[4. Gerar Códigos de Backup]
+    Step4 --> Download[Download códigos.txt]
+    Download --> Ativado[2FA Ativado]
+    Ativado --> Dashboard
+    
+    Enable2FA -->|Não| Dashboard
+    
+    style Start fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style Dashboard fill:#10B981,stroke:#059669,color:#fff
+    style ErroLogin fill:#EF4444,stroke:#DC2626,color:#fff
+    style ErroCode fill:#EF4444,stroke:#DC2626,color:#fff
+    style ErroSetup fill:#EF4444,stroke:#DC2626,color:#fff
+    style Ativado fill:#10B981,stroke:#059669,color:#fff
+    style Setup2FA fill:#3B82F6,stroke:#2563EB,color:#fff
+    style Verify2FA fill:#F59E0B,stroke:#D97706,color:#fff

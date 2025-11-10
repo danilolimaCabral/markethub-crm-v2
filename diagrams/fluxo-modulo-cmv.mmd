@@ -1,0 +1,89 @@
+graph TB
+    subgraph "ENTRADA DE DADOS"
+        A1[Compra de Mercadorias]
+        A2[Venda de Produtos]
+        A3[Ajustes de Estoque]
+        A4[Perdas e Extravios]
+    end
+    
+    subgraph "PROCESSAMENTO"
+        B1[Registrar Compra]
+        B2[Calcular Custo Unitário]
+        B3[Criar Movimentação Estoque]
+        B4[Atualizar Estoque]
+        B5[Calcular Custo Médio]
+    end
+    
+    subgraph "CÁLCULO CMV"
+        C1[Estoque Inicial]
+        C2[Compras do Período]
+        C3[Estoque Final]
+        C4[CMV = EI + Compras - EF]
+    end
+    
+    subgraph "ANÁLISE"
+        D1[CMV por Produto]
+        D2[CMV por Categoria]
+        D3[Margem Bruta]
+        D4[Margem Líquida]
+        D5[Alertas de Margem]
+    end
+    
+    subgraph "RELATÓRIOS"
+        E1[Dashboard CMV]
+        E2[Produtos Mais Lucrativos]
+        E3[Produtos com Margem Baixa]
+        E4[Análise Temporal]
+        E5[Exportação Dados]
+    end
+    
+    A1 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> B5
+    
+    A2 --> B3
+    A3 --> B3
+    A4 --> B3
+    
+    B5 --> C1
+    B1 --> C2
+    B4 --> C3
+    
+    C1 --> C4
+    C2 --> C4
+    C3 --> C4
+    
+    C4 --> D1
+    C4 --> D2
+    D1 --> D3
+    D1 --> D4
+    D3 --> D5
+    D4 --> D5
+    
+    D1 --> E1
+    D2 --> E1
+    D3 --> E2
+    D4 --> E2
+    D5 --> E3
+    C4 --> E4
+    
+    E1 --> E5
+    E2 --> E5
+    E3 --> E5
+    E4 --> E5
+    
+    style A1 fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style A2 fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style A3 fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style A4 fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    
+    style C4 fill:#EF4444,stroke:#DC2626,color:#fff
+    style D3 fill:#10B981,stroke:#059669,color:#fff
+    style D4 fill:#10B981,stroke:#059669,color:#fff
+    style D5 fill:#F59E0B,stroke:#D97706,color:#fff
+    
+    style E1 fill:#3B82F6,stroke:#2563EB,color:#fff
+    style E2 fill:#3B82F6,stroke:#2563EB,color:#fff
+    style E3 fill:#3B82F6,stroke:#2563EB,color:#fff

@@ -1,0 +1,87 @@
+graph TB
+    subgraph "FRONTEND - MarketHub CRM"
+        UI[Interface do Usuário]
+        Chat[Chat IA]
+        Produtos[Gestão Produtos]
+        Relatorios[Relatórios]
+        Precos[Precificação]
+    end
+    
+    subgraph "BACKEND - Node.js"
+        API[API MarketHub]
+        AI_Service[Serviço de IA]
+        Prompt_Engine[Engine de Prompts]
+        Context_Builder[Construtor de Contexto]
+        Cache[Cache Redis]
+    end
+    
+    subgraph "OPENAI API"
+        GPT4[GPT-4 Turbo]
+        GPT35[GPT-3.5 Turbo]
+        Embeddings[text-embedding-3]
+        Moderation[Moderation API]
+    end
+    
+    subgraph "FUNCIONALIDADES IA"
+        F1[Assistente Virtual]
+        F2[Análise Preditiva]
+        F3[Otimização Preços]
+        F4[Análise Sentimento]
+        F5[Geração Descrições]
+        F6[Detecção Anomalias]
+        F7[Recomendações]
+    end
+    
+    subgraph "BANCO DE DADOS"
+        PG[(PostgreSQL)]
+        Vector[(Vector Store)]
+    end
+    
+    UI --> Chat
+    UI --> Produtos
+    UI --> Relatorios
+    UI --> Precos
+    
+    Chat --> API
+    Produtos --> API
+    Relatorios --> API
+    Precos --> API
+    
+    API --> AI_Service
+    AI_Service --> Prompt_Engine
+    AI_Service --> Context_Builder
+    AI_Service --> Cache
+    
+    Context_Builder --> PG
+    Context_Builder --> Vector
+    
+    Prompt_Engine --> GPT4
+    Prompt_Engine --> GPT35
+    AI_Service --> Embeddings
+    AI_Service --> Moderation
+    
+    GPT4 --> F1
+    GPT4 --> F2
+    GPT4 --> F3
+    GPT35 --> F4
+    GPT35 --> F5
+    GPT4 --> F6
+    Embeddings --> F7
+    
+    F1 --> Cache
+    F2 --> Cache
+    F3 --> Cache
+    
+    style UI fill:#8B5CF6,stroke:#7C3AED,color:#fff
+    style API fill:#3B82F6,stroke:#2563EB,color:#fff
+    style AI_Service fill:#10B981,stroke:#059669,color:#fff
+    style GPT4 fill:#00A67E,stroke:#00875A,color:#fff
+    style GPT35 fill:#00A67E,stroke:#00875A,color:#fff
+    style PG fill:#336791,stroke:#2D5A7B,color:#fff
+    style F1 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F2 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F3 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F4 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F5 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F6 fill:#F59E0B,stroke:#D97706,color:#fff
+    style F7 fill:#F59E0B,stroke:#D97706,color:#fff
