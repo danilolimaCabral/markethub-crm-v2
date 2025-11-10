@@ -51,6 +51,8 @@ WORKDIR /app
 
 # Copiar apenas os arquivos necessários do builder
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/database ./database
+COPY --from=builder --chown=nodejs:nodejs /app/scripts ./scripts
 COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
@@ -71,5 +73,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Usar dumb-init para gerenciar processos corretamente
 ENTRYPOINT ["dumb-init", "--"]
 
-# Comando para iniciar a aplicação
-CMD ["node", "dist/index.js"]
+# Comando para iniciar a aplicação (com migrations)
+CMD ["sh", "-c", "node scripts/migrate.js && node dist/index.js"]
