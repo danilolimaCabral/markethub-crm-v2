@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../db';
+import { query } from '../db';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const router = Router();
@@ -14,18 +14,19 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Título, descrição e categoria são obrigatórios' });
     }
 
-    const result = db.prepare(`
+    const result = await query(`
       INSERT INTO tickets (user_id, title, description, category, priority, status)
-      VALUES (?, ?, ?, ?, ?, 'open')
-    `).run(userId, title, description, category, priority);
+      VALUES ($1, $2, $3, $4, $5, 'open')
+      RETURNING id
+    `, [userId, title, description, category, priority]);
 
-    const ticketId = result.lastInsertRowid;
+    const ticketId = result.rows[0].id;
 
     // Adicionar mensagem inicial do usuário
-    db.prepare(`
+    await query(`
       INSERT INTO ticket_messages (ticket_id, sender_type, message)
-      VALUES (?, 'user', ?)
-    `).run(ticketId, description);
+      VALUES ($1, 'user', $2)
+    `, [ticketId, description]);
 
     // Gerar resposta automática da Mia
     if (process.env.GEMINI_API_KEY) {
@@ -54,16 +55,16 @@ Resposta:`;
         const miaResponse = response.text();
 
         // Salvar resposta da Mia
-        db.prepare(`
+        await query(`
           INSERT INTO ticket_messages (ticket_id, sender_type, message)
-          VALUES (?, 'mia', ?)
-        `).run(ticketId, miaResponse);
+          VALUES ($1, 'mia', $2)
+        `, [ticketId, miaResponse]);
 
         // Atualizar status para in_progress
-        db.prepare(`
+        await query(`
           UPDATE tickets SET status = 'in_progress', updated_at = CURRENT_TIMESTAMP
-          WHERE id = ?
-        `).run(ticketId);
+          WHERE id = $1
+        `, [ticketId]);
 
         res.json({
           ticket: {
@@ -113,18 +114,18 @@ router.get('/', async (req, res) => {
     const userId = (req as any).user?.id || 1;
     const { status } = req.query;
 
-    let query = 'SELECT * FROM tickets WHERE user_id = ?';
+    let queryText = 'SELECT * FROM tickets WHERE user_id = $1';
     const params: any[] = [userId];
 
     if (status) {
-      query += ' AND status = ?';
+      queryText += ' AND status = $2';
       params.push(status);
     }
 
-    query += ' ORDER BY created_at DESC';
+    queryText += ' ORDER BY created_at DESC';
 
-    const tickets = db.prepare(query).all(...params);
-    res.json(tickets);
+    const result = await query(queryText, params);
+    res.json(result.rows);
   } catch (error) {
     console.error('Erro ao listar tickets:', error);
     res.status(500).json({ error: 'Erro ao listar tickets' });
@@ -137,19 +138,19 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const userId = (req as any).user?.id || 1;
 
-    const ticket = db.prepare(`
-      SELECT * FROM tickets WHERE id = ? AND user_id = ?
-    `).get(id, userId);
+    const ticketResult = await query(`
+      SELECT * FROM tickets WHERE id = $1 AND user_id = $2
+    `, [id, userId]);
 
-    if (!ticket) {
+    if (ticketResult.rows.length === 0) {
       return res.status(404).json({ error: 'Ticket não encontrado' });
     }
 
-    const messages = db.prepare(`
-      SELECT * FROM ticket_messages WHERE ticket_id = ? ORDER BY created_at ASC
-    `).all(id);
+    const messagesResult = await query(`
+      SELECT * FROM ticket_messages WHERE ticket_id = $1 ORDER BY created_at ASC
+    `, [id]);
 
-    res.json({ ticket, messages });
+    res.json({ ticket: ticketResult.rows[0], messages: messagesResult.rows });
   } catch (error) {
     console.error('Erro ao obter ticket:', error);
     res.status(500).json({ error: 'Erro ao obter ticket' });
@@ -168,24 +169,26 @@ router.post('/:id/messages', async (req, res) => {
     }
 
     // Verificar se ticket existe e pertence ao usuário
-    const ticket = db.prepare(`
-      SELECT * FROM tickets WHERE id = ? AND user_id = ?
-    `).get(id, userId);
+    const ticketResult = await query(`
+      SELECT * FROM tickets WHERE id = $1 AND user_id = $2
+    `, [id, userId]);
 
-    if (!ticket) {
+    if (ticketResult.rows.length === 0) {
       return res.status(404).json({ error: 'Ticket não encontrado' });
     }
 
+    const ticket = ticketResult.rows[0];
+
     // Adicionar mensagem do usuário
-    db.prepare(`
+    await query(`
       INSERT INTO ticket_messages (ticket_id, sender_type, message)
-      VALUES (?, 'user', ?)
-    `).run(id, message);
+      VALUES ($1, 'user', $2)
+    `, [id, message]);
 
     // Atualizar timestamp do ticket
-    db.prepare(`
-      UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE id = ?
-    `).run(id);
+    await query(`
+      UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE id = $1
+    `, [id]);
 
     // Gerar resposta da Mia
     if (process.env.GEMINI_API_KEY) {
@@ -194,20 +197,20 @@ router.post('/:id/messages', async (req, res) => {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         // Buscar histórico de mensagens
-        const history = db.prepare(`
+        const historyResult = await query(`
           SELECT sender_type, message FROM ticket_messages 
-          WHERE ticket_id = ? 
+          WHERE ticket_id = $1 
           ORDER BY created_at ASC
-        `).all(id) as Array<{ sender_type: string; message: string }>;
+        `, [id]);
 
-        const conversationHistory = history.map(msg => 
+        const conversationHistory = historyResult.rows.map((msg: any) => 
           `${msg.sender_type === 'user' ? 'Usuário' : 'Mia'}: ${msg.message}`
         ).join('\n\n');
 
         const prompt = `Você é Mia, assistente de suporte 24/7 do MarketHub CRM.
 
-Ticket: ${(ticket as any).title}
-Categoria: ${(ticket as any).category}
+Ticket: ${ticket.title}
+Categoria: ${ticket.category}
 
 Histórico da conversa:
 ${conversationHistory}
@@ -221,10 +224,10 @@ Resposta:`;
         const miaResponse = response.text();
 
         // Salvar resposta da Mia
-        db.prepare(`
+        await query(`
           INSERT INTO ticket_messages (ticket_id, sender_type, message)
-          VALUES (?, 'mia', ?)
-        `).run(id, miaResponse);
+          VALUES ($1, 'mia', $2)
+        `, [id, miaResponse]);
 
         res.json({ success: true, miaResponse });
       } catch (error) {
@@ -246,13 +249,14 @@ router.patch('/:id/close', async (req, res) => {
     const { id } = req.params;
     const userId = (req as any).user?.id || 1;
 
-    const result = db.prepare(`
+    const result = await query(`
       UPDATE tickets 
       SET status = 'closed', resolved_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ? AND user_id = ?
-    `).run(id, userId);
+      WHERE id = $1 AND user_id = $2
+      RETURNING id
+    `, [id, userId]);
 
-    if (result.changes === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Ticket não encontrado' });
     }
 
