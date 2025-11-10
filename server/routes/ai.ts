@@ -13,13 +13,19 @@ router.post('/chat', async (req, res) => {
     }
 
     // Verificar se API Key está configurada
+    console.log('🔍 DEBUG: Verificando GEMINI_API_KEY...');
+    console.log('🔍 DEBUG: GEMINI_API_KEY existe?', !!process.env.GEMINI_API_KEY);
+    console.log('🔍 DEBUG: GEMINI_API_KEY primeiros 10 chars:', process.env.GEMINI_API_KEY?.substring(0, 10));
+    
     if (!process.env.GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY não está configurada!');
+      console.error('❌ ERRO: GEMINI_API_KEY não está configurada!');
       return res.status(500).json({ error: 'API Key do Gemini não configurada' });
     }
 
     // Inicializar Gemini AI (dentro da rota para garantir que .env foi carregado)
+    console.log('🚀 DEBUG: Inicializando GoogleGenerativeAI...');
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    console.log('🚀 DEBUG: Obtendo modelo gemini-2.5-flash...');
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     // Definir contexto baseado na origem
@@ -62,9 +68,12 @@ router.post('/chat', async (req, res) => {
       },
     });
 
+    console.log('💬 DEBUG: Enviando mensagem para Gemini...');
     const result = await chat.sendMessage(`${systemPrompt}\n\nUsuário: ${message}`);
+    console.log('✅ DEBUG: Resposta recebida do Gemini!');
     const response = await result.response;
     const text = response.text();
+    console.log('✅ DEBUG: Texto extraído:', text.substring(0, 50) + '...');
 
     res.json({ 
       response: text,
@@ -72,10 +81,16 @@ router.post('/chat', async (req, res) => {
     });
 
   } catch (error: any) {
-    console.error('Erro ao processar chat:', error);
+    console.error('❌ ERRO ao processar chat:', error);
+    console.error('❌ ERRO stack:', error.stack);
+    console.error('❌ ERRO message:', error.message);
+    console.error('❌ ERRO status:', error.status);
+    console.error('❌ ERRO response:', error.response?.data);
     res.status(500).json({ 
       error: 'Erro ao processar mensagem',
-      details: error.message 
+      details: error.message,
+      status: error.status,
+      errorData: error.response?.data
     });
   }
 });
