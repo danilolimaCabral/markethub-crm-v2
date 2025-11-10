@@ -24,6 +24,9 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 
+# Cache invalidation argument
+ARG CACHEBUST=20251110-1548
+
 # Instalar dependências
 RUN pnpm install --frozen-lockfile
 
