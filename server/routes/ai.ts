@@ -14,20 +14,14 @@ router.post('/chat', async (req, res) => {
 
     // Verificar se API Key está configurada (tentar GOOGLE_AI_KEY primeiro, depois GEMINI_API_KEY)
     const apiKey = process.env.GOOGLE_AI_KEY || process.env.GEMINI_API_KEY;
-    console.log('🔍 DEBUG: Verificando API Keys...');
-    console.log('🔍 DEBUG: GOOGLE_AI_KEY existe?', !!process.env.GOOGLE_AI_KEY);
-    console.log('🔍 DEBUG: GEMINI_API_KEY existe?', !!process.env.GEMINI_API_KEY);
-    console.log('🔍 DEBUG: API Key selecionada primeiros 10 chars:', apiKey?.substring(0, 10));
     
     if (!apiKey) {
       console.error('❌ ERRO: Nenhuma API Key configurada (GOOGLE_AI_KEY ou GEMINI_API_KEY)!');
       return res.status(500).json({ error: 'API Key do Gemini não configurada' });
     }
 
-    // Inicializar Gemini AI (dentro da rota para garantir que .env foi carregado)
-    console.log('🚀 DEBUG: Inicializando GoogleGenerativeAI...');
+    // Inicializar Gemini AI
     const genAI = new GoogleGenerativeAI(apiKey);
-    console.log('🚀 DEBUG: Obtendo modelo gemini-2.5-flash...');
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     // Definir contexto baseado na origem
@@ -70,12 +64,9 @@ router.post('/chat', async (req, res) => {
       },
     });
 
-    console.log('💬 DEBUG: Enviando mensagem para Gemini...');
     const result = await chat.sendMessage(`${systemPrompt}\n\nUsuário: ${message}`);
-    console.log('✅ DEBUG: Resposta recebida do Gemini!');
     const response = await result.response;
     const text = response.text();
-    console.log('✅ DEBUG: Texto extraído:', text.substring(0, 50) + '...');
 
     res.json({ 
       response: text,
@@ -83,16 +74,9 @@ router.post('/chat', async (req, res) => {
     });
 
   } catch (error: any) {
-    console.error('❌ ERRO ao processar chat:', error);
-    console.error('❌ ERRO stack:', error.stack);
-    console.error('❌ ERRO message:', error.message);
-    console.error('❌ ERRO status:', error.status);
-    console.error('❌ ERRO response:', error.response?.data);
+    console.error('❌ Erro ao processar chat com Gemini:', error.message);
     res.status(500).json({ 
-      error: 'Erro ao processar mensagem',
-      details: error.message,
-      status: error.status,
-      errorData: error.response?.data
+      error: 'Erro ao processar mensagem. Por favor, tente novamente.'
     });
   }
 });
