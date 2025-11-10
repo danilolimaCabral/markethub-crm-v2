@@ -68,6 +68,7 @@ const ROUTE_TO_MODULE: Record<string, string> = {
   '/mercado-livre': 'mercado-livre',
   '/calculadora-taxas-ml': 'calculadora-taxas-ml',
   '/importacao-financeira': 'importacao-financeira',
+  '/admin-master': 'admin-master',
 };
 
 export default function CRMLayout({ children }: { children: React.ReactNode }) {
