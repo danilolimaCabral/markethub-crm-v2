@@ -128,7 +128,7 @@ router.post('/', async (req, res) => {
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
       RETURNING id
     `, {
-      bind: [
+      replacements: [
         nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
         planLimits.users, planLimits.products, planLimits.orders
       ]
@@ -151,7 +151,7 @@ router.post('/', async (req, res) => {
         tenant_id, username, email, password_hash, full_name, role, created_at
       ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
     `, {
-      bind: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]
+      replacements: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]
     });
     
     // Salvar integrações configuradas
@@ -161,7 +161,7 @@ router.post('/', async (req, res) => {
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
           VALUES ($1, $2, 1, NOW())
         `, {
-          bind: [tenantId, integration]
+          replacements: [tenantId, integration]
         });
       }
     }
