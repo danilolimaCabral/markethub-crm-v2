@@ -326,6 +326,6 @@ pnpm dev:safe
 
 ---
 
-**Criado por:** Sistema MarketHub CRM  
+**Criado por:** Sistema Markthub CRM  
 **Data:** 10/11/2025  
 **Versão:** 1.0

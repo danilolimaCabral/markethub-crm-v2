@@ -35,8 +35,8 @@ export default function ChatGemini({ autoOpen = false }: ChatGeminiProps) {
 
   // Mensagem inicial baseada no contexto
   const initialMessage = isLandingPage
-    ? 'Olá! Sou a Mia, assistente virtual do MarketHub CRM. Como posso ajudar você hoje? 😊'
-    : 'Olá! Sou a Mia, seu suporte 24/7 do MarketHub CRM. Estou aqui para ajudar com qualquer problema ou dúvida. Posso abrir um chamado para você ou responder perguntas diretamente!';
+    ? 'Olá! Sou a Mia, assistente virtual do Markthub CRM. Como posso ajudar você hoje? 😊'
+    : 'Olá! Sou a Mia, seu suporte 24/7 do Markthub CRM. Estou aqui para ajudar com qualquer problema ou dúvida. Posso abrir um chamado para você ou responder perguntas diretamente!';
 
   // Inicializar mensagens
   useEffect(() => {

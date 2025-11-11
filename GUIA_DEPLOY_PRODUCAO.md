@@ -1,4 +1,4 @@
-# 🚀 Guia de Deploy Permanente - MarketHub CRM
+# 🚀 Guia de Deploy Permanente - Markthub CRM
 
 **Domínio:** markethubcrm.manus.space  
 **Versão:** 2.1.0  
@@ -198,7 +198,7 @@ PROTOCOL=https
 GEMINI_API_KEY=sua_chave_gemini_aqui
 
 # Personalização
-VITE_APP_TITLE=MarketHub CRM
+VITE_APP_TITLE=Markthub CRM
 VITE_APP_LOGO=/logo-markethub.png
 
 # Integrações (Opcional)
@@ -351,7 +351,7 @@ Abra o navegador e acesse:
 
 **https://markethubcrm.manus.space**
 
-Deve carregar a landing page do MarketHub CRM com:
+Deve carregar a landing page do Markthub CRM com:
 - ✅ Logo
 - ✅ Calculadora de taxas ML
 - ✅ Planos de preços
@@ -382,13 +382,13 @@ Adicionar:
 ```bash
 #!/bin/bash
 
-# Script de atualização do MarketHub CRM
-# Autor: MarketHub Team
+# Script de atualização do Markthub CRM
+# Autor: Markthub Team
 # Data: 2025-11-10
 
 set -e
 
-echo "🚀 Iniciando atualização do MarketHub CRM..."
+echo "🚀 Iniciando atualização do Markthub CRM..."
 
 # Ir para diretório do projeto
 cd ~/projetos/markethub-crm-v2
@@ -751,7 +751,7 @@ sudo journalctl -u docker
 
 ## 🎉 Conclusão
 
-Seguindo este guia, o **MarketHub CRM** estará rodando permanentemente em:
+Seguindo este guia, o **Markthub CRM** estará rodando permanentemente em:
 
 **🌐 https://markethubcrm.manus.space**
 

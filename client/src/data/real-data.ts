@@ -1,5 +1,5 @@
 /**
- * Dados Reais Baseados no MarketHub CRM
+ * Dados Reais Baseados no Markthub CRM
  * Fonte: Dashboard TRUE IMPORTADOS BR (06/11/2025 - DADOS REAIS)
  * Período: Últimos 30 dias
  * Atualizado via scraping automático

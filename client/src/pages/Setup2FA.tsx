@@ -57,7 +57,7 @@ export default function Setup2FA() {
   };
 
   const handleDownloadBackupCodes = () => {
-    const text = `MarketHub CRM - Códigos de Backup 2FA\n\n${backupCodes.join('\n')}\n\nGuarde estes códigos em local seguro. Cada código pode ser usado apenas uma vez.`;
+    const text = `Markthub CRM - Códigos de Backup 2FA\n\n${backupCodes.join('\n')}\n\nGuarde estes códigos em local seguro. Cada código pode ser usado apenas uma vez.`;
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

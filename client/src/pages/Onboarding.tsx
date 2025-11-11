@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 const ETAPAS = [
   {
     id: 1,
-    titulo: 'Bem-vindo ao MarketHub CRM!',
+    titulo: 'Bem-vindo ao Markthub CRM!',
     descricao: 'Vamos configurar sua conta em 3 minutos',
     icone: '👋'
   },

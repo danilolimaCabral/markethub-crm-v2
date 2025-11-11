@@ -1,8 +1,8 @@
-# Guia Completo de Integrações - MarketHub CRM
+# Guia Completo de Integrações - Markthub CRM
 
 ## Visão Geral
 
-Este guia consolida todas as informações necessárias para integrar o **MarketHub CRM** com os principais marketplaces: **Mercado Livre**, **Amazon** e **Shopee**.
+Este guia consolida todas as informações necessárias para integrar o **Markthub CRM** com os principais marketplaces: **Mercado Livre**, **Amazon** e **Shopee**.
 
 ---
 
@@ -318,4 +318,4 @@ logger.error('Erro na sincronização', { marketplace: 'amazon', error: error.me
 
 ---
 
-**MarketHub CRM** - Sistema completo de gestão para marketplaces
+**Markthub CRM** - Sistema completo de gestão para marketplaces

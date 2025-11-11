@@ -115,7 +115,7 @@ MARKETHUB_API_BASE_URL=https://api.example.com`;
                 <CardHeader>
                   <CardTitle>Credenciais da API</CardTitle>
                   <CardDescription>
-                    Insira as credenciais obtidas no portal do MarketHub CRM
+                    Insira as credenciais obtidas no portal do Markthub CRM
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

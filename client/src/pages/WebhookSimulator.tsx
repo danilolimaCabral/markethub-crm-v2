@@ -51,7 +51,7 @@ export default function WebhookSimulator() {
         cycle: 'MONTHLY',
         status: event === 'SUBSCRIPTION_DELETED' ? 'INACTIVE' : 'ACTIVE',
         billingType: 'CREDIT_CARD',
-        description: 'MarketHub CRM - Plano Starter',
+        description: 'Markthub CRM - Plano Starter',
         externalReference: email,
       };
     }

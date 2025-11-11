@@ -1,5 +1,5 @@
 -- ============================================================================
--- MarketHub CRM - Triggers and Functions
+-- Markthub CRM - Triggers and Functions
 -- Database: PostgreSQL 14+
 -- Author: Manus AI
 -- Date: Janeiro 2025

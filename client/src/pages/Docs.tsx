@@ -28,7 +28,7 @@ export default function Docs() {
     {
       title: "Referência",
       items: [
-        { name: "API MarketHub CRM", desc: "Documentação da API" },
+        { name: "API Markthub CRM", desc: "Documentação da API" },
         { name: "Ferramentas MCP", desc: "16 ferramentas disponíveis" },
         { name: "Renovação de Tokens", desc: "Como renovar tokens" }
       ]
@@ -86,7 +86,7 @@ export default function Docs() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-primary hover:underline"
               >
-                Portal da API MarketHub CRM <ExternalLink className="w-4 h-4" />
+                Portal da API Markthub CRM <ExternalLink className="w-4 h-4" />
               </a>
               <a
                 href="http://support.example.com/"
@@ -94,7 +94,7 @@ export default function Docs() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-primary hover:underline"
               >
-                Suporte MarketHub CRM <ExternalLink className="w-4 h-4" />
+                Suporte Markthub CRM <ExternalLink className="w-4 h-4" />
               </a>
             </CardContent>
           </Card>

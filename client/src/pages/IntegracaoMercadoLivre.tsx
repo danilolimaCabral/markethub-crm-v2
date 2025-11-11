@@ -287,7 +287,7 @@ export default function IntegracaoMercadoLivre() {
         <div className="max-w-4xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold">Integração Mercado Livre</h1>
-            <p className="text-muted-foreground">Conecte sua conta do Mercado Livre ao MarketHub CRM</p>
+            <p className="text-muted-foreground">Conecte sua conta do Mercado Livre ao Markthub CRM</p>
           </div>
 
           <Card>

@@ -203,7 +203,7 @@ export default function Cadastro() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight">
-                  MarketHub CRM
+                  Markthub CRM
                 </span>
                 <span className="text-[10px] text-muted-foreground -mt-0.5">
                   Venda mais, lucre mais

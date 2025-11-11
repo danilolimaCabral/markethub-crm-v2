@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-        const prompt = `Você é Mia, assistente de suporte 24/7 do MarketHub CRM.
+        const prompt = `Você é Mia, assistente de suporte 24/7 do Markthub CRM.
         
 Um usuário abriu um ticket de suporte:
 Categoria: ${category}
@@ -207,7 +207,7 @@ router.post('/:id/messages', async (req, res) => {
           `${msg.sender_type === 'user' ? 'Usuário' : 'Mia'}: ${msg.message}`
         ).join('\n\n');
 
-        const prompt = `Você é Mia, assistente de suporte 24/7 do MarketHub CRM.
+        const prompt = `Você é Mia, assistente de suporte 24/7 do Markthub CRM.
 
 Ticket: ${ticket.title}
 Categoria: ${ticket.category}

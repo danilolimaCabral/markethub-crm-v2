@@ -1,5 +1,5 @@
 -- ============================================================================
--- MarketHub CRM - Seed Data (Dados Iniciais)
+-- Markthub CRM - Seed Data (Dados Iniciais)
 -- Database: PostgreSQL 14+
 -- Author: Manus AI
 -- Date: Janeiro 2025
@@ -9,7 +9,7 @@
 -- 1. USUÁRIO ADMINISTRADOR PADRÃO
 -- ============================================================================
 
--- Senha: MarketHub@2025! (RECOMENDA-SE ALTERAR APÓS PRIMEIRO LOGIN)
+-- Senha: Markthub@2025! (RECOMENDA-SE ALTERAR APÓS PRIMEIRO LOGIN)
 -- Hash bcrypt: $2b$10$23Q3ReDCc06vs2H6LM2/Se3Ya01K3cA8571Amk46IuyEaQz8bh7wG
 
 INSERT INTO users (username, email, password_hash, full_name, role, is_active) VALUES
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
 
 -- Configurações padrão
 INSERT INTO system_settings (key, value, description) VALUES
-('system_name', 'MarketHub CRM', 'Nome do sistema'),
+('system_name', 'Markthub CRM', 'Nome do sistema'),
 ('default_currency', 'BRL', 'Moeda padrão (BRL, USD, EUR)'),
 ('timezone', 'America/Sao_Paulo', 'Fuso horário padrão'),
 ('low_stock_alert_enabled', 'true', 'Ativar alertas de estoque baixo'),
@@ -203,7 +203,7 @@ ON CONFLICT (key) DO NOTHING;
 DO $$
 BEGIN
     RAISE NOTICE '============================================';
-    RAISE NOTICE 'MarketHub CRM - Dados Iniciais Carregados';
+    RAISE NOTICE 'Markthub CRM - Dados Iniciais Carregados';
     RAISE NOTICE '============================================';
     RAISE NOTICE '';
     RAISE NOTICE 'Usuário Admin Criado:';

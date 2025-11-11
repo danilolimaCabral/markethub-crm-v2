@@ -1,5 +1,5 @@
 -- ============================================================================
--- MarketHub CRM - Database Creation Script
+-- Markthub CRM - Database Creation Script
 -- Database: PostgreSQL 14+
 -- Author: Manus AI
 -- Date: Janeiro 2025

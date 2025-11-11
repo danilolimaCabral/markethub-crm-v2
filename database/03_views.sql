@@ -1,5 +1,5 @@
 -- ============================================================================
--- MarketHub CRM - Views
+-- Markthub CRM - Views
 -- Database: PostgreSQL 14+
 -- Author: Manus AI
 -- Date: Janeiro 2025

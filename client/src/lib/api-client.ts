@@ -1,20 +1,20 @@
 import { getValidAccessToken, getIntegrationKey, isAPIConfigured } from './api-config';
 
 /**
- * MarketHub CRM API Configuration
+ * Markthub CRM API Configuration
  */
 const MARKETHUB_API_BASE_URL = 'https://api.example.com';
 
-export interface MarketHubAPIError {
+export interface MarkthubAPIError {
   message: string;
   status: number;
   details?: any;
 }
 
 /**
- * Make authenticated request to MarketHub CRM API
+ * Make authenticated request to Markthub CRM API
  */
-export async function callMarketHubAPI<T = any>(
+export async function callMarkthubAPI<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
@@ -50,7 +50,7 @@ export async function callMarketHubAPI<T = any>(
 
     if (!response.ok) {
       const errorText = await response.text();
-      const error: MarketHubAPIError = {
+      const error: MarkthubAPIError = {
         message: `API request failed: ${response.statusText}`,
         status: response.status,
         details: errorText,
@@ -72,7 +72,7 @@ export async function callMarketHubAPI<T = any>(
 }
 
 /**
- * API Methods for MarketHub CRM
+ * API Methods for Markthub CRM
  */
 
 // ========== PEDIDOS (Orders) ==========
@@ -102,11 +102,11 @@ export async function getPedidos(params?: {
   const query = queryParams.toString();
   const endpoint = `/Pedido/ObterLista${query ? `?${query}` : ''}`;
   
-  return callMarketHubAPI<Pedido[]>(endpoint);
+  return callMarkthubAPI<Pedido[]>(endpoint);
 }
 
 export async function getPedidoById(id: string): Promise<Pedido> {
-  return callMarketHubAPI<Pedido>(`/Pedido/Obter/${id}`);
+  return callMarkthubAPI<Pedido>(`/Pedido/Obter/${id}`);
 }
 
 // ========== PRODUTOS (Products) ==========
@@ -134,11 +134,11 @@ export async function getProdutos(params?: {
   const query = queryParams.toString();
   const endpoint = `/Catalogo/ObterLista${query ? `?${query}` : ''}`;
   
-  return callMarketHubAPI<Produto[]>(endpoint);
+  return callMarkthubAPI<Produto[]>(endpoint);
 }
 
 export async function getProdutoById(id: string): Promise<Produto> {
-  return callMarketHubAPI<Produto>(`/Catalogo/Obter/${id}`);
+  return callMarkthubAPI<Produto>(`/Catalogo/Obter/${id}`);
 }
 
 // ========== ANÚNCIOS (Listings) ==========
@@ -166,7 +166,7 @@ export async function getAnuncios(params?: {
   const query = queryParams.toString();
   const endpoint = `/Anuncio/ObterLista${query ? `?${query}` : ''}`;
   
-  return callMarketHubAPI<Anuncio[]>(endpoint);
+  return callMarkthubAPI<Anuncio[]>(endpoint);
 }
 
 // ========== ENTREGAS (Deliveries) ==========
@@ -191,7 +191,7 @@ export async function getEntregas(params?: {
   const query = queryParams.toString();
   const endpoint = `/Entrega/ObterLista${query ? `?${query}` : ''}`;
   
-  return callMarketHubAPI<Entrega[]>(endpoint);
+  return callMarkthubAPI<Entrega[]>(endpoint);
 }
 
 // ========== LOJAS (Stores) ==========
@@ -204,7 +204,7 @@ export interface Loja {
 }
 
 export async function getLojas(): Promise<Loja[]> {
-  return callMarketHubAPI<Loja[]>('/Loja/ObterLista');
+  return callMarkthubAPI<Loja[]>('/Loja/ObterLista');
 }
 
 // ========== DASHBOARD / METRICS ==========

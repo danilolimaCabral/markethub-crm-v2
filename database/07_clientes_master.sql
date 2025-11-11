@@ -1,5 +1,5 @@
 -- Tabela de Clientes Master (Multi-tenant)
--- Gerencia todos os clientes que usam o sistema MarketHub CRM
+-- Gerencia todos os clientes que usam o sistema Markthub CRM
 
 CREATE TABLE IF NOT EXISTS clientes_master (
   id SERIAL PRIMARY KEY,

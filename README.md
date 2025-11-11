@@ -1,10 +1,10 @@
-# 🚀 MarketHub CRM V2
+# 🚀 Markthub CRM V2
 
 Sistema completo de gestão multi-tenant para e-commerce com integrações de marketplaces (Mercado Livre, Amazon, Shopee).
 
 ## 📋 Sobre o Projeto
 
-O **MarketHub CRM** é uma plataforma SaaS completa para gestão de e-commerce, oferecendo funcionalidades avançadas de CRM, integração com múltiplos marketplaces, gestão financeira, controle de estoque e inteligência artificial para análise de mercado.
+O **Markthub CRM** é uma plataforma SaaS completa para gestão de e-commerce, oferecendo funcionalidades avançadas de CRM, integração com múltiplos marketplaces, gestão financeira, controle de estoque e inteligência artificial para análise de mercado.
 
 ## ✨ Funcionalidades Principais
 

@@ -8,7 +8,7 @@ interface Message {
   content: string;
 }
 
-// Base de conhecimento do MarketHub CRM
+// Base de conhecimento do Markthub CRM
 const knowledge = {
   precos: {
     starter: 'R$ 49/mês - 1 marketplace, 100 produtos',
@@ -51,7 +51,7 @@ function getAIResponse(question: string): string {
   
   // Preços
   if (q.includes('preço') || q.includes('quanto custa') || q.includes('valor') || q.includes('plano')) {
-    return `📊 **Planos do MarketHub CRM:**\n\n` +
+    return `📊 **Planos do Markthub CRM:**\n\n` +
       `• **Starter**: ${knowledge.precos.starter}\n` +
       `• **Professional**: ${knowledge.precos.professional}\n` +
       `• **Business**: ${knowledge.precos.business}\n` +
@@ -114,7 +114,7 @@ function getAIResponse(question: string): string {
   // Demonstração
   if (q.includes('demonstração') || q.includes('demonstracao') || q.includes('demo') || q.includes('apresentação') || q.includes('ver funcionando')) {
     return `🎥 **Demonstração Personalizada:**\n\n` +
-      `Adoraria mostrar o MarketHub CRM funcionando!\n\n` +
+      `Adoraria mostrar o Markthub CRM funcionando!\n\n` +
       `📱 Me passa seu WhatsApp que eu te mando:\n` +
       `• Vídeo de demonstração\n` +
       `• Link para agendar demo ao vivo\n` +
@@ -134,7 +134,7 @@ function getAIResponse(question: string): string {
   }
   
   // Resposta padrão
-  return `Olá! 👋 Sou o assistente virtual do MarketHub CRM.\n\n` +
+  return `Olá! 👋 Sou o assistente virtual do Markthub CRM.\n\n` +
     `Posso te ajudar com:\n` +
     `• Preços e planos\n` +
     `• Funcionalidades do sistema\n` +
@@ -150,7 +150,7 @@ export default function ChatbotIA() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Olá! 👋 Sou o assistente virtual do MarketHub CRM. Como posso ajudar você hoje?'
+      content: 'Olá! 👋 Sou o assistente virtual do Markthub CRM. Como posso ajudar você hoje?'
     }
   ]);
   const [input, setInput] = useState('');
@@ -237,7 +237,7 @@ export default function ChatbotIA() {
                 <MessageCircle className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold">Assistente MarketHub</h3>
+                <h3 className="font-semibold">Assistente Markthub</h3>
                 <p className="text-xs text-white/80">Online • Responde na hora</p>
               </div>
             </div>

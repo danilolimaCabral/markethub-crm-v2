@@ -1,7 +1,7 @@
-# Relatório de Testes Automatizados - MarketHub CRM
+# Relatório de Testes Automatizados - Markthub CRM
 
 **Data de Execução:** 08/11/2025 às 05:49:20  
-**Sistema:** MarketHub CRM - Sistema de Gestão de Marketplaces  
+**Sistema:** Markthub CRM - Sistema de Gestão de Marketplaces  
 **Versão:** 2f2e0454
 
 ---
@@ -205,7 +205,7 @@ Sistema de persistência de dados no localStorage funcionando perfeitamente, est
 
 ## 🎯 Conclusão
 
-O **MarketHub CRM** apresenta uma taxa de sucesso de **97%** nos testes automatizados, demonstrando alta qualidade e estabilidade do sistema. O único teste que falhou não representa um bug real, mas sim a ausência de dados iniciais no localStorage.
+O **Markthub CRM** apresenta uma taxa de sucesso de **97%** nos testes automatizados, demonstrando alta qualidade e estabilidade do sistema. O único teste que falhou não representa um bug real, mas sim a ausência de dados iniciais no localStorage.
 
 ### Pontos Fortes
 
@@ -240,5 +240,5 @@ O **MarketHub CRM** apresenta uma taxa de sucesso de **97%** nos testes automati
 
 ---
 
-**Relatório gerado automaticamente pelo sistema de testes do MarketHub CRM**  
+**Relatório gerado automaticamente pelo sistema de testes do Markthub CRM**  
 **Versão:** 2f2e0454 | **Data:** 08/11/2025

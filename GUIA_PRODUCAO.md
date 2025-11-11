@@ -1,4 +1,4 @@
-# MarketHub CRM - Guia de Preparação para Produção
+# Markthub CRM - Guia de Preparação para Produção
 
 **Autor:** Manus AI  
 **Data:** Janeiro 2025  
@@ -8,7 +8,7 @@
 
 ## Sumário Executivo
 
-Este documento fornece um guia completo para preparar o **MarketHub CRM** para ambiente de produção (ADP). O sistema está desenvolvido com React 19, Tailwind CSS 4 e arquitetura frontend-only com localStorage, pronto para ser conectado a um backend PostgreSQL.
+Este documento fornece um guia completo para preparar o **Markthub CRM** para ambiente de produção (ADP). O sistema está desenvolvido com React 19, Tailwind CSS 4 e arquitetura frontend-only com localStorage, pronto para ser conectado a um backend PostgreSQL.
 
 ---
 
@@ -44,7 +44,7 @@ Crie arquivo `.env.production` na raiz do projeto:
 
 ```env
 # Informações do App
-VITE_APP_TITLE=MarketHub CRM
+VITE_APP_TITLE=Markthub CRM
 VITE_APP_LOGO=/logo-markethub-v2.png
 
 # URLs de API (configurar quando backend estiver pronto)

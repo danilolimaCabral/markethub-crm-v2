@@ -148,7 +148,7 @@ export default function Login() {
 
           {/* Title */}
           <h1 className="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            MarketHub CRM
+            Markthub CRM
           </h1>
           <p className="text-center text-slate-400 text-sm mb-8">
             Entre com suas credenciais

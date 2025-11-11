@@ -229,7 +229,7 @@ Abra o navegador e acesse:
 
 Você deve ver:
 - ✅ Cadeado verde (SSL válido)
-- ✅ Landing page do MarketHub CRM
+- ✅ Landing page do Markthub CRM
 - ✅ Sem avisos de segurança
 
 ### Teste 5: Verificar Health Check

@@ -14,7 +14,7 @@ export default function ChatIA() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: 'Olá! Sou seu assistente inteligente do MarketHub CRM. Posso ajudá-lo com análises de dados, relatórios, previsões de vendas e muito mais. Como posso ajudar hoje?',
+      content: 'Olá! Sou seu assistente inteligente do Markthub CRM. Posso ajudá-lo com análises de dados, relatórios, previsões de vendas e muito mais. Como posso ajudar hoje?',
       timestamp: new Date()
     }
   ]);
@@ -61,7 +61,7 @@ export default function ChatIA() {
     if (q.includes('vendas') || q.includes('faturamento')) {
       return `📊 **Análise de Vendas**
 
-Com base nos dados do MarketHub CRM, aqui está uma análise detalhada:
+Com base nos dados do Markthub CRM, aqui está uma análise detalhada:
 
 **Últimos 30 dias:**
 - Faturamento total: R$ 145.890,00
@@ -203,7 +203,7 @@ Quer que eu detalhe alguma estratégia?`;
     
     return `Entendi sua pergunta sobre "${question}". 
 
-Como assistente IA integrado ao MarketHub CRM, posso ajudá-lo com:
+Como assistente IA integrado ao Markthub CRM, posso ajudá-lo com:
 
 📊 Análise de dados e relatórios
 💰 Insights financeiros e de margem

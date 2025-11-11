@@ -1,6 +1,6 @@
-# Estrutura de Banco de Dados - MarketHub CRM
+# Estrutura de Banco de Dados - Markthub CRM
 
-**Sistema:** MarketHub CRM  
+**Sistema:** Markthub CRM  
 **Banco de Dados:** PostgreSQL 14+  
 **Autor:** Manus AI  
 **Data:** Janeiro 2025
@@ -9,7 +9,7 @@
 
 ## Visão Geral
 
-O MarketHub CRM utiliza uma arquitetura de banco de dados relacional PostgreSQL otimizada para gerenciamento de vendas em múltiplos marketplaces. A estrutura foi projetada para escalabilidade, integridade referencial e performance em operações de leitura e escrita intensivas.
+O Markthub CRM utiliza uma arquitetura de banco de dados relacional PostgreSQL otimizada para gerenciamento de vendas em múltiplos marketplaces. A estrutura foi projetada para escalabilidade, integridade referencial e performance em operações de leitura e escrita intensivas.
 
 ### Características Principais
 
@@ -692,4 +692,4 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO markethub_reports;
 
 ## Conclusão
 
-Esta estrutura de banco de dados PostgreSQL foi projetada para suportar todas as funcionalidades do **MarketHub CRM** com escalabilidade, performance e segurança. A arquitetura modular permite expansão futura sem comprometer a integridade dos dados existentes, enquanto os triggers e views automatizam operações críticas e fornecem insights em tempo real para tomada de decisões estratégicas.
+Esta estrutura de banco de dados PostgreSQL foi projetada para suportar todas as funcionalidades do **Markthub CRM** com escalabilidade, performance e segurança. A arquitetura modular permite expansão futura sem comprometer a integridade dos dados existentes, enquanto os triggers e views automatizam operações críticas e fornecem insights em tempo real para tomada de decisões estratégicas.

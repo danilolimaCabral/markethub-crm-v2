@@ -1,7 +1,7 @@
 import { generateCodeVerifier, generateCodeChallenge, generateState, storePKCEParams, retrievePKCEParams } from './pkce';
 
 /**
- * OAuth2 Configuration for MarketHub CRM
+ * OAuth2 Configuration for Markthub CRM
  */
 const OAUTH_CONFIG = {
   authorizationEndpoint: 'https://api.example.com/Autenticacao/',

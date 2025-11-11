@@ -1,8 +1,8 @@
-# Arquitetura Multi-Tenant - MarketHub CRM SaaS
+# Arquitetura Multi-Tenant - Markthub CRM SaaS
 
 ## 📋 Visão Geral
 
-O MarketHub CRM foi estruturado como um **sistema SaaS multi-tenant** (multi-inquilino), permitindo que múltiplos clientes (empresas) utilizem a mesma aplicação de forma completamente isolada e independente.
+O Markthub CRM foi estruturado como um **sistema SaaS multi-tenant** (multi-inquilino), permitindo que múltiplos clientes (empresas) utilizem a mesma aplicação de forma completamente isolada e independente.
 
 ### Características Principais
 

@@ -1,19 +1,19 @@
-# Script de Vídeo - MarketHub CRM
+# Script de Vídeo - Markthub CRM
 
 **Duração Total:** 3-4 minutos  
-**Objetivo:** Apresentar o MarketHub CRM como solução completa para gestão de vendas em marketplaces
+**Objetivo:** Apresentar o Markthub CRM como solução completa para gestão de vendas em marketplaces
 
 ---
 
 ## CENA 1: ABERTURA (0:00 - 0:15)
 
-**Visual:** Logo MarketHub CRM com animação, fundo gradiente roxo/azul
+**Visual:** Logo Markthub CRM com animação, fundo gradiente roxo/azul
 
 **Narração:**  
-"Você vende no Mercado Livre, Amazon e Shopee? Está perdendo tempo gerenciando cada plataforma separadamente? Conheça o **MarketHub CRM** - a solução completa que centraliza TODAS as suas vendas em um único lugar."
+"Você vende no Mercado Livre, Amazon e Shopee? Está perdendo tempo gerenciando cada plataforma separadamente? Conheça o **Markthub CRM** - a solução completa que centraliza TODAS as suas vendas em um único lugar."
 
 **Texto na tela:**  
-- MarketHub CRM
+- Markthub CRM
 - Gestão Inteligente de Marketplaces
 
 ---
@@ -35,10 +35,10 @@
 
 ## CENA 3: SOLUÇÃO (0:35 - 1:00)
 
-**Visual:** Dashboard do MarketHub CRM com métricas em destaque
+**Visual:** Dashboard do Markthub CRM com métricas em destaque
 
 **Narração:**  
-"O MarketHub CRM integra Mercado Livre, Amazon e Shopee em um painel único e intuitivo. Veja TODOS os seus pedidos, produtos e métricas em tempo real, sem precisar trocar de plataforma."
+"O Markthub CRM integra Mercado Livre, Amazon e Shopee em um painel único e intuitivo. Veja TODOS os seus pedidos, produtos e métricas em tempo real, sem precisar trocar de plataforma."
 
 **Texto na tela:**  
 - ✅ Tudo em um só lugar
@@ -117,7 +117,7 @@
 **Visual:** Ícones dos diferenciais aparecendo
 
 **Narração:**  
-"MarketHub CRM é diferente: autenticação de dois fatores para segurança máxima, banco de dados PostgreSQL profissional, código limpo e documentado, pronto para escalar com seu negócio."
+"Markthub CRM é diferente: autenticação de dois fatores para segurança máxima, banco de dados PostgreSQL profissional, código limpo e documentado, pronto para escalar com seu negócio."
 
 **Texto na tela:**  
 - 🔒 Segurança 2FA
@@ -129,10 +129,10 @@
 
 ## CENA 10: CALL TO ACTION (2:55 - 3:15)
 
-**Visual:** Logo MarketHub CRM + informações de contato
+**Visual:** Logo Markthub CRM + informações de contato
 
 **Narração:**  
-"Pare de perder tempo e dinheiro gerenciando múltiplas plataformas. Centralize tudo no MarketHub CRM e foque no que realmente importa: vender mais e crescer seu negócio. Entre em contato agora e solicite uma demonstração gratuita."
+"Pare de perder tempo e dinheiro gerenciando múltiplas plataformas. Centralize tudo no Markthub CRM e foque no que realmente importa: vender mais e crescer seu negócio. Entre em contato agora e solicite uma demonstração gratuita."
 
 **Texto na tela:**  
 - 📧 contato@markethub.com
@@ -143,13 +143,13 @@
 
 ## CENA 11: ENCERRAMENTO (3:15 - 3:20)
 
-**Visual:** Logo MarketHub CRM com tagline
+**Visual:** Logo Markthub CRM com tagline
 
 **Narração:**  
-"MarketHub CRM. Venda mais. Gerencie melhor."
+"Markthub CRM. Venda mais. Gerencie melhor."
 
 **Texto na tela:**  
-- MarketHub CRM
+- Markthub CRM
 - Gestão Inteligente de Marketplaces
 
 ---
@@ -172,7 +172,7 @@
 - Duração: 0.5-1 segundo
 
 ### Cores
-- Roxo/Azul (identidade MarketHub)
+- Roxo/Azul (identidade Markthub)
 - Branco para textos
 - Verde para checkmarks
 - Vermelho para problemas

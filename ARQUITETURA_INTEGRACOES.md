@@ -1,8 +1,8 @@
-# Arquitetura de Integrações - MarketHub CRM
+# Arquitetura de Integrações - Markthub CRM
 
 ## 🎯 VISÃO GERAL
 
-O MarketHub CRM terá um **sistema de integrações modular e escalável** que permite conectar com ERPs, marketplaces e outros sistemas através de:
+O Markthub CRM terá um **sistema de integrações modular e escalável** que permite conectar com ERPs, marketplaces e outros sistemas através de:
 
 1. **API Pública RESTful** (para integrações customizadas)
 2. **Webhooks** (para eventos em tempo real)

@@ -116,7 +116,7 @@ export async function verifyTOTP(secret: string, token: string, window: number =
 /**
  * Gera URL para QR Code do Google Authenticator
  */
-export function generateQRCodeURL(secret: string, accountName: string, issuer: string = 'MarketHub CRM'): string {
+export function generateQRCodeURL(secret: string, accountName: string, issuer: string = 'Markthub CRM'): string {
   const params = new URLSearchParams({
     secret,
     issuer,

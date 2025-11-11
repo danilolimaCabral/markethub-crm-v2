@@ -1,9 +1,9 @@
-# MarketHub CRM - Apresentação Comercial
+# Markthub CRM - Apresentação Comercial
 
 ---
 
 ## Slide 1: Título
-**MarketHub CRM**
+**Markthub CRM**
 Gestão Inteligente de Marketplaces
 
 Centralize Mercado Livre, Amazon e Shopee em uma única plataforma
@@ -17,7 +17,7 @@ Consequências da gestão fragmentada: 23% de atraso em envios, 18% de perda de 
 
 ---
 
-## Slide 3: A Solução MarketHub
+## Slide 3: A Solução Markthub
 Integração nativa com três maiores marketplaces do Brasil concentra toda operação em painel único
 
 Sincronização automática em tempo real elimina trabalho manual e reduz erros operacionais em 85%

@@ -78,17 +78,17 @@ export interface IConnector {
   disconnect(): Promise<void>;
 
   /**
-   * Sincronizar produtos do sistema externo para o MarketHub
+   * Sincronizar produtos do sistema externo para o Markthub
    */
   syncProductsFromExternal(): Promise<ISyncResult>;
 
   /**
-   * Sincronizar produtos do MarketHub para o sistema externo
+   * Sincronizar produtos do Markthub para o sistema externo
    */
   syncProductsToExternal(products: IProduct[]): Promise<ISyncResult>;
 
   /**
-   * Sincronizar pedidos do sistema externo para o MarketHub
+   * Sincronizar pedidos do sistema externo para o Markthub
    */
   syncOrdersFromExternal(): Promise<ISyncResult>;
 

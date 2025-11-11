@@ -75,7 +75,7 @@ export class BlingConnector extends BaseConnector {
       // Processar cada produto
       for (const blingProduct of products) {
         try {
-          // Converter formato Bling para formato MarketHub
+          // Converter formato Bling para formato Markthub
           const product: IProduct = {
             externalId: blingProduct.id,
             name: blingProduct.nome,
@@ -86,7 +86,7 @@ export class BlingConnector extends BaseConnector {
             category: blingProduct.categoria?.descricao
           };
 
-          // Aqui você salvaria no banco do MarketHub
+          // Aqui você salvaria no banco do Markthub
           // Por enquanto, apenas contamos
           created++;
         } catch (error: any) {
@@ -115,7 +115,7 @@ export class BlingConnector extends BaseConnector {
 
       for (const product of products) {
         try {
-          // Converter formato MarketHub para formato Bling
+          // Converter formato Markthub para formato Bling
           const blingProduct = {
             nome: product.name,
             codigo: product.sku,
@@ -161,7 +161,7 @@ export class BlingConnector extends BaseConnector {
 
       for (const blingOrder of orders) {
         try {
-          // Converter formato Bling para formato MarketHub
+          // Converter formato Bling para formato Markthub
           const order: IOrder = {
             externalId: blingOrder.id,
             customerId: blingOrder.cliente.id,
@@ -178,7 +178,7 @@ export class BlingConnector extends BaseConnector {
             createdAt: new Date(blingOrder.data)
           };
 
-          // Aqui você salvaria no banco do MarketHub
+          // Aqui você salvaria no banco do Markthub
           created++;
         } catch (error: any) {
           errors.push(`Erro ao processar pedido ${blingOrder.id}: ${error.message}`);
@@ -200,7 +200,7 @@ export class BlingConnector extends BaseConnector {
     }
 
     try {
-      // Converter formato MarketHub para formato Bling
+      // Converter formato Markthub para formato Bling
       const blingOrder = {
         cliente: {
           id: order.customerId
@@ -238,7 +238,7 @@ export class BlingConnector extends BaseConnector {
   }
 
   /**
-   * Mapear status do Bling para status do MarketHub
+   * Mapear status do Bling para status do Markthub
    */
   private mapBlingStatus(blingStatus: string): IOrder['status'] {
     const statusMap: Record<string, IOrder['status']> = {

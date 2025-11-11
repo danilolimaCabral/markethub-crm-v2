@@ -186,7 +186,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
               <TrendingUp className="h-6 w-6 text-white" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-bold text-base md:text-lg bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent truncate">MarketHub CRM</h1>
+              <h1 className="font-bold text-base md:text-lg bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent truncate">Markthub CRM</h1>
               <p className="text-xs text-muted-foreground hidden md:block">Venda mais, lucre mais</p>
             </div>
             <Notifications />

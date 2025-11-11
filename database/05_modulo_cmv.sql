@@ -1,6 +1,6 @@
 -- ============================================================================
 -- MÓDULO DE CMV (Custo de Mercadoria Vendida)
--- MarketHub CRM - Extensão do Database Schema
+-- Markthub CRM - Extensão do Database Schema
 -- Author: Manus AI
 -- Date: Novembro 2025
 -- ============================================================================

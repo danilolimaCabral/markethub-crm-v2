@@ -1,6 +1,6 @@
 # 🐘 Guia de Migração para PostgreSQL
 
-Este guia explica como migrar o MarketHub CRM de localStorage para PostgreSQL.
+Este guia explica como migrar o Markthub CRM de localStorage para PostgreSQL.
 
 ## 📋 Pré-requisitos
 

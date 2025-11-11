@@ -46,7 +46,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent leading-tight">
-                  MarketHub CRM
+                  Markthub CRM
                 </span>
                 <span className="text-[10px] text-muted-foreground -mt-0.5">
                   A única ferramenta autônoma do mercado
@@ -240,12 +240,12 @@ export default function LandingPage() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Sem MarketHub */}
+          {/* Sem Markthub */}
           <Card className="border-2 border-red-200 scroll-animate hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <div className="flex items-center gap-2 text-red-600">
                 <span className="text-2xl">❌</span>
-                <CardTitle>Sem o MarketHub</CardTitle>
+                <CardTitle>Sem o Markthub</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -272,12 +272,12 @@ export default function LandingPage() {
             </CardContent>
           </Card>
 
-          {/* Com MarketHub */}
+          {/* Com Markthub */}
           <Card className="border-2 border-green-200 scroll-animate hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <div className="flex items-center gap-2 text-green-600">
                 <span className="text-2xl">✅</span>
-                <CardTitle>Com o MarketHub</CardTitle>
+                <CardTitle>Com o Markthub</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -435,7 +435,7 @@ export default function LandingPage() {
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
                   <TrendingUp className="h-5 w-5 text-white" />
                 </div>
-                <span className="font-bold text-lg">MarketHub CRM</span>
+                <span className="font-bold text-lg">Markthub CRM</span>
               </div>
               <p className="text-sm text-gray-400 mb-2">
                 A única ferramenta autônoma do mercado
@@ -529,7 +529,7 @@ export default function LandingPage() {
 
           <div className="border-t border-gray-800 mt-8 pt-8 flex items-center justify-between">
             <div className="text-sm text-gray-400">
-              © 2025 MarketHub CRM. Todos os direitos reservados.
+              © 2025 Markthub CRM. Todos os direitos reservados.
             </div>
             <button
               onClick={() => setLocation('/super-admin')}

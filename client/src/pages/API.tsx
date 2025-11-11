@@ -44,7 +44,7 @@ export default function API() {
 
   const handleConsultarAPI = async () => {
     setLoading(true);
-    toast.info("Consultando API do MarketHub CRM...");
+    toast.info("Consultando API do Markthub CRM...");
     
     // Simulação de chamada à API
     setTimeout(() => {
@@ -75,7 +75,7 @@ export default function API() {
             </Button>
             <div>
               <h1 className="text-xl font-bold">Consultar API</h1>
-              <p className="text-xs text-muted-foreground">Dados do MarketHub CRM em tempo real</p>
+              <p className="text-xs text-muted-foreground">Dados do Markthub CRM em tempo real</p>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
@@ -164,7 +164,7 @@ export default function API() {
               <Card>
                 <CardHeader>
                   <CardTitle>Pedidos</CardTitle>
-                  <CardDescription>Lista de pedidos do MarketHub CRM</CardDescription>
+                  <CardDescription>Lista de pedidos do Markthub CRM</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="rounded-md border">
@@ -293,7 +293,7 @@ export default function API() {
             <TabsContent value="chat">
               <Card className="h-[600px] flex flex-col">
                 <CardHeader>
-                  <CardTitle>Chat com MarketHub CRM</CardTitle>
+                  <CardTitle>Chat com Markthub CRM</CardTitle>
                   <CardDescription>Converse e obtenha informações em tempo real</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
@@ -304,7 +304,7 @@ export default function API() {
                         <Users className="w-12 h-12 mb-4 opacity-50" />
                         <p className="text-lg font-medium">Bem-vindo ao Chat!</p>
                         <p className="text-sm mt-2 max-w-md">
-                          Pergunte sobre pedidos, produtos, estoque, anúncios ou qualquer informação do MarketHub CRM.
+                          Pergunte sobre pedidos, produtos, estoque, anúncios ou qualquer informação do Markthub CRM.
                         </p>
                         <div className="mt-6 space-y-2 text-left">
                           <p className="text-sm font-medium">Exemplos:</p>

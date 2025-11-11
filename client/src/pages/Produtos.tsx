@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import { REAL_CATEGORIES } from "@/data/real-data";
 import { toast } from "sonner";
 
-// Categorias reais do MarketHub CRM
+// Categorias reais do Markthub CRM
 const categorias = REAL_CATEGORIES.map(cat => cat.name);
 
 interface Produto {

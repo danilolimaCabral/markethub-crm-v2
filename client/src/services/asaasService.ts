@@ -231,7 +231,7 @@ class AsaasService {
       value: plan.value,
       nextDueDate: nextDueDateStr,
       cycle: 'MONTHLY',
-      description: `MarketHub CRM - ${plan.name}`,
+      description: `Markthub CRM - ${plan.name}`,
       externalReference: customer.email, // Usar email como referência
     });
 

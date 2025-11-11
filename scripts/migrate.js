@@ -27,7 +27,7 @@ const migrations = [
 ];
 
 async function runMigrations() {
-  console.log('🚀 Iniciando migrações do MarketHub CRM...\n');
+  console.log('🚀 Iniciando migrações do Markthub CRM...\n');
   
   // Verificar se DATABASE_URL está configurada
   if (!process.env.DATABASE_URL) {

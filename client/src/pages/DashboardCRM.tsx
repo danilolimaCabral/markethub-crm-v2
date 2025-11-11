@@ -9,7 +9,7 @@ import { REAL_METRICS, REAL_CATEGORIES, REAL_MARKETPLACES, REAL_DAILY_SALES, REA
 import SyncIndicator from '@/components/SyncIndicator';
 import DashboardFinanceiro from '@/components/DashboardFinanceiro';
 
-// Dados reais do MarketHub CRM - TRUE IMPORTADOS BR
+// Dados reais do Markthub CRM - TRUE IMPORTADOS BR
 const stats = [
   {
     title: "Pedidos Pendentes",
@@ -49,7 +49,7 @@ const stats = [
   },
 ];
 
-// Dados de vendas da semana (últimos 7 dias do MarketHub CRM)
+// Dados de vendas da semana (últimos 7 dias do Markthub CRM)
 const salesData = REAL_DAILY_SALES.slice(-7).map((day, index) => ({
   name: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'][new Date(day.date).getDay()],
   vendas: day.value

@@ -29,7 +29,7 @@ export default function Home() {
   const steps = [
     "Configure suas credenciais da API",
     "Gere o Access Token automaticamente",
-    "Teste a conexão com o MarketHub CRM",
+    "Teste a conexão com o Markthub CRM",
     "Use o Manus para automatizar suas operações"
   ];
 
@@ -43,7 +43,7 @@ export default function Home() {
               <span className="text-primary-foreground font-bold text-xl">L</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold">MarketHub CRM</h1>
+              <h1 className="text-xl font-bold">Markthub CRM</h1>
               <p className="text-xs text-muted-foreground">Integração com Manus</p>
             </div>
           </div>
@@ -66,7 +66,7 @@ export default function Home() {
           </div>
           <h2 className="text-5xl font-bold tracking-tight">
             Integre o <span className="text-primary">Manus</span> com o{" "}
-            <span className="text-primary">MarketHub CRM</span>
+            <span className="text-primary">Markthub CRM</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Configure em minutos e comece a automatizar pedidos, estoque, anúncios e relatórios
@@ -133,7 +133,7 @@ export default function Home() {
               <CardContent className="space-y-4">
                 <div className="bg-background rounded-lg p-4 border">
                   <p className="text-sm text-muted-foreground mb-2">Você:</p>
-                  <p className="font-medium">"Manus, liste os pedidos pendentes do MarketHub CRM"</p>
+                  <p className="font-medium">"Manus, liste os pedidos pendentes do Markthub CRM"</p>
                 </div>
                 <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
                   <p className="text-sm text-muted-foreground mb-2">Manus:</p>
@@ -186,7 +186,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © 2025 Integração Manus × MarketHub CRM
+              © 2025 Integração Manus × Markthub CRM
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="/docs" className="hover:text-foreground transition-colors">

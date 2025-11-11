@@ -1,4 +1,4 @@
-# 🐳 Guia de Deploy com Docker - MarketHub CRM
+# 🐳 Guia de Deploy com Docker - Markthub CRM
 
 **Versão:** 1.0.0  
 **Última Atualização:** 10 de novembro de 2025  
@@ -22,7 +22,7 @@
 
 ### Requisitos Mínimos do Servidor
 
-Para executar o MarketHub CRM em produção, você precisará de um servidor com as seguintes especificações mínimas.
+Para executar o Markthub CRM em produção, você precisará de um servidor com as seguintes especificações mínimas.
 
 | Recurso | Mínimo | Recomendado |
 |---------|--------|-------------|
@@ -255,7 +255,7 @@ O sistema suporta as seguintes variáveis de ambiente para personalização.
 |----------|-----------|--------|-------------|
 | `NODE_ENV` | Ambiente de execução | `production` | Não |
 | `PORT` | Porta do servidor | `3000` | Não |
-| `VITE_APP_TITLE` | Título da aplicação | `MarketHub CRM` | Não |
+| `VITE_APP_TITLE` | Título da aplicação | `Markthub CRM` | Não |
 | `VITE_APP_LOGO` | Caminho do logo | `/logo-final.png` | Não |
 
 #### Integrações
@@ -283,7 +283,7 @@ Para facilitar o gerenciamento de variáveis de ambiente, crie um arquivo `.env`
 # Criar arquivo .env
 cat > .env << 'EOF'
 # Aplicação
-VITE_APP_TITLE=MarketHub CRM
+VITE_APP_TITLE=Markthub CRM
 VITE_APP_LOGO=/logo-final.png
 
 # Integrações (configure conforme necessário)
@@ -490,7 +490,7 @@ Antes de colocar em produção, verifique os seguintes itens.
 
 ### Serviços de Cloud Recomendados
 
-O MarketHub CRM pode ser facilmente deployado em diversos serviços de cloud.
+O Markthub CRM pode ser facilmente deployado em diversos serviços de cloud.
 
 #### DigitalOcean (Recomendado)
 
@@ -555,7 +555,7 @@ docker exec -i markethub-postgres psql -U markethub markethub < backup.sql
 
 ## 🎯 Conclusão
 
-Com este guia, você tem tudo o que precisa para fazer o deploy do MarketHub CRM usando Docker. O sistema está otimizado para produção e pronto para escalar conforme suas necessidades.
+Com este guia, você tem tudo o que precisa para fazer o deploy do Markthub CRM usando Docker. O sistema está otimizado para produção e pronto para escalar conforme suas necessidades.
 
 Para suporte adicional, consulte a documentação completa no repositório ou abra uma issue no GitHub.
 

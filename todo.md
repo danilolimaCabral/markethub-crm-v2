@@ -679,11 +679,11 @@
 - [x] Adicionar ícones e cores por categoria
 - [x] Implementar remoção de custos
 
-## Rebranding para MarketHub CRM
+## Rebranding para Markthub CRM
 
 - [x] Criar logo profissional com tema de marketplaces conectados
 - [x] Gerar logo com hexagonos interconectados (Mercado Livre, Amazon, Shopee)
-- [x] Atualizar nome para MarketHub CRM em client/src/const.ts
+- [x] Atualizar nome para Markthub CRM em client/src/const.ts
 - [x] Aplicar cores da identidade visual (verde emerald + azul)
 - [x] Salvar logo em client/public/logo-markethub.png
 - [x] Aplicar cores emerald-600 como primary no index.css
@@ -707,14 +707,14 @@
 ## Correção de Nome Antigo
 
 - [x] Buscar "IA BRUNO CRM" em todos os arquivos
-- [x] Substituir por "MarketHub CRM" no CRMLayout
+- [x] Substituir por "Markthub CRM" no CRMLayout
 - [x] Atualizar página de login
 - [x] Atualizar logo no CRMLayout
 - [x] Atualizar gerador de proposta
 - [x] Atualizar biblioteca TOTP
 - [x] Sistema completamente renomeado
 
-## Substituição de lexos-hub por MarketHub CRM
+## Substituição de lexos-hub por Markthub CRM
 
 - [x] Buscar "lexos" em todos os arquivos
 - [x] Atualizar email no CRMLayout (user@markethub.com)
@@ -765,8 +765,8 @@
 - [x] Usar timestamp dinâmico no caminho da logo
 - [x] Criar logo-new-1762577940.png
 - [x] Atualizar const.ts
-- [x] Substituir todas as referências a "Lexos Hub" por "MarketHub CRM"
-- [x] Substituir "IA BRUNO" por "MarketHub"
+- [x] Substituir todas as referências a "Lexos Hub" por "Markthub CRM"
+- [x] Substituir "IA BRUNO" por "Markthub"
 - [x] Substituir URLs de api.lexos.com.br por api.example.com
 - [x] Limpar completamente o código de nomes antigos
 
@@ -822,7 +822,7 @@
 - [ ] Gerar slides profissionais
 - [ ] Criar guia de gravação passo a passo
 
-## Nova Logo MarketHub CRM
+## Nova Logo Markthub CRM
 
 - [x] Gerar nova logo profissional (M+H estilizado com hub/rede)
 - [x] Aplicar logo no sistema (logo-final.png)

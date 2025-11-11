@@ -1,4 +1,4 @@
-# 🚀 Guia Completo de Deploy - MarketHub CRM no Railway
+# 🚀 Guia Completo de Deploy - Markthub CRM no Railway
 
 ## 📋 Índice
 
@@ -161,7 +161,7 @@ GEMINI_API_KEY=sua_chave_gemini_aqui
 #### Aplicação (Opcional)
 
 ```env
-VITE_APP_TITLE=MarketHub CRM
+VITE_APP_TITLE=Markthub CRM
 VITE_APP_LOGO=/logo-final.png
 ```
 
@@ -649,7 +649,7 @@ Configure alertas no Railway:
 
 ## 🎉 Conclusão
 
-Parabéns! Seu **MarketHub CRM** está no ar! 🚀
+Parabéns! Seu **Markthub CRM** está no ar! 🚀
 
 ### URLs Importantes
 
@@ -682,4 +682,4 @@ Parabéns! Seu **MarketHub CRM** está no ar! 🚀
 
 ---
 
-**Feito com ❤️ para o MarketHub CRM**
+**Feito com ❤️ para o Markthub CRM**

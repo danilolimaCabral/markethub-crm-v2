@@ -51,7 +51,7 @@ Escolher o nome certo é fundamental para o sucesso comercial do produto. Abaixo
 
 ---
 
-### Opção 3: **MarketHub Pro**
+### Opção 3: **Markthub Pro**
 
 **Significado:** Centro de operações para marketplaces.
 
@@ -99,7 +99,7 @@ Escolher o nome certo é fundamental para o sucesso comercial do produto. Abaixo
 |------|----------------|------------------|-----------|---------------|------------|
 | **VendaMax CRM** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | **9.0/10** |
 | FlowCommerce | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 8.5/10 |
-| MarketHub Pro | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 8.5/10 |
+| Markthub Pro | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 8.5/10 |
 | GestãoFácil | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | 8.0/10 |
 | SalesCore | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | 7.5/10 |
 
