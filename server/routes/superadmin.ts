@@ -116,10 +116,10 @@ router.get('/dashboard', superAdminAuth, async (req, res) => {
     const uptime = process.uptime();
 
     const systemMetrics = {
-      cpu_usage: ((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2), // Convertendo para segundos
-      memory_usage: (memUsage.heapUsed / 1024 / 1024).toFixed(2), // MB
-      memory_total: (memUsage.heapTotal / 1024 / 1024).toFixed(2), // MB
-      uptime_hours: (uptime / 3600).toFixed(2),
+      cpu_usage: parseFloat(((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2)),
+      memory_usage: parseFloat((memUsage.heapUsed / 1024 / 1024).toFixed(2)),
+      memory_total: parseFloat((memUsage.heapTotal / 1024 / 1024).toFixed(2)),
+      uptime_hours: parseFloat((uptime / 3600).toFixed(2)),
       platform: os.platform(),
       hostname: os.hostname()
     };
@@ -237,10 +237,10 @@ router.get('/metrics/system', superAdminAuth, async (req, res) => {
     const uptime = process.uptime();
 
     res.json({
-      cpu_usage: ((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2),
-      memory_usage: (memUsage.heapUsed / 1024 / 1024).toFixed(2),
-      memory_total: (memUsage.heapTotal / 1024 / 1024).toFixed(2),
-      uptime_hours: (uptime / 3600).toFixed(2),
+      cpu_usage: parseFloat(((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2)),
+      memory_usage: parseFloat((memUsage.heapUsed / 1024 / 1024).toFixed(2)),
+      memory_total: parseFloat((memUsage.heapTotal / 1024 / 1024).toFixed(2)),
+      uptime_hours: parseFloat((uptime / 3600).toFixed(2)),
       platform: os.platform(),
       hostname: os.hostname(),
       node_version: process.version
