@@ -25,7 +25,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY patches ./patches
 
 # Cache invalidation argument
-ARG CACHEBUST=20251110-1652
+ARG CACHEBUST=20251111-1545
 
 # Instalar dependências
 RUN pnpm install --frozen-lockfile
