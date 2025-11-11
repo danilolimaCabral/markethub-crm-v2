@@ -109,6 +109,9 @@ importers:
       '@types/pg':
         specifier: ^8.15.6
         version: 8.15.6
+      '@types/pg-format':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@types/qrcode':
         specifier: ^1.5.6
         version: 1.5.6
@@ -166,6 +169,9 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
+      pg-format:
+        specifier: ^1.0.4
+        version: 1.0.4
       pg-hstore:
         specifier: ^2.3.4
         version: 2.3.4
@@ -1786,6 +1792,9 @@ packages:
   '@types/papaparse@5.5.0':
     resolution: {integrity: sha512-GVs5iMQmUr54BAZYYkByv8zPofFxmyxUpISPb2oh8sayR3+1zbxasrOvoKiHJ/nnoq/uULuPsu1Lze1EkagVFg==}
 
+  '@types/pg-format@1.0.5':
+    resolution: {integrity: sha512-i+oEEJEC+1I3XAhgqtVp45Faj8MBbV0Aoq4rHsHD7avgLjyDkaWKObd514g0Q/DOUkdxU0P4CQ0iq2KR4SoJcw==}
+
   '@types/pg@8.15.6':
     resolution: {integrity: sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==}
 
@@ -3332,6 +3341,10 @@ packages:
 
   pg-connection-string@2.9.1:
     resolution: {integrity: sha512-nkc6NpDcvPVpZXxrreI/FOtX3XemeLl8E0qFr6F2Lrm/I8WOnaWNhIPK2Z7OHpw7gh5XJThi6j6ppgNoaT1w4w==}
+
+  pg-format@1.0.4:
+    resolution: {integrity: sha512-YyKEF78pEA6wwTAqOUaHIN/rWpfzzIuMh9KdAhc3rSLQ/7zkRFcCgYBAEGatDstLyZw4g0s9SNICmaTGnBVeyw==}
+    engines: {node: '>=4.0'}
 
   pg-hstore@2.3.4:
     resolution: {integrity: sha512-N3SGs/Rf+xA1M2/n0JBiXFDVMzdekwLZLAO0g7mpDY9ouX+fDI7jS6kTq3JujmYbtNSJ53TJ0q4G98KVZSM4EA==}
@@ -5683,6 +5696,8 @@ snapshots:
     dependencies:
       '@types/node': 24.7.0
 
+  '@types/pg-format@1.0.5': {}
+
   '@types/pg@8.15.6':
     dependencies:
       '@types/node': 24.7.0
@@ -7536,6 +7551,8 @@ snapshots:
     optional: true
 
   pg-connection-string@2.9.1: {}
+
+  pg-format@1.0.4: {}
 
   pg-hstore@2.3.4:
     dependencies:

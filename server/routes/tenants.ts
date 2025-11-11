@@ -1,6 +1,7 @@
 import express from 'express';
 import sequelize from '../config/database';
 import bcrypt from 'bcryptjs';
+import format from 'pg-format';
 
 const router = express.Router();
 
@@ -124,23 +125,24 @@ router.post('/', async (req, res) => {
       nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ];
-    console.log('=== DEBUG INSERT TENANT - BUILD fc2269c - 20:30 ===');
+    console.log('=== DEBUG INSERT TENANT - BUILD WORKAROUND - 20:45 ===');
     console.log('Parâmetros:', JSON.stringify(insertParams, null, 2));
     console.log('Tipos:', insertParams.map(p => typeof p));
-    console.log('USANDO $N PLACEHOLDERS COM BIND (SOLUÇÃO CORRETA)');
+    console.log('USANDO PG-FORMAT PARA ESCAPE SEGURO');
     
-    // Criar tenant (campos opcionais podem ser NULL)
-    // Usar bind parameters ($1, $2, ...) com opção bind: conforme documentação Sequelize
+    // Criar tenant usando pg-format para escape seguro
     const { QueryTypes } = await import('sequelize');
-    const [result] = await sequelize.query(`
-      INSERT INTO tenants (
+    const insertQuery = format(
+      `INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
-      RETURNING id
-    `, {
-      bind: insertParams,
+      ) VALUES (%L, %L, %L, %L, %L, %L, %L, %L, %L, 'trial', NOW())
+      RETURNING id`,
+      ...insertParams
+    );
+    
+    const [result] = await sequelize.query(insertQuery, {
       type: QueryTypes.INSERT
     });
     
@@ -156,23 +158,27 @@ router.post('/', async (req, res) => {
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
     const adminEmail = email_contato || `${adminUsername}@temp.com`;
     
-    await sequelize.query(`
-      INSERT INTO users (
+    const userQuery = format(
+      `INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
-      ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
-    `, {
-      bind: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa],
+      ) VALUES (%L, %L, %L, %L, %L, 'admin', NOW())`,
+      tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa
+    );
+    
+    await sequelize.query(userQuery, {
       type: QueryTypes.INSERT
     });
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
       for (const integration of integrations) {
-        await sequelize.query(`
-          INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-          VALUES ($1, $2, 1, NOW())
-        `, {
-          bind: [tenantId, integration],
+        const integrationQuery = format(
+          `INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
+          VALUES (%L, %L, 1, NOW())`,
+          tenantId, integration
+        );
+        
+        await sequelize.query(integrationQuery, {
           type: QueryTypes.INSERT
         });
       }
