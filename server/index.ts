@@ -76,16 +76,30 @@ async function startServer() {
   
   // Diagnostic endpoint
   app.get("/api/diagnostic", async (_req, res) => {
-    const sequelize = (await import("./config/database.js")).default;
-    const pkg = await import("sequelize/package.json", { assert: { type: "json" } }).catch(() => null);
-    
-    res.json({
-      sequelize_version: pkg?.default?.version || "unknown",
-      node_version: process.version,
-      env: process.env.NODE_ENV,
-      database_url: process.env.DATABASE_URL ? "configured" : "not configured",
-      timestamp: new Date().toISOString()
-    });
+    try {
+      const { Sequelize } = await import("sequelize");
+      const sequelize = (await import("./config/database.js")).default;
+      
+      // Testar query simples
+      let queryTest = "not tested";
+      try {
+        await sequelize.query("SELECT 1 as test", []);
+        queryTest = "success";
+      } catch (e: any) {
+        queryTest = `failed: ${e.message}`;
+      }
+      
+      res.json({
+        sequelize_version: Sequelize.version || "unknown",
+        node_version: process.version,
+        env: process.env.NODE_ENV,
+        database_url: process.env.DATABASE_URL ? "configured" : "not configured",
+        query_test: queryTest,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   });
 
   // Serve static files from dist/public in production
