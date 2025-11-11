@@ -89,12 +89,25 @@ async function startServer() {
         queryTest = `failed: ${e.message}`;
       }
       
+      // Testar INSERT com placeholders
+      let insertTest = "not tested";
+      try {
+        await sequelize.query(
+          "SELECT $1 as param1, $2 as param2, $3 as param3",
+          ["test1", "test2", "test3"]
+        );
+        insertTest = "success";
+      } catch (e: any) {
+        insertTest = `failed: ${e.message}`;
+      }
+      
       res.json({
         sequelize_version: Sequelize.version || "unknown",
         node_version: process.version,
         env: process.env.NODE_ENV,
         database_url: process.env.DATABASE_URL ? "configured" : "not configured",
         query_test: queryTest,
+        insert_test: insertTest,
         timestamp: new Date().toISOString()
       });
     } catch (error: any) {
