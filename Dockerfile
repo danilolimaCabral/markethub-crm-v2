@@ -78,4 +78,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENTRYPOINT ["dumb-init", "--"]
 
 # Comando para iniciar a aplicação (com migrations)
-CMD ["node", "dist/index.js"]
+# Executa migrations primeiro, depois inicia o servidor
+CMD ["sh", "-c", "node scripts/migrate.js && node dist/index.js"]
