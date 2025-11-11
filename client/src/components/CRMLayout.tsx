@@ -262,7 +262,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">Usuário</p>
-              <p className="text-xs text-muted-foreground truncate">user@markethub.com</p>
+              <p className="text-xs text-muted-foreground truncate">contato@markthubcrm.com.br</p>
             </div>
           </div>
 

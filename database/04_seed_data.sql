@@ -9,11 +9,11 @@
 -- 1. USUÁRIO ADMINISTRADOR PADRÃO
 -- ============================================================================
 
--- Senha padrão: admin123 (DEVE SER ALTERADA NO PRIMEIRO LOGIN)
--- Hash bcrypt: $2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+-- Senha: MarketHub@2025! (RECOMENDA-SE ALTERAR APÓS PRIMEIRO LOGIN)
+-- Hash bcrypt: $2b$10$23Q3ReDCc06vs2H6LM2/Se3Ya01K3cA8571Amk46IuyEaQz8bh7wG
 
 INSERT INTO users (username, email, password_hash, full_name, role, is_active) VALUES
-('admin', 'admin@markethub.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Administrador', 'admin', TRUE);
+('admin', 'admin@markthubcrm.com.br', '$2b$10$23Q3ReDCc06vs2H6LM2/Se3Ya01K3cA8571Amk46IuyEaQz8bh7wG', 'Administrador', 'admin', TRUE);
 
 -- Permissões completas para o admin
 INSERT INTO user_permissions (user_id, module_name, can_view, can_create, can_edit, can_delete)
@@ -208,7 +208,7 @@ BEGIN
     RAISE NOTICE '';
     RAISE NOTICE 'Usuário Admin Criado:';
     RAISE NOTICE '  Username: admin';
-    RAISE NOTICE '  Email: admin@markethub.com';
+    RAISE NOTICE '  Email: admin@markthubcrm.com.br';
     RAISE NOTICE '  Senha: admin123';
     RAISE NOTICE '';
     RAISE NOTICE '⚠️  IMPORTANTE: Altere a senha do admin no primeiro login!';

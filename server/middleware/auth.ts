@@ -27,7 +27,7 @@ export const authenticateToken = (
   if (token === 'valid-token') {
     req.user = {
       id: '1',
-      email: 'admin@markethub.com',
+      email: 'admin@markthubcrm.com.br',
       role: 'admin'
     };
     next();
@@ -56,7 +56,7 @@ export const authenticateSuperAdmin = (
   if (username === 'superadmin' && password === 'SuperAdmin@2024!') {
     req.user = {
       id: 'superadmin',
-      email: 'superadmin@markethub.com',
+      email: 'superadmin@markthubcrm.com.br',
       role: 'superadmin'
     };
     next();

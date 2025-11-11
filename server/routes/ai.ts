@@ -63,10 +63,11 @@ router.post('/chat', limiter, async (req, res) => {
          HORÁRIO DE ATENDIMENTO:
          - Eu (Mia) estou disponível 24/7 para responder perguntas!
          - Suporte humano: Segunda a Sexta, 9h às 18h (horário de Brasília)
-         - E-mail: suporte@markethub.com.br
+         - E-mail: contato@markthubcrm.com.br
          - WhatsApp: (62) 99999-9999
          
          DIFERENCIAIS ÚNICOS:
+         - A ÚNICA FERRAMENTA AUTÔNOMA DO MERCADO!
          - ÚNICA ferramenta do mercado com IA integrada (eu!)
          - Calculadora de taxas ML mais precisa do Brasil
          - Considera ICMS por estado (Goiás 19%, SP 18%, etc)

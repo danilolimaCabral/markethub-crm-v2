@@ -316,7 +316,7 @@ export default function Settings() {
 
               <div className="space-y-2">
                 <Label>Email</Label>
-                <Input value="user@markethub.com" disabled />
+                <Input value="contato@markthubcrm.com.br" disabled />
               </div>
 
               <Alert>

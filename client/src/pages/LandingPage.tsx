@@ -49,7 +49,7 @@ export default function LandingPage() {
                   MarketHub CRM
                 </span>
                 <span className="text-[10px] text-muted-foreground -mt-0.5">
-                  Venda mais, lucre mais
+                  A única ferramenta autônoma do mercado
                 </span>
               </div>
             </div>
@@ -437,8 +437,13 @@ export default function LandingPage() {
                 </div>
                 <span className="font-bold text-lg">MarketHub CRM</span>
               </div>
+              <p className="text-sm text-gray-400 mb-2">
+                A única ferramenta autônoma do mercado
+              </p>
               <p className="text-sm text-gray-400 mb-4">
-                O CRM especializado em vendedores de marketplace
+                <a href="mailto:contato@markthubcrm.com.br" className="hover:text-purple-400 transition-colors">
+                  contato@markthubcrm.com.br
+                </a>
               </p>
               
               {/* Redes Sociais */}
