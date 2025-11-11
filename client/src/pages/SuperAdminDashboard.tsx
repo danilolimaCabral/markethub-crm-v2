@@ -39,8 +39,7 @@ interface DashboardData {
     cpu_usage: number;
     memory_usage: number;
     memory_total: number;
-    memory_used: number;
-    uptime: number;
+    uptime_hours: number;
     platform: string;
     hostname: string;
   };
@@ -219,10 +218,10 @@ export default function SuperAdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {formatUptime(data.system_metrics.uptime).split(' ')[0]}
+              {data.system_metrics.uptime_hours.toFixed(0)}h
             </div>
             <p className="text-xs text-slate-400 mt-1">
-              {formatUptime(data.system_metrics.uptime)}
+              {data.system_metrics.uptime_hours.toFixed(1)} horas
             </p>
           </CardContent>
         </Card>
@@ -263,16 +262,16 @@ export default function SuperAdminDashboard() {
                   Memória
                 </span>
                 <span className="text-sm font-medium text-white">
-                  {data.system_metrics.memory_usage.toFixed(1)}%
+                  {data.system_metrics.memory_usage.toFixed(1)} MB
                   <span className="text-slate-400 ml-2">
-                    ({data.system_metrics.memory_used.toFixed(1)}GB / {data.system_metrics.memory_total.toFixed(1)}GB)
+                    / {data.system_metrics.memory_total.toFixed(1)} MB
                   </span>
                 </span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all"
-                  style={{ width: `${Math.min(data.system_metrics.memory_usage, 100)}%` }}
+                  style={{ width: `${Math.min((data.system_metrics.memory_usage / data.system_metrics.memory_total) * 100, 100)}%` }}
                 />
               </div>
             </div>
