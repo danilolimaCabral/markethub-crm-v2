@@ -124,9 +124,10 @@ router.post('/', async (req, res) => {
       nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ];
-    console.log('=== DEBUG INSERT TENANT ===');
+    console.log('=== DEBUG INSERT TENANT - BUILD 054529d - 20:15 ===');
     console.log('Parâmetros:', JSON.stringify(insertParams, null, 2));
     console.log('Tipos:', insertParams.map(p => typeof p));
+    console.log('USANDO ? PLACEHOLDERS COM REPLACEMENTS');
     
     // Criar tenant (campos opcionais podem ser NULL)
     // Usar QueryTypes.INSERT para garantir compatibilidade
