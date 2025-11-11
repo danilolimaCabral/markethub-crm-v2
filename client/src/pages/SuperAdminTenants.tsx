@@ -42,12 +42,8 @@ export default function SuperAdminTenants() {
   const [newTenantCredentials, setNewTenantCredentials] = useState<NewTenantCredentials | null>(null);
   
   const [formData, setFormData] = useState({
-    company_name: '',
-    cnpj: '',
-    email: '',
-    phone: '',
-    plan: 'basic',
-    integrations: [] as string[]
+    nome_empresa: '',
+    plano: 'starter'
   });
 
   useEffect(() => {
@@ -81,12 +77,8 @@ export default function SuperAdminTenants() {
         loadTenants();
         
         setFormData({
-          company_name: '',
-          cnpj: '',
-          email: '',
-          phone: '',
-          plan: 'basic',
-          integrations: []
+          nome_empresa: '',
+          plano: 'starter'
         });
       }
     } catch (error: any) {
@@ -177,34 +169,29 @@ IMPORTANTE: Guarde esta senha em local seguro. Por segurança, ela não será ex
             </DialogHeader>
             
             <form onSubmit={handleCreateTenant} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <Label htmlFor="company_name">Nome da Empresa *</Label>
-                  <Input id="company_name" value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} required />
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="nome_empresa">Nome da Empresa *</Label>
+                  <Input 
+                    id="nome_empresa" 
+                    value={formData.nome_empresa} 
+                    onChange={(e) => setFormData({...formData, nome_empresa: e.target.value})} 
+                    placeholder="Digite o nome da empresa"
+                    required 
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Após criar o cliente, você poderá adicionar CNPJ, email, telefone e outras informações no módulo de integração.
+                  </p>
                 </div>
                 
                 <div>
-                  <Label htmlFor="cnpj">CNPJ *</Label>
-                  <Input id="cnpj" value={formData.cnpj} onChange={(e) => setFormData({...formData, cnpj: e.target.value})} placeholder="00.000.000/0000-00" required />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input id="phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="(00) 00000-0000" />
-                </div>
-                
-                <div className="col-span-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
-                </div>
-                
-                <div className="col-span-2">
-                  <Label htmlFor="plan">Plano</Label>
-                  <Select value={formData.plan} onValueChange={(value) => setFormData({...formData, plan: value})}>
+                  <Label htmlFor="plano">Plano</Label>
+                  <Select value={formData.plano} onValueChange={(value) => setFormData({...formData, plano: value})}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="basic">Básico (3 usuários, 100 produtos)</SelectItem>
-                      <SelectItem value="pro">Pro (10 usuários, 1000 produtos)</SelectItem>
+                      <SelectItem value="starter">Starter (3 usuários, 100 produtos)</SelectItem>
+                      <SelectItem value="professional">Professional (10 usuários, 1000 produtos)</SelectItem>
+                      <SelectItem value="business">Business (25 usuários, 2000 produtos)</SelectItem>
                       <SelectItem value="enterprise">Enterprise (Ilimitado)</SelectItem>
                     </SelectContent>
                   </Select>

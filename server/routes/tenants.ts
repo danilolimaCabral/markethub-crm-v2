@@ -89,15 +89,17 @@ router.post('/', async (req, res) => {
       integrations = []
     } = req.body;
     
-    // Validações
-    if (!nome_empresa || !cnpj || !email_contato) {
-      return res.status(400).json({ error: 'Dados obrigatórios faltando' });
+    // Validações - apenas nome da empresa é obrigatório
+    if (!nome_empresa || nome_empresa.trim() === '') {
+      return res.status(400).json({ error: 'Nome da empresa é obrigatório' });
     }
     
-    // Verificar se CNPJ já existe
-    const [existing] = await sequelize.query('SELECT id FROM tenants WHERE cnpj = $1', [cnpj]);
-    if (Array.isArray(existing) && existing.length > 0) {
-      return res.status(400).json({ error: 'CNPJ já cadastrado' });
+    // Verificar se CNPJ já existe (apenas se fornecido)
+    if (cnpj) {
+      const [existing] = await sequelize.query('SELECT id FROM tenants WHERE cnpj = $1', [cnpj]);
+      if (Array.isArray(existing) && existing.length > 0) {
+        return res.status(400).json({ error: 'CNPJ já cadastrado' });
+      }
     }
     
     // Gerar slug único
@@ -117,16 +119,16 @@ router.post('/', async (req, res) => {
     
     const planLimits = limits[plano as keyof typeof limits] || limits.starter;
     
-    // Criar tenant
+    // Criar tenant (campos opcionais podem ser NULL)
     const [result] = await sequelize.query(`
       INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
       RETURNING id
     `, [
-      nome_empresa, slug, cnpj, email_contato, telefone, plano,
+      nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ]);
     
@@ -140,12 +142,13 @@ router.post('/', async (req, res) => {
     const adminUsername = `admin_${slug}`;
     const adminPassword = generatePassword();
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const adminEmail = email_contato || `${adminUsername}@temp.com`;
     
     await sequelize.query(`
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
       ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
-    `, [tenantId, adminUsername, email_contato, hashedPassword, nome_empresa]);
+    `, [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]);
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
@@ -164,7 +167,7 @@ router.post('/', async (req, res) => {
       admin_credentials: {
         username: adminUsername,
         password: adminPassword,
-        email: email
+        email: adminEmail
       },
       message: 'Tenant criado com sucesso! Guarde as credenciais do admin.'
     });
