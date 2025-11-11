@@ -129,14 +129,19 @@ router.post('/', async (req, res) => {
     console.log('Tipos:', insertParams.map(p => typeof p));
     
     // Criar tenant (campos opcionais podem ser NULL)
+    // Usar QueryTypes.INSERT para garantir compatibilidade
+    const { QueryTypes } = await import('sequelize');
     const [result] = await sequelize.query(`
       INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', NOW())
       RETURNING id
-    `, insertParams);
+    `, {
+      replacements: insertParams,
+      type: QueryTypes.INSERT
+    });
     
     const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
     
@@ -153,16 +158,22 @@ router.post('/', async (req, res) => {
     await sequelize.query(`
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
-      ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
-    `, [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]);
+      ) VALUES (?, ?, ?, ?, ?, 'admin', NOW())
+    `, {
+      replacements: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa],
+      type: QueryTypes.INSERT
+    });
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
       for (const integration of integrations) {
         await sequelize.query(`
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-          VALUES ($1, $2, 1, NOW())
-        `, [tenantId, integration]);
+          VALUES (?, ?, 1, NOW())
+        `, {
+          replacements: [tenantId, integration],
+          type: QueryTypes.INSERT
+        });
       }
     }
     
