@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
       LEFT JOIN products p ON p.tenant_id = t.id
       LEFT JOIN orders o ON o.tenant_id = t.id
       GROUP BY t.id
-      ORDER BY t.created_at DESC
+      ORDER BY t.criado_em DESC
     `);
     
     res.json(tenants);
@@ -67,7 +67,7 @@ router.get('/:id', async (req, res) => {
         (SELECT COUNT(*) FROM users WHERE tenant_id = ?) as user_count,
         (SELECT COUNT(*) FROM products WHERE tenant_id = ?) as product_count,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = ?) as order_count,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = ? AND DATE(created_at) = CURDATE()) as orders_today
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = ? AND DATE(criado_em) = CURRENT_DATE) as orders_today
     `, [req.params.id, req.params.id, req.params.id, req.params.id]);
     
     res.json({ ...tenant, stats: Array.isArray(stats) ? stats[0] : {} });
@@ -119,13 +119,13 @@ router.post('/', async (req, res) => {
     // Criar tenant
     const [result] = await sequelize.query(`
       INSERT INTO tenants (
-        company_name, slug, cnpj, email, phone, plan,
-        max_users, max_products, max_orders, max_storage_mb,
-        status, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())
+        nome_empresa, slug, cnpj, email_contato, telefone, plano,
+        limite_usuarios, limite_produtos, limite_pedidos_mes, status,
+        criado_em
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())
     `, [
       company_name, slug, cnpj, email, phone, plan,
-      planLimits.users, planLimits.products, planLimits.orders, planLimits.storage_mb
+      planLimits.users, planLimits.products, planLimits.orders
     ]);
     
     const tenantId = (result as any).insertId;
@@ -137,7 +137,7 @@ router.post('/', async (req, res) => {
     
     await sequelize.query(`
       INSERT INTO users (
-        tenant_id, username, email, password, role, created_at
+        tenant_id, username, email, password, role, criado_em
       ) VALUES (?, ?, ?, ?, 'admin', NOW())
     `, [tenantId, adminUsername, email, hashedPassword]);
     
@@ -145,7 +145,7 @@ router.post('/', async (req, res) => {
     if (integrations.length > 0) {
       for (const integration of integrations) {
         await sequelize.query(`
-          INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, created_at)
+          INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
           VALUES (?, ?, 1, NOW())
         `, [tenantId, integration]);
       }
@@ -177,19 +177,19 @@ router.put('/:id', async (req, res) => {
     const values: any[] = [];
     
     if (company_name) {
-      updates.push('company_name = ?');
+      updates.push('nome_empresa = ?');
       values.push(company_name);
     }
     if (email) {
-      updates.push('email = ?');
+      updates.push('email_contato = ?');
       values.push(email);
     }
     if (phone) {
-      updates.push('phone = ?');
+      updates.push('telefone = ?');
       values.push(phone);
     }
     if (plan) {
-      updates.push('plan = ?');
+      updates.push('plano = ?');
       values.push(plan);
       
       // Atualizar limites baseados no novo plano
@@ -201,8 +201,8 @@ router.put('/:id', async (req, res) => {
       
       const planLimits = limits[plan as keyof typeof limits];
       if (planLimits) {
-        updates.push('max_users = ?, max_products = ?, max_orders = ?, max_storage_mb = ?');
-        values.push(planLimits.users, planLimits.products, planLimits.orders, planLimits.storage_mb);
+        updates.push('limite_usuarios = ?, limite_produtos = ?, limite_pedidos_mes = ?');
+        values.push(planLimits.users, planLimits.products, planLimits.orders);
       }
     }
     if (status) {
@@ -214,7 +214,7 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ error: 'Nenhum campo para atualizar' });
     }
     
-    updates.push('updated_at = NOW()');
+    updates.push('atualizado_em = NOW()');
     values.push(req.params.id);
     
     await sequelize.query(`
@@ -232,7 +232,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await sequelize.query(`
-      UPDATE tenants SET status = 'suspended', updated_at = NOW() WHERE id = ?
+      UPDATE tenants SET status = 'suspended', atualizado_em = NOW() WHERE id = ?
     `, [req.params.id]);
     
     res.json({ success: true, message: 'Tenant desativado com sucesso' });
@@ -251,8 +251,8 @@ router.get('/:id/stats', async (req, res) => {
         (SELECT COUNT(*) FROM products WHERE tenant_id = ?) as total_products,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = ?) as total_orders,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = ? AND status = 'pending') as pending_orders,
-        (SELECT SUM(total_amount) FROM orders WHERE tenant_id = ? AND DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)) as revenue_30d,
-        (SELECT created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC LIMIT 1) as last_activity
+        (SELECT SUM(total_amount) FROM orders WHERE tenant_id = ? AND DATE(criado_em) >= CURRENT_DATE - INTERVAL '30 days') as revenue_30d,
+        (SELECT criado_em FROM users WHERE tenant_id = ? ORDER BY criado_em DESC LIMIT 1) as last_activity
     `, [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id]);
     
     res.json(Array.isArray(stats) && stats.length > 0 ? stats[0] : {});
