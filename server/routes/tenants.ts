@@ -52,7 +52,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const [tenants] = await sequelize.query(`
-      SELECT * FROM tenants WHERE id = ?
+      SELECT * FROM tenants WHERE id = $1
     `, [req.params.id]);
     
     if (!Array.isArray(tenants) || tenants.length === 0) {
@@ -64,10 +64,10 @@ router.get('/:id', async (req, res) => {
     // Buscar estatísticas
     const [stats] = await sequelize.query(`
       SELECT 
-        (SELECT COUNT(*) FROM users WHERE tenant_id = ?) as user_count,
-        (SELECT COUNT(*) FROM products WHERE tenant_id = ?) as product_count,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = ?) as order_count,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = ? AND DATE(criado_em) = CURRENT_DATE) as orders_today
+        (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as user_count,
+        (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as product_count,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $3) as order_count,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $4 AND DATE(criado_em) = CURRENT_DATE) as orders_today
     `, [req.params.id, req.params.id, req.params.id, req.params.id]);
     
     res.json({ ...tenant, stats: Array.isArray(stats) ? stats[0] : {} });
@@ -95,14 +95,14 @@ router.post('/', async (req, res) => {
     }
     
     // Verificar se CNPJ já existe
-    const [existing] = await sequelize.query('SELECT id FROM tenants WHERE cnpj = ?', [cnpj]);
+    const [existing] = await sequelize.query('SELECT id FROM tenants WHERE cnpj = $1', [cnpj]);
     if (Array.isArray(existing) && existing.length > 0) {
       return res.status(400).json({ error: 'CNPJ já cadastrado' });
     }
     
     // Gerar slug único
     let slug = generateSlug(company_name);
-    const [slugExists] = await sequelize.query('SELECT id FROM tenants WHERE slug = ?', [slug]);
+    const [slugExists] = await sequelize.query('SELECT id FROM tenants WHERE slug = $1', [slug]);
     if (Array.isArray(slugExists) && slugExists.length > 0) {
       slug = `${slug}-${Date.now()}`;
     }
@@ -122,7 +122,7 @@ router.post('/', async (req, res) => {
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', NOW())
     `, [
       company_name, slug, cnpj, email, phone, plan,
       planLimits.users, planLimits.products, planLimits.orders
@@ -138,7 +138,7 @@ router.post('/', async (req, res) => {
     await sequelize.query(`
       INSERT INTO users (
         tenant_id, username, email, password, role, criado_em
-      ) VALUES (?, ?, ?, ?, 'admin', NOW())
+      ) VALUES ($1, $2, $3, $4, 'admin', NOW())
     `, [tenantId, adminUsername, email, hashedPassword]);
     
     // Salvar integrações configuradas
@@ -146,7 +146,7 @@ router.post('/', async (req, res) => {
       for (const integration of integrations) {
         await sequelize.query(`
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-          VALUES (?, ?, 1, NOW())
+          VALUES ($1, $2, 1, NOW())
         `, [tenantId, integration]);
       }
     }
@@ -175,21 +175,22 @@ router.put('/:id', async (req, res) => {
     
     const updates: string[] = [];
     const values: any[] = [];
+    let paramIndex = 1;
     
     if (company_name) {
-      updates.push('nome_empresa = ?');
+      updates.push(`nome_empresa = $${paramIndex++}`);
       values.push(company_name);
     }
     if (email) {
-      updates.push('email_contato = ?');
+      updates.push(`email_contato = $${paramIndex++}`);
       values.push(email);
     }
     if (phone) {
-      updates.push('telefone = ?');
+      updates.push(`telefone = $${paramIndex++}`);
       values.push(phone);
     }
     if (plan) {
-      updates.push('plano = ?');
+      updates.push(`plano = $${paramIndex++}`);
       values.push(plan);
       
       // Atualizar limites baseados no novo plano
@@ -201,12 +202,12 @@ router.put('/:id', async (req, res) => {
       
       const planLimits = limits[plan as keyof typeof limits];
       if (planLimits) {
-        updates.push('limite_usuarios = ?, limite_produtos = ?, limite_pedidos_mes = ?');
+        updates.push(`limite_usuarios = $${paramIndex++}, limite_produtos = $${paramIndex++}, limite_pedidos_mes = $${paramIndex++}`);
         values.push(planLimits.users, planLimits.products, planLimits.orders);
       }
     }
     if (status) {
-      updates.push('status = ?');
+      updates.push(`status = $${paramIndex++}`);
       values.push(status);
     }
     
@@ -218,7 +219,7 @@ router.put('/:id', async (req, res) => {
     values.push(req.params.id);
     
     await sequelize.query(`
-      UPDATE tenants SET ${updates.join(', ')} WHERE id = ?
+      UPDATE tenants SET ${updates.join(', ')} WHERE id = $${paramIndex}
     `, values);
     
     res.json({ success: true, message: 'Tenant atualizado com sucesso' });
@@ -232,7 +233,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await sequelize.query(`
-      UPDATE tenants SET status = 'suspended', atualizado_em = NOW() WHERE id = ?
+      UPDATE tenants SET status = 'suspended', atualizado_em = NOW() WHERE id = $1
     `, [req.params.id]);
     
     res.json({ success: true, message: 'Tenant desativado com sucesso' });
@@ -247,12 +248,12 @@ router.get('/:id/stats', async (req, res) => {
   try {
     const [stats] = await sequelize.query(`
       SELECT 
-        (SELECT COUNT(*) FROM users WHERE tenant_id = ?) as total_users,
-        (SELECT COUNT(*) FROM products WHERE tenant_id = ?) as total_products,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = ?) as total_orders,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = ? AND status = 'pending') as pending_orders,
-        (SELECT SUM(total_amount) FROM orders WHERE tenant_id = ? AND DATE(criado_em) >= CURRENT_DATE - INTERVAL '30 days') as revenue_30d,
-        (SELECT criado_em FROM users WHERE tenant_id = ? ORDER BY criado_em DESC LIMIT 1) as last_activity
+        (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as total_users,
+        (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as total_products,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $3) as total_orders,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $4 AND status = 'pending') as pending_orders,
+        (SELECT SUM(total_amount) FROM orders WHERE tenant_id = $5 AND DATE(criado_em) >= CURRENT_DATE - INTERVAL '30 days') as revenue_30d,
+        (SELECT criado_em FROM users WHERE tenant_id = $6 ORDER BY criado_em DESC LIMIT 1) as last_activity
     `, [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id]);
     
     res.json(Array.isArray(stats) && stats.length > 0 ? stats[0] : {});
