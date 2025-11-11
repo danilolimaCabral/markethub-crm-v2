@@ -81,16 +81,16 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const {
-      company_name,
+      nome_empresa,
       cnpj,
-      email,
-      phone,
-      plan = 'starter',
+      email_contato,
+      telefone,
+      plano = 'starter',
       integrations = []
     } = req.body;
     
     // Validações
-    if (!company_name || !cnpj || !email) {
+    if (!nome_empresa || !cnpj || !email_contato) {
       return res.status(400).json({ error: 'Dados obrigatórios faltando' });
     }
     
@@ -101,7 +101,7 @@ router.post('/', async (req, res) => {
     }
     
     // Gerar slug único
-    let slug = generateSlug(company_name);
+    let slug = generateSlug(nome_empresa);
     const [slugExists] = await sequelize.query('SELECT id FROM tenants WHERE slug = $1', [slug]);
     if (Array.isArray(slugExists) && slugExists.length > 0) {
       slug = `${slug}-${Date.now()}`;
@@ -115,7 +115,7 @@ router.post('/', async (req, res) => {
       enterprise: { users: -1, products: -1, orders: -1 }
     };
     
-    const planLimits = limits[plan as keyof typeof limits] || limits.starter;
+    const planLimits = limits[plano as keyof typeof limits] || limits.starter;
     
     // Criar tenant
     const [result] = await sequelize.query(`
@@ -126,7 +126,7 @@ router.post('/', async (req, res) => {
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', NOW())
       RETURNING id
     `, [
-      company_name, slug, cnpj, email, phone, plan,
+      nome_empresa, slug, cnpj, email_contato, telefone, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ]);
     
@@ -145,7 +145,7 @@ router.post('/', async (req, res) => {
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
       ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
-    `, [tenantId, adminUsername, email, hashedPassword, company_name]);
+    `, [tenantId, adminUsername, email_contato, hashedPassword, nome_empresa]);
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
