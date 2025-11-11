@@ -171,9 +171,15 @@ router.post('/', async (req, res) => {
       },
       message: 'Tenant criado com sucesso! Guarde as credenciais do admin.'
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao criar tenant:', error);
-    res.status(500).json({ error: 'Erro ao criar tenant' });
+    console.error('Stack trace:', error.stack);
+    console.error('Error message:', error.message);
+    res.status(500).json({ 
+      error: 'Erro ao criar tenant',
+      details: error.message,
+      code: error.code 
+    });
   }
 });
 
