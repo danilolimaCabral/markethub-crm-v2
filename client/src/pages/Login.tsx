@@ -34,37 +34,34 @@ export default function Login() {
 
     setIsLoading(true);
     
-    // Simular delay de autenticação
-    setTimeout(() => {
-      // Validar credenciais (admin/admin123)
-      if (username === 'admin' && password === 'admin123') {
-        const user = {
-          username: 'admin',
-          name: 'Administrador',
-          role: 'admin'
-        };
+    try {
+      // Fazer chamada real para a API
+      const response = await fetch('/api/superadmin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-        // Verificar se 2FA está habilitado
-        const users = JSON.parse(localStorage.getItem('markethub_users') || '[]');
-        const existingUser = users.find((u: any) => u.username === username);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Salvar token e dados do usuário
+        localStorage.setItem('markethub_token', data.token);
+        localStorage.setItem('markethub_user', JSON.stringify(data.user));
         
-        if (existingUser && existingUser.twoFactorEnabled) {
-          // Salvar dados temporários para verificação 2FA
-          sessionStorage.setItem('temp_login_user', JSON.stringify(user));
-          toast.info('Digite o código de verificação');
-          setLocation('/verify-2fa');
-        } else {
-          // Login direto sem 2FA
-          localStorage.setItem('markethub_user', JSON.stringify(user));
-          toast.success('Login realizado com sucesso!');
-          setLocation('/');
-        }
+        toast.success('Login realizado com sucesso!');
+        setLocation('/superadmin');
       } else {
-        toast.error('Usuário ou senha incorretos');
+        toast.error(data.error || 'Usuário ou senha incorretos');
       }
-      
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      toast.error('Erro ao conectar com o servidor');
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
 
   const handlePasswordRecovery = async (e: React.FormEvent) => {
