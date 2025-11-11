@@ -7,6 +7,24 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Forçar saída de logs
+process.stdout.write('\n');
+console.log('='.repeat(60));
+console.log('🚀 INICIANDO MIGRAÇÕES DO MARKTHUB CRM');
+console.log('='.repeat(60));
+console.log('');
+
+// Verificar se DATABASE_URL está configurada
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERROR: DATABASE_URL não está configurada!');
+  console.error('Configure a variável de ambiente DATABASE_URL antes de executar as migrations.');
+  process.exit(1);
+}
+
+console.log('✅ DATABASE_URL encontrada');
+console.log('📍 Host:', process.env.DATABASE_URL.split('@')[1]?.split('/')[0] || 'unknown');
+console.log('');
+
 // Conexão com PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -27,60 +45,81 @@ const migrations = [
 ];
 
 async function runMigrations() {
-  console.log('🚀 Iniciando migrações do Markthub CRM...\n');
-  
-  // Verificar se DATABASE_URL está configurada
-  if (!process.env.DATABASE_URL) {
-    console.error('❌ ERROR: DATABASE_URL não está configurada!');
-    console.error('Configure a variável de ambiente DATABASE_URL antes de executar as migrations.');
-    process.exit(1);
-  }
-  
   // Testar conexão
   try {
-    await pool.query('SELECT NOW()');
-    console.log('✅ Conexão com PostgreSQL estabelecida!\n');
+    console.log('🔌 Testando conexão com PostgreSQL...');
+    const result = await pool.query('SELECT NOW() as now, version() as version');
+    console.log('✅ Conexão estabelecida com sucesso!');
+    console.log('⏰ Timestamp do servidor:', result.rows[0].now);
+    console.log('🐘 Versão PostgreSQL:', result.rows[0].version.split('\n')[0]);
+    console.log('');
   } catch (error) {
-    console.error('❌ Erro ao conectar ao PostgreSQL:', error.message);
+    console.error('❌ Erro ao conectar ao PostgreSQL:');
+    console.error('   Mensagem:', error.message);
+    console.error('   Código:', error.code);
+    console.error('   Stack:', error.stack);
     process.exit(1);
   }
   
   // Executar cada migration
+  let successCount = 0;
+  let skipCount = 0;
+  let errorCount = 0;
+  
   for (const migration of migrations) {
     const filePath = path.join(__dirname, '..', 'database', migration);
     
     // Verificar se arquivo existe
     if (!fs.existsSync(filePath)) {
       console.warn(`⚠️  Arquivo ${migration} não encontrado, pulando...`);
+      skipCount++;
       continue;
     }
     
     const sql = fs.readFileSync(filePath, 'utf8');
+    const fileSize = (sql.length / 1024).toFixed(2);
     
-    console.log(`📝 Executando ${migration}...`);
+    console.log(`📝 Executando ${migration} (${fileSize} KB)...`);
     
     try {
+      const startTime = Date.now();
       await pool.query(sql);
-      console.log(`✅ ${migration} executado com sucesso!\n`);
+      const duration = Date.now() - startTime;
+      console.log(`✅ ${migration} executado com sucesso! (${duration}ms)`);
+      console.log('');
+      successCount++;
     } catch (error) {
       // Se for erro de "já existe", apenas avisa mas continua
       if (error.message.includes('already exists') || error.message.includes('já existe')) {
-        console.warn(`⚠️  ${migration}: Objetos já existem, pulando...\n`);
+        console.warn(`⚠️  ${migration}: Objetos já existem, pulando...`);
+        console.log('');
+        skipCount++;
         continue;
       }
       
       console.error(`❌ Erro ao executar ${migration}:`);
-      console.error(error.message);
-      console.error('\nStack trace:', error.stack);
-      process.exit(1);
+      console.error('   Mensagem:', error.message);
+      console.error('   Código:', error.code);
+      console.error('');
+      errorCount++;
+      
+      // Não para na primeira falha, tenta executar todas
+      continue;
     }
   }
   
-  console.log('🎉 Todas as migrações foram executadas com sucesso!');
-  console.log('📊 Verificando tabelas criadas...\n');
+  console.log('='.repeat(60));
+  console.log('📊 RESUMO DAS MIGRAÇÕES');
+  console.log('='.repeat(60));
+  console.log(`✅ Sucesso: ${successCount}`);
+  console.log(`⚠️  Puladas: ${skipCount}`);
+  console.log(`❌ Erros: ${errorCount}`);
+  console.log(`📦 Total: ${migrations.length}`);
+  console.log('');
   
   // Listar tabelas criadas
   try {
+    console.log('🔍 Verificando tabelas criadas...');
     const result = await pool.query(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -88,21 +127,47 @@ async function runMigrations() {
       ORDER BY table_name;
     `);
     
-    console.log('✅ Tabelas criadas:');
-    result.rows.forEach(row => {
-      console.log(`   - ${row.table_name}`);
-    });
-    console.log(`\n📊 Total: ${result.rows.length} tabelas\n`);
+    console.log('');
+    console.log('✅ Tabelas no banco de dados:');
+    if (result.rows.length === 0) {
+      console.log('   (nenhuma tabela encontrada)');
+    } else {
+      result.rows.forEach((row, index) => {
+        console.log(`   ${index + 1}. ${row.table_name}`);
+      });
+    }
+    console.log('');
+    console.log(`📊 Total: ${result.rows.length} tabelas`);
+    console.log('');
   } catch (error) {
     console.error('⚠️  Não foi possível listar as tabelas:', error.message);
   }
   
   await pool.end();
-  console.log('✅ Migration concluída! Banco de dados pronto para uso.\n');
+  
+  console.log('='.repeat(60));
+  if (errorCount === 0) {
+    console.log('🎉 MIGRATIONS CONCLUÍDAS COM SUCESSO!');
+  } else {
+    console.log('⚠️  MIGRATIONS CONCLUÍDAS COM ERROS');
+  }
+  console.log('✅ Banco de dados pronto para uso');
+  console.log('='.repeat(60));
+  console.log('');
+  
+  // Retornar código de saída apropriado
+  process.exit(errorCount > 0 ? 1 : 0);
 }
 
 // Executar migrations
 runMigrations().catch(error => {
-  console.error('❌ Erro fatal durante migration:', error);
+  console.error('');
+  console.error('='.repeat(60));
+  console.error('❌ ERRO FATAL DURANTE MIGRATION');
+  console.error('='.repeat(60));
+  console.error('Mensagem:', error.message);
+  console.error('Stack:', error.stack);
+  console.error('='.repeat(60));
+  console.error('');
   process.exit(1);
 });
