@@ -182,14 +182,12 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
         {/* Logo/Header */}
         <div className="p-3 md:p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <img 
-              src="/logo-markethub.png" 
-              alt="MarketHub CRM" 
-              className="w-8 h-8 md:w-10 md:h-10 object-contain"
-            />
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+              <TrendingUp className="h-6 w-6 text-white" />
+            </div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-bold text-base md:text-lg text-foreground truncate">MarketHub CRM</h1>
-              <p className="text-xs text-muted-foreground hidden md:block">v2.0 - Atualizado</p>
+              <h1 className="font-bold text-base md:text-lg bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent truncate">MarketHub CRM</h1>
+              <p className="text-xs text-muted-foreground hidden md:block">Venda mais, lucre mais</p>
             </div>
             <Notifications />
           </div>

@@ -1,10 +1,20 @@
 import { Router } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import rateLimit from 'express-rate-limit';
 
 const router = Router();
 
+// Rate limiting: máximo 20 requisições por minuto por IP
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minuto
+  max: 20, // máximo 20 requisições
+  message: 'Muitas requisições. Por favor, aguarde um momento e tente novamente.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Endpoint para chat com Mia
-router.post('/chat', async (req, res) => {
+router.post('/chat', limiter, async (req, res) => {
   try {
     const { message, context } = req.body;
 
@@ -42,9 +52,27 @@ router.post('/chat', async (req, res) => {
          - Integração com Mercado Livre, Amazon, Shopee
          - Alertas automáticos de estoque
          - Relatórios avançados de lucratividade
-         - Trial gratuito de 14 dias
+         - Trial gratuito de 14 dias SEM CARTÃO DE CRÉDITO
          
-         Seja concisa e objetiva nas respostas.`
+         PLANOS E PREÇOS:
+         - Starter: R$ 97/mês - Até 100 pedidos/mês, ideal para pequenos vendedores
+         - Professional: R$ 197/mês - Até 500 pedidos/mês, integrações completas
+         - Business: R$ 397/mês - Pedidos ilimitados, multi-marketplace, API
+         - Enterprise: R$ 797/mês - Tudo + Suporte prioritário, White label
+         
+         HORÁRIO DE ATENDIMENTO:
+         - Eu (Mia) estou disponível 24/7 para responder perguntas!
+         - Suporte humano: Segunda a Sexta, 9h às 18h (horário de Brasília)
+         - E-mail: suporte@markethub.com.br
+         - WhatsApp: (62) 99999-9999
+         
+         DIFERENCIAIS ÚNICOS:
+         - ÚNICA ferramenta do mercado com IA integrada (eu!)
+         - Calculadora de taxas ML mais precisa do Brasil
+         - Considera ICMS por estado (Goiás 19%, SP 18%, etc)
+         - Mostra lucro líquido REAL após todas as taxas
+         
+         Seja concisa, objetiva e sempre destaque o trial gratuito de 14 dias!`
       : `Você é Mia, a assistente inteligente do MarketHub CRM.
          Você está conversando com um usuário logado no sistema.
          Seu objetivo é:
