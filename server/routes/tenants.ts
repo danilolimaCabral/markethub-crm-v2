@@ -125,7 +125,7 @@ router.post('/', async (req, res) => {
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', NOW())
       RETURNING id
     `, {
       replacements: [
@@ -149,7 +149,7 @@ router.post('/', async (req, res) => {
     await sequelize.query(`
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
-      ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
+      ) VALUES (?, ?, ?, ?, ?, 'admin', NOW())
     `, {
       replacements: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]
     });
@@ -159,7 +159,7 @@ router.post('/', async (req, res) => {
       for (const integration of integrations) {
         await sequelize.query(`
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-          VALUES ($1, $2, 1, NOW())
+          VALUES (?, ?, 1, NOW())
         `, {
           replacements: [tenantId, integration]
         });
