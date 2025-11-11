@@ -127,10 +127,12 @@ router.post('/', async (req, res) => {
         criado_em
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
       RETURNING id
-    `, [
-      nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
-      planLimits.users, planLimits.products, planLimits.orders
-    ]);
+    `, {
+      bind: [
+        nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
+        planLimits.users, planLimits.products, planLimits.orders
+      ]
+    });
     
     const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
     
@@ -148,7 +150,9 @@ router.post('/', async (req, res) => {
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
       ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
-    `, [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]);
+    `, {
+      bind: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa]
+    });
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
@@ -156,7 +160,9 @@ router.post('/', async (req, res) => {
         await sequelize.query(`
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
           VALUES ($1, $2, 1, NOW())
-        `, [tenantId, integration]);
+        `, {
+          bind: [tenantId, integration]
+        });
       }
     }
     
