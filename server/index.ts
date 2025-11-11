@@ -73,6 +73,20 @@ async function startServer() {
       database: process.env.DB_NAME || "not configured"
     });
   });
+  
+  // Diagnostic endpoint
+  app.get("/api/diagnostic", async (_req, res) => {
+    const sequelize = (await import("./config/database.js")).default;
+    const pkg = await import("sequelize/package.json", { assert: { type: "json" } }).catch(() => null);
+    
+    res.json({
+      sequelize_version: pkg?.default?.version || "unknown",
+      node_version: process.version,
+      env: process.env.NODE_ENV,
+      database_url: process.env.DATABASE_URL ? "configured" : "not configured",
+      timestamp: new Date().toISOString()
+    });
+  });
 
   // Serve static files from dist/public in production
   const staticPath =
