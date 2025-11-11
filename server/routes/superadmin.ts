@@ -1,9 +1,63 @@
 import express from 'express';
-import { SystemLogModel } from '../models/SystemLog';
-import { SystemMetricModel } from '../models/SystemMetric';
-import pool from '../db';
+import os from 'os';
 
 const router = express.Router();
+
+// Dados mock em memória
+const mockTenants = [
+  {
+    id: 1,
+    name: 'Comex Brasil Smart',
+    slug: 'comex-brasil',
+    is_active: true,
+    created_at: new Date('2025-01-15'),
+    total_users: 5,
+    total_orders: 127,
+    total_products: 45,
+    total_revenue: 15420.50,
+    errors_24h: 2,
+    last_activity: new Date()
+  },
+  {
+    id: 2,
+    name: 'Loja Exemplo 1',
+    slug: 'loja-exemplo-1',
+    is_active: true,
+    created_at: new Date('2025-02-01'),
+    total_users: 3,
+    total_orders: 89,
+    total_products: 32,
+    total_revenue: 8950.00,
+    errors_24h: 0,
+    last_activity: new Date()
+  },
+  {
+    id: 3,
+    name: 'Loja Exemplo 2',
+    slug: 'loja-exemplo-2',
+    is_active: false,
+    created_at: new Date('2025-01-20'),
+    total_users: 2,
+    total_orders: 15,
+    total_products: 12,
+    total_revenue: 1250.00,
+    errors_24h: 5,
+    last_activity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+  }
+];
+
+const mockLogs = [
+  { id: 1, tenant_id: 1, level: 'info', category: 'http', message: 'GET /api/products - 200 OK', created_at: new Date() },
+  { id: 2, tenant_id: 1, level: 'error', category: 'database', message: 'Connection timeout', created_at: new Date(Date.now() - 1000 * 60 * 5) },
+  { id: 3, tenant_id: 2, level: 'warning', category: 'application', message: 'Low stock alert for product #123', created_at: new Date(Date.now() - 1000 * 60 * 10) },
+  { id: 4, tenant_id: 1, level: 'info', category: 'http', message: 'POST /api/orders - 201 Created', created_at: new Date(Date.now() - 1000 * 60 * 15) },
+  { id: 5, tenant_id: 3, level: 'critical', category: 'application', message: 'Payment gateway error', created_at: new Date(Date.now() - 1000 * 60 * 20) },
+  { id: 6, tenant_id: 2, level: 'info', category: 'http', message: 'GET /api/dashboard - 200 OK', created_at: new Date(Date.now() - 1000 * 60 * 25) },
+  { id: 7, tenant_id: 1, level: 'warning', category: 'security', message: 'Multiple failed login attempts', created_at: new Date(Date.now() - 1000 * 60 * 30) },
+  { id: 8, tenant_id: 3, level: 'error', category: 'integration', message: 'Mercado Livre API timeout', created_at: new Date(Date.now() - 1000 * 60 * 35) },
+  { id: 9, tenant_id: 2, level: 'info', category: 'http', message: 'GET /api/reports - 200 OK', created_at: new Date(Date.now() - 1000 * 60 * 40) },
+  { id: 10, tenant_id: 1, level: 'info', category: 'application', message: 'Daily backup completed', created_at: new Date(Date.now() - 1000 * 60 * 45) }
+];
 
 // Middleware de autenticação do Super Admin
 const superAdminAuth = (req: any, res: any, next: any) => {
@@ -16,8 +70,7 @@ const superAdminAuth = (req: any, res: any, next: any) => {
   const token = authHeader.substring(7);
   
   // Verificar se é o token do super admin
-  // Em produção, usar JWT ou sessão real
-  if (token !== process.env.SUPER_ADMIN_TOKEN || token !== 'super-admin-secret-token-2024') {
+  if (token !== 'super-admin-secret-token-2024') {
     return res.status(403).json({ error: 'Acesso negado' });
   }
 
@@ -29,11 +82,11 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Credenciais hardcoded (em produção, usar hash bcrypt)
+    // Credenciais hardcoded
     if (username === 'superadmin' && password === 'SuperAdmin@2024!') {
       res.json({
         success: true,
-        token: process.env.SUPER_ADMIN_TOKEN || 'super-admin-secret-token-2024',
+        token: 'super-admin-secret-token-2024',
         user: {
           username: 'superadmin',
           name: 'Super Administrador',
@@ -52,44 +105,36 @@ router.post('/login', async (req, res) => {
 // Dashboard - Estatísticas gerais
 router.get('/dashboard', superAdminAuth, async (req, res) => {
   try {
-    // Total de tenants
-    const tenantsResult = await pool.query('SELECT COUNT(*) as total FROM tenants');
-    const totalTenants = parseInt(tenantsResult.rows[0].total);
-
-    // Tenants ativos (com atividade nas últimas 24h)
-    const activeTenantsResult = await pool.query(`
-      SELECT COUNT(DISTINCT tenant_id) as active
-      FROM system_logs
-      WHERE created_at >= NOW() - INTERVAL '24 hours'
-    `);
-    const activeTenants = parseInt(activeTenantsResult.rows[0].active || 0);
-
-    // Total de erros nas últimas 24h
-    const errorsResult = await pool.query(`
-      SELECT COUNT(*) as total
-      FROM system_logs
-      WHERE level IN ('error', 'critical')
-        AND created_at >= NOW() - INTERVAL '24 hours'
-    `);
-    const totalErrors = parseInt(errorsResult.rows[0].total || 0);
-
-    // Total de requests nas últimas 24h
-    const requestsResult = await pool.query(`
-      SELECT COUNT(*) as total
-      FROM system_metrics
-      WHERE metric_type = 'request'
-        AND created_at >= NOW() - INTERVAL '24 hours'
-    `);
-    const totalRequests = parseInt(requestsResult.rows[0].total || 0);
+    const totalTenants = mockTenants.length;
+    const activeTenants = mockTenants.filter(t => t.is_active).length;
+    const totalErrors = mockLogs.filter(l => l.level === 'error' || l.level === 'critical').length;
+    const totalRequests = mockLogs.filter(l => l.category === 'http').length;
 
     // Métricas do sistema
-    const systemMetrics = await SystemMetricModel.getSystemMetrics();
+    const cpuUsage = process.cpuUsage();
+    const memUsage = process.memoryUsage();
+    const uptime = process.uptime();
+
+    const systemMetrics = {
+      cpu_usage: ((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2), // Convertendo para segundos
+      memory_usage: (memUsage.heapUsed / 1024 / 1024).toFixed(2), // MB
+      memory_total: (memUsage.heapTotal / 1024 / 1024).toFixed(2), // MB
+      uptime_hours: (uptime / 3600).toFixed(2),
+      platform: os.platform(),
+      hostname: os.hostname()
+    };
 
     // Erros por tenant
-    const errorsByTenant = await SystemLogModel.errorsByTenant(24);
+    const errorsByTenant = mockTenants.map(tenant => ({
+      tenant_id: tenant.id,
+      tenant_name: tenant.name,
+      error_count: mockLogs.filter(l => l.tenant_id === tenant.id && (l.level === 'error' || l.level === 'critical')).length,
+      warning_count: mockLogs.filter(l => l.tenant_id === tenant.id && l.level === 'warning').length,
+      critical_count: mockLogs.filter(l => l.tenant_id === tenant.id && l.level === 'critical').length
+    })).filter(e => e.error_count > 0 || e.warning_count > 0 || e.critical_count > 0);
 
     // Logs recentes
-    const recentLogs = await SystemLogModel.list({ limit: 10 });
+    const recentLogs = mockLogs.slice(0, 10);
 
     res.json({
       stats: {
@@ -111,38 +156,7 @@ router.get('/dashboard', superAdminAuth, async (req, res) => {
 // Listar todos os tenants com estatísticas
 router.get('/tenants', superAdminAuth, async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT 
-        t.id,
-        t.name,
-        t.slug,
-        t.is_active,
-        t.created_at,
-        COUNT(DISTINCT u.id) as total_users,
-        COUNT(DISTINCT o.id) as total_orders,
-        COUNT(DISTINCT p.id) as total_products,
-        COALESCE(SUM(o.total_amount), 0) as total_revenue,
-        (
-          SELECT COUNT(*)
-          FROM system_logs sl
-          WHERE sl.tenant_id = t.id
-            AND sl.level IN ('error', 'critical')
-            AND sl.created_at >= NOW() - INTERVAL '24 hours'
-        ) as errors_24h,
-        (
-          SELECT MAX(created_at)
-          FROM system_logs sl
-          WHERE sl.tenant_id = t.id
-        ) as last_activity
-      FROM tenants t
-      LEFT JOIN users u ON t.id = u.tenant_id
-      LEFT JOIN orders o ON t.id = o.tenant_id
-      LEFT JOIN products p ON t.id = p.tenant_id
-      GROUP BY t.id, t.name, t.slug, t.is_active, t.created_at
-      ORDER BY t.created_at DESC
-    `);
-
-    res.json({ tenants: result.rows });
+    res.json({ tenants: mockTenants });
   } catch (error) {
     console.error('Erro ao listar tenants:', error);
     res.status(500).json({ error: 'Erro ao listar tenants' });
@@ -153,33 +167,28 @@ router.get('/tenants', superAdminAuth, async (req, res) => {
 router.get('/tenants/:id', superAdminAuth, async (req, res) => {
   try {
     const { id } = req.params;
+    const tenant = mockTenants.find(t => t.id === parseInt(id));
 
-    // Informações do tenant
-    const tenantResult = await pool.query('SELECT * FROM tenants WHERE id = $1', [id]);
-    if (tenantResult.rows.length === 0) {
+    if (!tenant) {
       return res.status(404).json({ error: 'Tenant não encontrado' });
     }
 
-    const tenant = tenantResult.rows[0];
-
-    // Estatísticas
-    const statsResult = await pool.query(`
-      SELECT 
-        (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as total_users,
-        (SELECT COUNT(*) FROM orders WHERE tenant_id = $1) as total_orders,
-        (SELECT COUNT(*) FROM products WHERE tenant_id = $1) as total_products,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE tenant_id = $1) as total_revenue
-    `, [id]);
-
-    // Logs recentes do tenant
-    const logs = await SystemLogModel.list({ tenant_id: parseInt(id), limit: 50 });
-
-    // Erros por nível
-    const errorsByLevel = await SystemLogModel.countByLevel(parseInt(id));
+    const logs = mockLogs.filter(l => l.tenant_id === parseInt(id));
+    const errorsByLevel = {
+      info: logs.filter(l => l.level === 'info').length,
+      warning: logs.filter(l => l.level === 'warning').length,
+      error: logs.filter(l => l.level === 'error').length,
+      critical: logs.filter(l => l.level === 'critical').length
+    };
 
     res.json({
       tenant,
-      stats: statsResult.rows[0],
+      stats: {
+        total_users: tenant.total_users,
+        total_orders: tenant.total_orders,
+        total_products: tenant.total_products,
+        total_revenue: tenant.total_revenue
+      },
       logs,
       errors_by_level: errorsByLevel
     });
@@ -196,26 +205,24 @@ router.get('/logs', superAdminAuth, async (req, res) => {
       tenant_id,
       level,
       category,
-      limit = 100,
-      offset = 0,
-      start_date,
-      end_date
+      limit = 100
     } = req.query;
 
-    const filters: any = {
-      limit: parseInt(limit as string),
-      offset: parseInt(offset as string)
-    };
+    let filteredLogs = [...mockLogs];
 
-    if (tenant_id) filters.tenant_id = parseInt(tenant_id as string);
-    if (level) filters.level = level as string;
-    if (category) filters.category = category as string;
-    if (start_date) filters.start_date = new Date(start_date as string);
-    if (end_date) filters.end_date = new Date(end_date as string);
+    if (tenant_id) {
+      filteredLogs = filteredLogs.filter(l => l.tenant_id === parseInt(tenant_id as string));
+    }
+    if (level) {
+      filteredLogs = filteredLogs.filter(l => l.level === level);
+    }
+    if (category) {
+      filteredLogs = filteredLogs.filter(l => l.category === category);
+    }
 
-    const logs = await SystemLogModel.list(filters);
+    filteredLogs = filteredLogs.slice(0, parseInt(limit as string));
 
-    res.json({ logs });
+    res.json({ logs: filteredLogs });
   } catch (error) {
     console.error('Erro ao listar logs:', error);
     res.status(500).json({ error: 'Erro ao listar logs' });
@@ -225,59 +232,22 @@ router.get('/logs', superAdminAuth, async (req, res) => {
 // Métricas do sistema
 router.get('/metrics/system', superAdminAuth, async (req, res) => {
   try {
-    const metrics = await SystemMetricModel.getSystemMetrics();
-    res.json(metrics);
+    const cpuUsage = process.cpuUsage();
+    const memUsage = process.memoryUsage();
+    const uptime = process.uptime();
+
+    res.json({
+      cpu_usage: ((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2),
+      memory_usage: (memUsage.heapUsed / 1024 / 1024).toFixed(2),
+      memory_total: (memUsage.heapTotal / 1024 / 1024).toFixed(2),
+      uptime_hours: (uptime / 3600).toFixed(2),
+      platform: os.platform(),
+      hostname: os.hostname(),
+      node_version: process.version
+    });
   } catch (error) {
     console.error('Erro ao buscar métricas:', error);
     res.status(500).json({ error: 'Erro ao buscar métricas' });
-  }
-});
-
-// Métricas de performance
-router.get('/metrics/performance', superAdminAuth, async (req, res) => {
-  try {
-    const { hours = 1 } = req.query;
-    const metrics = await SystemMetricModel.getPerformanceMetrics(parseInt(hours as string));
-    res.json({ metrics });
-  } catch (error) {
-    console.error('Erro ao buscar métricas de performance:', error);
-    res.status(500).json({ error: 'Erro ao buscar métricas' });
-  }
-});
-
-// Requests por tenant
-router.get('/metrics/requests', superAdminAuth, async (req, res) => {
-  try {
-    const { hours = 24 } = req.query;
-    const metrics = await SystemMetricModel.requestsByTenant(parseInt(hours as string));
-    res.json({ metrics });
-  } catch (error) {
-    console.error('Erro ao buscar métricas de requests:', error);
-    res.status(500).json({ error: 'Erro ao buscar métricas' });
-  }
-});
-
-// Limpar logs antigos
-router.post('/maintenance/cleanup-logs', superAdminAuth, async (req, res) => {
-  try {
-    const { days = 30 } = req.body;
-    const deleted = await SystemLogModel.cleanup(days);
-    res.json({ success: true, deleted });
-  } catch (error) {
-    console.error('Erro ao limpar logs:', error);
-    res.status(500).json({ error: 'Erro ao limpar logs' });
-  }
-});
-
-// Limpar métricas antigas
-router.post('/maintenance/cleanup-metrics', superAdminAuth, async (req, res) => {
-  try {
-    const { days = 7 } = req.body;
-    const deleted = await SystemMetricModel.cleanup(days);
-    res.json({ success: true, deleted });
-  } catch (error) {
-    console.error('Erro ao limpar métricas:', error);
-    res.status(500).json({ error: 'Erro ao limpar métricas' });
   }
 });
 
