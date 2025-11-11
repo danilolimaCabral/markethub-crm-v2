@@ -119,6 +119,15 @@ router.post('/', async (req, res) => {
     
     const planLimits = limits[plano as keyof typeof limits] || limits.starter;
     
+    // Log para debug
+    const insertParams = [
+      nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
+      planLimits.users, planLimits.products, planLimits.orders
+    ];
+    console.log('=== DEBUG INSERT TENANT ===');
+    console.log('Parâmetros:', JSON.stringify(insertParams, null, 2));
+    console.log('Tipos:', insertParams.map(p => typeof p));
+    
     // Criar tenant (campos opcionais podem ser NULL)
     const [result] = await sequelize.query(`
       INSERT INTO tenants (
@@ -127,10 +136,7 @@ router.post('/', async (req, res) => {
         criado_em
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
       RETURNING id
-    `, [
-      nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
-      planLimits.users, planLimits.products, planLimits.orders
-    ]);
+    `, insertParams);
     
     const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
     
