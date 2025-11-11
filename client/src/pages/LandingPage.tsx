@@ -449,7 +449,7 @@ export default function LandingPage() {
               {/* Redes Sociais */}
               <div className="flex items-center gap-3">
                 <a 
-                  href="https://instagram.com/markethubcrm" 
+                  href="https://instagram.com/markthubcrm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110"
@@ -458,7 +458,7 @@ export default function LandingPage() {
                   <Instagram className="h-4 w-4" />
                 </a>
                 <a 
-                  href="https://facebook.com/markethubcrm" 
+                  href="https://facebook.com/markthubcrm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-all duration-300 hover:scale-110"
@@ -467,7 +467,7 @@ export default function LandingPage() {
                   <Facebook className="h-4 w-4" />
                 </a>
                 <a 
-                  href="https://linkedin.com/company/markethubcrm" 
+                  href="https://linkedin.com/company/markthubcrm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-all duration-300 hover:scale-110"
@@ -476,7 +476,7 @@ export default function LandingPage() {
                   <Linkedin className="h-4 w-4" />
                 </a>
                 <a 
-                  href="https://youtube.com/@markethubcrm" 
+                  href="https://youtube.com/@markthubcrm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-all duration-300 hover:scale-110"
@@ -485,7 +485,7 @@ export default function LandingPage() {
                   <Youtube className="h-4 w-4" />
                 </a>
                 <a 
-                  href="https://twitter.com/markethubcrm" 
+                  href="https://twitter.com/markthubcrm" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110"
