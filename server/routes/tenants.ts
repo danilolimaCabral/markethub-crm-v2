@@ -124,23 +124,23 @@ router.post('/', async (req, res) => {
       nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ];
-    console.log('=== DEBUG INSERT TENANT - BUILD 054529d - 20:15 ===');
+    console.log('=== DEBUG INSERT TENANT - BUILD fc2269c - 20:30 ===');
     console.log('Parâmetros:', JSON.stringify(insertParams, null, 2));
     console.log('Tipos:', insertParams.map(p => typeof p));
-    console.log('USANDO ? PLACEHOLDERS COM REPLACEMENTS');
+    console.log('USANDO $N PLACEHOLDERS COM BIND (SOLUÇÃO CORRETA)');
     
     // Criar tenant (campos opcionais podem ser NULL)
-    // Usar QueryTypes.INSERT para garantir compatibilidade
+    // Usar bind parameters ($1, $2, ...) com opção bind: conforme documentação Sequelize
     const { QueryTypes } = await import('sequelize');
     const [result] = await sequelize.query(`
       INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'trial', NOW())
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'trial', NOW())
       RETURNING id
     `, {
-      replacements: insertParams,
+      bind: insertParams,
       type: QueryTypes.INSERT
     });
     
@@ -159,9 +159,9 @@ router.post('/', async (req, res) => {
     await sequelize.query(`
       INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
-      ) VALUES (?, ?, ?, ?, ?, 'admin', NOW())
+      ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
     `, {
-      replacements: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa],
+      bind: [tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa],
       type: QueryTypes.INSERT
     });
     
@@ -170,9 +170,9 @@ router.post('/', async (req, res) => {
       for (const integration of integrations) {
         await sequelize.query(`
           INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-          VALUES (?, ?, 1, NOW())
+          VALUES ($1, $2, 1, NOW())
         `, {
-          replacements: [tenantId, integration],
+          bind: [tenantId, integration],
           type: QueryTypes.INSERT
         });
       }
