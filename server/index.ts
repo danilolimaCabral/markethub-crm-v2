@@ -4,6 +4,10 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import dotenv from "dotenv";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 // Importar rotas
 import clientesRouter from "./routes/clientes";
@@ -21,7 +25,26 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+async function runMigrations() {
+  console.log("\n============================================================");
+  console.log("🚀 EXECUTANDO MIGRAÇÕES DO BANCO DE DADOS");
+  console.log("============================================================\n");
+  
+  try {
+    const { stdout, stderr } = await execAsync("node scripts/migrate.js");
+    if (stdout) console.log(stdout);
+    if (stderr) console.error(stderr);
+    console.log("\n✅ Migrações concluídas com sucesso!\n");
+  } catch (error: any) {
+    console.error("\n❌ Erro ao executar migrações:", error.message);
+    console.error("\n⚠️  Servidor continuará sem as migrações...\n");
+  }
+}
+
 async function startServer() {
+  // Executar migrations antes de iniciar o servidor
+  await runMigrations();
+  
   const app = express();
   const server = createServer(app);
 

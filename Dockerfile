@@ -77,8 +77,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Usar dumb-init para gerenciar processos corretamente
 ENTRYPOINT ["dumb-init", "--"]
 
-# Copiar script de inicialização
-COPY --from=builder --chown=nodejs:nodejs /app/start.sh ./start.sh
-
-# Comando para iniciar a aplicação (com migrations)
-CMD ["./start.sh"]
+# Comando para iniciar a aplicação (migrations serão executadas no index.ts)
+CMD ["node", "dist/index.js"]
