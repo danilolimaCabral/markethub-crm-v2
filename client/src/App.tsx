@@ -43,6 +43,11 @@ import AdminMaster from './pages/AdminMaster';
 import Anuncios from './pages/Anuncios';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import Sobre from './pages/Sobre';
+import Contato from './pages/Contato';
+import Termos from './pages/Termos';
+import Privacidade from './pages/Privacidade';
+import { Blog, Tutoriais, BaseConhecimento, APIDocs, Integracoes, Roadmap } from './pages/EmBreve';
 import { isAuthenticated } from "./lib/auth";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
@@ -93,6 +98,16 @@ function Router() {
         <Route path="/onboarding" component={Onboarding} />
         <Route path="/verify-2fa" component={Verify2FA} />
         <Route path="/callback" component={Callback} />
+        <Route path="/sobre" component={Sobre} />
+        <Route path="/contato" component={Contato} />
+        <Route path="/termos" component={Termos} />
+        <Route path="/privacidade" component={Privacidade} />
+        <Route path="/blog" component={Blog} />
+        <Route path="/tutoriais" component={Tutoriais} />
+        <Route path="/base-conhecimento" component={BaseConhecimento} />
+        <Route path="/api-docs" component={APIDocs} />
+        <Route path="/integracoes" component={Integracoes} />
+        <Route path="/roadmap" component={Roadmap} />
         <Route component={LandingPage} />
       </Switch>
     );

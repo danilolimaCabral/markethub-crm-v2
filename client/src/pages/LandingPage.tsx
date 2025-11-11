@@ -501,28 +501,28 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="#funcionalidades" className="hover:text-white transition">Funcionalidades</a></li>
                 <li><a href="#precos" className="hover:text-white transition">Preços</a></li>
-                <li><a href="#" className="hover:text-white transition">Integrações</a></li>
-                <li><a href="#" className="hover:text-white transition">Roadmap</a></li>
+                <li><a href="/integracoes" className="hover:text-white transition">Integrações</a></li>
+                <li><a href="/roadmap" className="hover:text-white transition">Roadmap</a></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-4">Recursos</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition">Tutoriais</a></li>
-                <li><a href="#" className="hover:text-white transition">Base de Conhecimento</a></li>
-                <li><a href="#" className="hover:text-white transition">API Docs</a></li>
+                <li><a href="/blog" className="hover:text-white transition">Blog</a></li>
+                <li><a href="/tutoriais" className="hover:text-white transition">Tutoriais</a></li>
+                <li><a href="/base-conhecimento" className="hover:text-white transition">Base de Conhecimento</a></li>
+                <li><a href="/api-docs" className="hover:text-white transition">API Docs</a></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-4">Empresa</h3>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition">Sobre</a></li>
-                <li><a href="#" className="hover:text-white transition">Contato</a></li>
-                <li><a href="#" className="hover:text-white transition">Termos de Uso</a></li>
-                <li><a href="#" className="hover:text-white transition">Privacidade</a></li>
+                <li><a href="/sobre" className="hover:text-white transition">Sobre</a></li>
+                <li><a href="/contato" className="hover:text-white transition">Contato</a></li>
+                <li><a href="/termos" className="hover:text-white transition">Termos de Uso</a></li>
+                <li><a href="/privacidade" className="hover:text-white transition">Privacidade</a></li>
               </ul>
             </div>
           </div>
