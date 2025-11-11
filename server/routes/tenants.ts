@@ -85,7 +85,7 @@ router.post('/', async (req, res) => {
       cnpj,
       email,
       phone,
-      plan = 'basic',
+      plan = 'starter',
       integrations = []
     } = req.body;
     
@@ -109,12 +109,13 @@ router.post('/', async (req, res) => {
     
     // Definir limites baseados no plano
     const limits = {
-      basic: { users: 3, products: 100, orders: 500, storage_mb: 500 },
-      pro: { users: 10, products: 1000, orders: 5000, storage_mb: 5000 },
-      enterprise: { users: -1, products: -1, orders: -1, storage_mb: -1 }
+      starter: { users: 3, products: 100, orders: 500 },
+      professional: { users: 10, products: 1000, orders: 5000 },
+      business: { users: 25, products: 2000, orders: 10000 },
+      enterprise: { users: -1, products: -1, orders: -1 }
     };
     
-    const planLimits = limits[plan as keyof typeof limits] || limits.basic;
+    const planLimits = limits[plan as keyof typeof limits] || limits.starter;
     
     // Criar tenant
     const [result] = await sequelize.query(`
@@ -123,12 +124,17 @@ router.post('/', async (req, res) => {
         limite_usuarios, limite_produtos, limite_pedidos_mes, status,
         criado_em
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active', NOW())
+      RETURNING id
     `, [
       company_name, slug, cnpj, email, phone, plan,
       planLimits.users, planLimits.products, planLimits.orders
     ]);
     
-    const tenantId = (result as any).insertId;
+    const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
+    
+    if (!tenantId) {
+      throw new Error('Falha ao obter ID do tenant criado');
+    }
     
     // Criar usuário admin para o tenant
     const adminUsername = `admin_${slug}`;
@@ -137,9 +143,9 @@ router.post('/', async (req, res) => {
     
     await sequelize.query(`
       INSERT INTO users (
-        tenant_id, username, email, password, role, criado_em
-      ) VALUES ($1, $2, $3, $4, 'admin', NOW())
-    `, [tenantId, adminUsername, email, hashedPassword]);
+        tenant_id, username, email, password_hash, full_name, role, created_at
+      ) VALUES ($1, $2, $3, $4, $5, 'admin', NOW())
+    `, [tenantId, adminUsername, email, hashedPassword, company_name]);
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
