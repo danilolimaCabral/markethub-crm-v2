@@ -155,7 +155,7 @@ SELECT
     c.email as customer_email,
     c.phone as customer_phone,
     COUNT(oi.id) as items_count,
-    EXTRACT(DAY FROM (CURRENT_TIMESTAMP - o.created_at)) as days_pending
+    EXTRACT(DAY FROM AGE(CURRENT_TIMESTAMP, o.created_at)) as days_pending
 FROM orders o
 LEFT JOIN customers c ON c.id = o.customer_id
 LEFT JOIN order_items oi ON oi.order_id = o.id
@@ -232,7 +232,7 @@ SELECT
         WHEN ft.due_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'Vence em 7 dias'
         ELSE 'A Vencer'
     END as status_label,
-    EXTRACT(DAY FROM (CURRENT_DATE - ft.due_date)) as days_overdue
+    EXTRACT(DAY FROM AGE(CURRENT_DATE, ft.due_date)) as days_overdue
 FROM financial_transactions ft
 LEFT JOIN orders o ON o.id = ft.order_id
 LEFT JOIN customers c ON c.id = ft.customer_id
@@ -261,7 +261,7 @@ SELECT
         WHEN ft.due_date <= CURRENT_DATE + INTERVAL '7 days' THEN 'Vence em 7 dias'
         ELSE 'A Vencer'
     END as status_label,
-    EXTRACT(DAY FROM (CURRENT_DATE - ft.due_date)) as days_overdue
+    EXTRACT(DAY FROM AGE(CURRENT_DATE, ft.due_date)) as days_overdue
 FROM financial_transactions ft
 WHERE ft.type = 'expense'
   AND ft.status = 'pending'
@@ -333,11 +333,11 @@ SELECT
     mi.is_active,
     mi.last_sync_at,
     mi.sync_frequency,
-    EXTRACT(MINUTE FROM (CURRENT_TIMESTAMP - mi.last_sync_at)) as minutes_since_last_sync,
+    EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - mi.last_sync_at))/60 as minutes_since_last_sync,
     CASE
         WHEN mi.is_active = FALSE THEN 'Desativado'
         WHEN mi.last_sync_at IS NULL THEN 'Nunca Sincronizado'
-        WHEN EXTRACT(MINUTE FROM (CURRENT_TIMESTAMP - mi.last_sync_at)) > mi.sync_frequency * 2 THEN 'Atrasado'
+        WHEN EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - mi.last_sync_at))/60 > mi.sync_frequency * 2 THEN 'Atrasado'
         ELSE 'OK'
     END as sync_status,
     (
