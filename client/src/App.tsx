@@ -43,6 +43,7 @@ import AdminMaster from './pages/AdminMaster';
 import Anuncios from './pages/Anuncios';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import SuperAdminTenants from './pages/SuperAdminTenants';
 import Sobre from './pages/Sobre';
 import Contato from './pages/Contato';
 import Termos from './pages/Termos';
@@ -83,6 +84,7 @@ function Router() {
       <Switch>
         <Route path="/super-admin/login" component={SuperAdminLogin} />
         <Route path="/super-admin/dashboard" component={SuperAdminDashboard} />
+        <Route path="/super-admin/tenants" component={SuperAdminTenants} />
         <Route path="/super-admin" component={SuperAdminLogin} />
       </Switch>
     );

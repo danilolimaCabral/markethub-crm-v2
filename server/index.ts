@@ -16,6 +16,7 @@ import produtosRouter from "./routes/produtos";
 import aiRouter from "./routes/ai";
 import mercadolivreRouter from "./routes/mercadolivre";
 import superadminRouter from "./routes/superadmin";
+import tenantsRouter from "./routes/tenants";
 import integrationsRouter from "./routes/api/v1/integrations";
 // import ticketsRouter from "./routes/tickets";
 
@@ -60,6 +61,7 @@ async function startServer() {
   app.use("/api/ai", aiRouter);
   app.use("/api/integrations/mercadolivre", mercadolivreRouter);
   app.use("/api/superadmin", superadminRouter);
+  app.use("/api/tenants", tenantsRouter);
   app.use("/api/v1/integrations", integrationsRouter);
   // app.use("/api/tickets", ticketsRouter);
 
