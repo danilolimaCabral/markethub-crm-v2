@@ -289,7 +289,7 @@ router.get('/tenants/:id', superAdminAuth, async (req, res) => {
 
     // Buscar tenant
     const tenantResult = await pool.query(`
-      SELECT * FROM tenants WHERE id = $1 AND deletado_em IS NULL
+      SELECT * FROM tenants WHERE id = $1
     `, [id]);
 
     if (tenantResult.rows.length === 0) {
@@ -301,8 +301,8 @@ router.get('/tenants/:id', superAdminAuth, async (req, res) => {
     // Buscar estatísticas detalhadas
     const stats = await pool.query(`
       SELECT
-        (SELECT COUNT(*) FROM users WHERE tenant_id = $1 AND deletado_em IS NULL) as total_users,
-        (SELECT COUNT(*) FROM products WHERE tenant_id = $1 AND deletado_em IS NULL) as total_products,
+        (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as total_users,
+        (SELECT COUNT(*) FROM products WHERE tenant_id = $1) as total_products,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = $1) as total_orders,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', criado_em) = DATE_TRUNC('month', CURRENT_DATE)) as orders_this_month,
         (SELECT COALESCE(SUM(valor_total), 0) FROM orders WHERE tenant_id = $1) as total_revenue,
