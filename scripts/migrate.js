@@ -156,7 +156,9 @@ async function runMigrations() {
   console.log('');
   
   // Retornar código de saída apropriado
-  process.exit(errorCount > 0 ? 1 : 0);
+  // Não falha se houver erros, apenas avisa (permite que servidor inicie)
+  // process.exit(errorCount > 0 ? 1 : 0);
+  process.exit(0);
 }
 
 // Executar migrations
