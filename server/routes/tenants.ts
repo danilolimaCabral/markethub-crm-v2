@@ -104,6 +104,9 @@ router.post('/', async (req, res) => {
       }
     }
     
+    // Gerar email temporário se não fornecido
+    const finalEmail = email_contato || `contato_${generateSlug(nome_empresa)}@temp.markethub.com`;
+    
     // Gerar slug único
     let slug = generateSlug(nome_empresa);
     const slugQuery = format('SELECT id FROM tenants WHERE slug = %L', slug);
@@ -124,7 +127,7 @@ router.post('/', async (req, res) => {
     
     // Log para debug
     const insertParams = [
-      nome_empresa, slug, cnpj || null, email_contato || null, telefone || null, plano,
+      nome_empresa, slug, cnpj || null, finalEmail, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ];
     console.log('=== DEBUG INSERT TENANT - BUILD WORKAROUND - 20:45 ===');
