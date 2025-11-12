@@ -243,7 +243,7 @@ BEGIN
         pedidos_mes_atual = (
             SELECT COUNT(*) FROM orders 
             WHERE tenant_id = p_tenant_id 
-            AND DATE_TRUNC('month', data_pedido) = DATE_TRUNC('month', CURRENT_DATE)
+            AND DATE_TRUNC('month', criado_em) = DATE_TRUNC('month', CURRENT_DATE)
         ),
         atualizado_em = CURRENT_TIMESTAMP
     WHERE id = p_tenant_id;
