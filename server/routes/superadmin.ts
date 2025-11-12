@@ -305,8 +305,8 @@ router.get('/tenants/:id', superAdminAuth, async (req, res) => {
         (SELECT COUNT(*) FROM products WHERE tenant_id = $1) as total_products,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = $1) as total_orders,
         (SELECT COUNT(*) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)) as orders_this_month,
-        (SELECT COALESCE(SUM(valor_total), 0) FROM orders WHERE tenant_id = $1) as total_revenue,
-        (SELECT COALESCE(SUM(valor_total), 0) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)) as revenue_this_month
+        (SELECT COALESCE(SUM(total), 0) FROM orders WHERE tenant_id = $1) as total_revenue,
+        (SELECT COALESCE(SUM(total), 0) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)) as revenue_this_month
     `, [id]);
 
     // Buscar logs recentes do tenant
