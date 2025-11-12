@@ -94,65 +94,62 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
     window.location.href = "/";
   };
 
-  // Navegação organizada conforme layout solicitado
+  // Navegação organizada por seções estilo Pulse
   const navSections: NavSection[] = [
     {
-      title: "CENTRAL",
+      title: "Central",
       items: [
         { path: "/", icon: <LayoutDashboard size={20} />, label: "Dashboard", color: "text-blue-500" },
-        { path: "/chat", icon: <MessageSquare size={20} />, label: "Assistente IA", color: "text-blue-500" },
+        { path: "/chat", icon: <MessageSquare size={20} />, label: "Assistente IA", color: "text-purple-500" },
       ]
     },
     {
       title: 'OPERACIONAL',
       items: [
-        { path: '/pedidos', icon: <ShoppingCart size={20} />, label: 'Pedidos', color: 'text-cyan-500' },
-        { path: '/produtos', icon: <Package size={20} />, label: 'Produtos', color: 'text-blue-500' },
-        { path: '/anuncios', icon: <Megaphone size={20} />, label: 'Anúncios', color: 'text-yellow-500' },
-        { path: '/catalogo', icon: <Users size={20} />, label: 'Catálogo', color: 'text-orange-500' },
-        { path: '/logistica', icon: <Truck size={20} />, label: 'Logística', color: 'text-green-500' },
-        { path: '/logistica-2', icon: <Truck size={20} />, label: 'Logística', color: 'text-blue-500' },
-        { path: '/postagens', icon: <FileText size={20} />, label: 'Postagens', color: 'text-blue-500' },
-        { path: '/marketing', icon: <Megaphone size={20} />, label: 'Marketing', color: 'text-orange-500' },
-        { path: '/comunicacao', icon: <MessageSquare size={20} />, label: 'Comunicação', color: 'text-blue-500' },
-        { path: '/chat-suporte', icon: <MessageSquare size={20} />, label: 'Chat', color: 'text-blue-500' },
-        { path: '/chat-interno', icon: <MessageSquare size={20} />, label: 'Chat', color: 'text-cyan-500' },
-        { path: '/atendimento', icon: <Headphones size={20} />, label: 'Atendimento', color: 'text-teal-500' },
-        { path: '/clientes', icon: <Users size={20} />, label: 'Clientes', color: 'text-orange-500' },
-        { path: '/clientes-2', icon: <Users size={20} />, label: 'Clientes', color: 'text-blue-500' },
-        { path: '/leads', icon: <FileText size={20} />, label: 'Lista de Leads', color: 'text-orange-500' },
-        { path: '/calendario', icon: <FileText size={20} />, label: 'Calendário', color: 'text-orange-500' },
+        { path: '/pedidos', icon: <ShoppingCart size={20} />, label: 'Pedidos', badge: 12, color: 'text-orange-500' },
+        { path: '/produtos', icon: <Package size={20} />, label: 'Produtos', color: 'text-green-500' },
+        { path: '/anuncios', icon: <Megaphone size={20} />, label: 'Anúncios', color: 'text-red-500' },
+        { path: '/clientes', icon: <Users size={20} />, label: 'Clientes', color: 'text-cyan-500' },
+        { path: '/entregas', icon: <Truck size={20} />, label: 'Entregas', color: 'text-blue-500' },
+        { path: '/notas-fiscais', icon: <FileText size={20} />, label: 'Notas Fiscais', color: 'text-slate-500' },
+        { path: '/pos-vendas', icon: <Headphones size={20} />, label: 'Pós-Vendas', color: 'text-teal-500' },
+        { path: '/importacao', icon: <Calculator size={20} />, label: 'Importação', color: 'text-indigo-500' },
+        { path: '/inteligencia-mercado', icon: <Target size={20} />, label: 'Inteligência de Mercado', color: 'text-purple-500' },
+        { path: '/tabela-preco', icon: <DollarSign size={20} />, label: 'Tabela de Preços', color: 'text-green-500' },
       ]
     },
     {
-      title: "FINANCEIRO",
+      title: "Financeiro",
       items: [
-        { path: "/receitas", icon: <DollarSign size={20} />, label: "Receitas", color: "text-green-500" },
-        { path: "/despesas", icon: <DollarSign size={20} />, label: "Despesas", color: "text-purple-500" },
-        { path: "/comissoes", icon: <DollarSign size={20} />, label: "Comissões", color: "text-red-500" },
-        { path: "/comissoes-2", icon: <BarChart3 size={20} />, label: "Comissões", color: "text-blue-500" },
+        { path: "/contas-pagar", icon: <DollarSign size={20} />, label: "Contas a Pagar", color: "text-red-600" },
+        { path: "/contas-receber", icon: <DollarSign size={20} />, label: "Contas a Receber", color: "text-green-600" },
+        { path: "/fluxo-caixa", icon: <TrendingUp size={20} />, label: "Fluxo de Caixa", color: "text-blue-600" },
+        { path: "/notas", icon: <FileText size={20} />, label: "Notas Fiscais", color: "text-slate-500" },
+        { path: "/precos", icon: <Calculator size={20} />, label: "Tabela de Preços", color: "text-yellow-600" },
+        { path: "/calculadora-taxas-ml", icon: <Calculator size={20} />, label: "Calculadora Taxas ML", color: "text-amber-600" },
       ]
     },
     {
-      title: "ANÁLISE",
+      title: "Análise",
       items: [
-        { path: "/conversoes", icon: <TrendingUp size={20} />, label: "Conversões", color: "text-blue-500" },
-        { path: "/relatorios", icon: <BarChart3 size={20} />, label: "Relatórios", color: "text-blue-500" },
+        { path: "/relatorios", icon: <BarChart3 size={20} />, label: "Relatórios", color: "text-violet-500" },
+        { path: "/vendas", icon: <TrendingUp size={20} />, label: "Análise de Vendas", color: "text-emerald-500" },
+        { path: "/metricas", icon: <PieChart size={20} />, label: "Métricas", color: "text-pink-500" },
       ]
     },
     {
-      title: "INTEGRAÇÕES",
+      title: "Integrações",
       items: [
-        { path: "/integracoes", icon: <Target size={20} />, label: "Integrações", color: "text-cyan-500" },
+        { path: "/mercado-livre", icon: <ShoppingCart size={20} />, label: "Mercado Livre", color: "text-yellow-500" },
+        { path: "/importacao-financeira", icon: <FileText size={20} />, label: "Importação Financeira", color: "text-green-500" },
       ]
     },
     {
-      title: "ADMINISTRAÇÃO",
+      title: "Administração",
       items: [
+        { path: "/admin-master", icon: <Users size={20} />, label: "Painel Master", color: "text-pink-500" },
+        { path: "/usuarios", icon: <Users size={20} />, label: "Usuários", color: "text-purple-500" },
         { path: "/configuracoes", icon: <Settings size={20} />, label: "Configurações", color: "text-slate-500" },
-        { path: "/usuarios", icon: <Users size={20} />, label: "Usuários", color: "text-blue-500" },
-        { path: "/permissoes", icon: <Settings size={20} />, label: "Permissões", color: "text-slate-500" },
-        { path: "/logs", icon: <FileText size={20} />, label: "Log de acessos", color: "text-slate-500" },
       ]
     }
   ];
