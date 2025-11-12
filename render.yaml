@@ -1,0 +1,51 @@
+# Render Blueprint - MarketHub CRM
+# Configuração completa para deploy no Render.com
+
+services:
+  # Web Service - Aplicação Node.js
+  - type: web
+    name: markethub-crm
+    env: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: markethub-db
+          property: connectionString
+      - key: PGHOST
+        fromDatabase:
+          name: markethub-db
+          property: host
+      - key: PGPORT
+        fromDatabase:
+          name: markethub-db
+          property: port
+      - key: PGDATABASE
+        fromDatabase:
+          name: markethub-db
+          property: database
+      - key: PGUSER
+        fromDatabase:
+          name: markethub-db
+          property: user
+      - key: PGPASSWORD
+        fromDatabase:
+          name: markethub-db
+          property: password
+
+databases:
+  # PostgreSQL Database
+  - name: markethub-db
+    databaseName: markethub_crm
+    user: markethub_user
+    plan: free
+    region: oregon
