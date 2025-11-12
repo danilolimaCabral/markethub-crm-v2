@@ -1,65 +1,18 @@
 import express from 'express';
 import os from 'os';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import pool from '../db';
 
 const router = express.Router();
 
-// Dados mock em memória
-const mockTenants = [
-  {
-    id: 1,
-    name: 'Comex Brasil Smart',
-    slug: 'comex-brasil',
-    is_active: true,
-    created_at: new Date('2025-01-15'),
-    total_users: 5,
-    total_orders: 127,
-    total_products: 45,
-    total_revenue: 15420.50,
-    errors_24h: 2,
-    last_activity: new Date()
-  },
-  {
-    id: 2,
-    name: 'Loja Exemplo 1',
-    slug: 'loja-exemplo-1',
-    is_active: true,
-    created_at: new Date('2025-02-01'),
-    total_users: 3,
-    total_orders: 89,
-    total_products: 32,
-    total_revenue: 8950.00,
-    errors_24h: 0,
-    last_activity: new Date()
-  },
-  {
-    id: 3,
-    name: 'Loja Exemplo 2',
-    slug: 'loja-exemplo-2',
-    is_active: false,
-    created_at: new Date('2025-01-20'),
-    total_users: 2,
-    total_orders: 15,
-    total_products: 12,
-    total_revenue: 1250.00,
-    errors_24h: 5,
-    last_activity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-  }
-];
+// Configurações de segurança via variáveis de ambiente
+const SUPERADMIN_USERNAME = process.env.SUPERADMIN_USERNAME || 'superadmin';
+const SUPERADMIN_PASSWORD_HASH = process.env.SUPERADMIN_PASSWORD_HASH || '$2b$10$a/L96zEUUp5n1So14c1vmOFflvknXZRlvO8xzGgZYzllW50xsRgo.';
+const SUPERADMIN_JWT_SECRET = process.env.SUPERADMIN_JWT_SECRET || process.env.JWT_SECRET || 'change-this-secret-in-production';
+const JWT_EXPIRES_IN = '24h';
 
-const mockLogs = [
-  { id: 1, tenant_id: 1, level: 'info', category: 'http', message: 'GET /api/products - 200 OK', created_at: new Date() },
-  { id: 2, tenant_id: 1, level: 'error', category: 'database', message: 'Connection timeout', created_at: new Date(Date.now() - 1000 * 60 * 5) },
-  { id: 3, tenant_id: 2, level: 'warning', category: 'application', message: 'Low stock alert for product #123', created_at: new Date(Date.now() - 1000 * 60 * 10) },
-  { id: 4, tenant_id: 1, level: 'info', category: 'http', message: 'POST /api/orders - 201 Created', created_at: new Date(Date.now() - 1000 * 60 * 15) },
-  { id: 5, tenant_id: 3, level: 'critical', category: 'application', message: 'Payment gateway error', created_at: new Date(Date.now() - 1000 * 60 * 20) },
-  { id: 6, tenant_id: 2, level: 'info', category: 'http', message: 'GET /api/dashboard - 200 OK', created_at: new Date(Date.now() - 1000 * 60 * 25) },
-  { id: 7, tenant_id: 1, level: 'warning', category: 'security', message: 'Multiple failed login attempts', created_at: new Date(Date.now() - 1000 * 60 * 30) },
-  { id: 8, tenant_id: 3, level: 'error', category: 'integration', message: 'Mercado Livre API timeout', created_at: new Date(Date.now() - 1000 * 60 * 35) },
-  { id: 9, tenant_id: 2, level: 'info', category: 'http', message: 'GET /api/reports - 200 OK', created_at: new Date(Date.now() - 1000 * 60 * 40) },
-  { id: 10, tenant_id: 1, level: 'info', category: 'application', message: 'Daily backup completed', created_at: new Date(Date.now() - 1000 * 60 * 45) }
-];
-
-// Middleware de autenticação do Super Admin
+// Middleware de autenticação do Super Admin com JWT
 const superAdminAuth = (req: any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
   
@@ -69,46 +22,143 @@ const superAdminAuth = (req: any, res: any, next: any) => {
 
   const token = authHeader.substring(7);
   
-  // Verificar se é o token do super admin
-  if (token !== 'super-admin-secret-token-2024') {
-    return res.status(403).json({ error: 'Acesso negado' });
+  try {
+    // Verificar e decodificar JWT
+    const decoded = jwt.verify(token, SUPERADMIN_JWT_SECRET) as any;
+    
+    // Verificar se é super admin
+    if (decoded.role !== 'superadmin') {
+      return res.status(403).json({ error: 'Acesso negado' });
+    }
+    
+    // Adicionar informações do usuário à requisição
+    req.superAdmin = decoded;
+    next();
+  } catch (error) {
+    console.error('Erro na verificação do token:', error);
+    return res.status(403).json({ error: 'Token inválido ou expirado' });
   }
-
-  next();
 };
 
-// Login do Super Admin
+// Login do Super Admin com bcrypt e JWT
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Credenciais hardcoded
-    if (username === 'superadmin' && password === 'SuperAdmin@2024!') {
-      res.json({
-        success: true,
-        token: 'super-admin-secret-token-2024',
-        user: {
-          username: 'superadmin',
-          name: 'Super Administrador',
-          role: 'superadmin'
-        }
-      });
-    } else {
-      res.status(401).json({ error: 'Credenciais inválidas' });
+    // Validar campos obrigatórios
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username e password são obrigatórios' });
     }
+
+    // Verificar username
+    if (username !== SUPERADMIN_USERNAME) {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+
+    // Verificar senha com bcrypt
+    const isPasswordValid = await bcrypt.compare(password, SUPERADMIN_PASSWORD_HASH);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+
+    // Gerar JWT
+    const token = jwt.sign(
+      {
+        username: SUPERADMIN_USERNAME,
+        role: 'superadmin',
+        name: 'Super Administrador'
+      },
+      SUPERADMIN_JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        username: SUPERADMIN_USERNAME,
+        name: 'Super Administrador',
+        role: 'superadmin'
+      },
+      expiresIn: JWT_EXPIRES_IN
+    });
   } catch (error) {
     console.error('Erro no login do super admin:', error);
     res.status(500).json({ error: 'Erro ao fazer login' });
   }
 });
 
-// Dashboard - Estatísticas gerais
+// Dashboard - Estatísticas gerais com dados reais
 router.get('/dashboard', superAdminAuth, async (req, res) => {
   try {
-    const totalTenants = mockTenants.length;
-    const activeTenants = mockTenants.filter(t => t.is_active).length;
-    const totalErrors = mockLogs.filter(l => l.level === 'error' || l.level === 'critical').length;
-    const totalRequests = mockLogs.filter(l => l.category === 'http').length;
+    // Buscar estatísticas de tenants
+    const tenantsStats = await pool.query(`
+      SELECT 
+        COUNT(*) as total_tenants,
+        COUNT(*) FILTER (WHERE status = 'active') as active_tenants,
+        COUNT(*) FILTER (WHERE status = 'trial') as trial_tenants,
+        COUNT(*) FILTER (WHERE status = 'suspended') as suspended_tenants,
+        COUNT(*) FILTER (WHERE status = 'cancelled') as cancelled_tenants
+      FROM tenants
+      WHERE deletado_em IS NULL
+    `);
+
+    // Buscar estatísticas por plano
+    const planStats = await pool.query(`
+      SELECT 
+        plano,
+        COUNT(*) as count,
+        SUM(usuarios_ativos) as total_users,
+        SUM(produtos_cadastrados) as total_products,
+        SUM(pedidos_mes_atual) as total_orders
+      FROM tenants
+      WHERE deletado_em IS NULL
+      GROUP BY plano
+      ORDER BY plano
+    `);
+
+    // Buscar logs de erro recentes (últimas 24h)
+    const errorLogs = await pool.query(`
+      SELECT COUNT(*) as total_errors
+      FROM audit_log
+      WHERE nivel IN ('error', 'critical')
+      AND criado_em > NOW() - INTERVAL '24 hours'
+    `);
+
+    // Buscar tenants com mais erros
+    const tenantsWithErrors = await pool.query(`
+      SELECT 
+        t.id,
+        t.nome_empresa,
+        t.slug,
+        COUNT(*) FILTER (WHERE a.nivel = 'error') as error_count,
+        COUNT(*) FILTER (WHERE a.nivel = 'warning') as warning_count,
+        COUNT(*) FILTER (WHERE a.nivel = 'critical') as critical_count
+      FROM tenants t
+      LEFT JOIN audit_log a ON a.tenant_id = t.id AND a.criado_em > NOW() - INTERVAL '24 hours'
+      WHERE t.deletado_em IS NULL
+      GROUP BY t.id, t.nome_empresa, t.slug
+      HAVING COUNT(*) FILTER (WHERE a.nivel IN ('error', 'critical', 'warning')) > 0
+      ORDER BY COUNT(*) FILTER (WHERE a.nivel = 'critical') DESC, COUNT(*) FILTER (WHERE a.nivel = 'error') DESC
+      LIMIT 10
+    `);
+
+    // Buscar logs recentes
+    const recentLogs = await pool.query(`
+      SELECT 
+        a.id,
+        a.tenant_id,
+        t.nome_empresa as tenant_name,
+        a.nivel as level,
+        a.categoria as category,
+        a.mensagem as message,
+        a.criado_em as created_at
+      FROM audit_log a
+      LEFT JOIN tenants t ON t.id = a.tenant_id
+      ORDER BY a.criado_em DESC
+      LIMIT 20
+    `);
 
     // Métricas do sistema
     const cpuUsage = process.cpuUsage();
@@ -121,80 +171,212 @@ router.get('/dashboard', superAdminAuth, async (req, res) => {
       memory_total: parseFloat((memUsage.heapTotal / 1024 / 1024).toFixed(2)),
       uptime_hours: parseFloat((uptime / 3600).toFixed(2)),
       platform: os.platform(),
-      hostname: os.hostname()
+      hostname: os.hostname(),
+      node_version: process.version
     };
-
-    // Erros por tenant
-    const errorsByTenant = mockTenants.map(tenant => ({
-      tenant_id: tenant.id,
-      tenant_name: tenant.name,
-      error_count: mockLogs.filter(l => l.tenant_id === tenant.id && (l.level === 'error' || l.level === 'critical')).length,
-      warning_count: mockLogs.filter(l => l.tenant_id === tenant.id && l.level === 'warning').length,
-      critical_count: mockLogs.filter(l => l.tenant_id === tenant.id && l.level === 'critical').length
-    })).filter(e => e.error_count > 0 || e.warning_count > 0 || e.critical_count > 0);
-
-    // Logs recentes
-    const recentLogs = mockLogs.slice(0, 10);
 
     res.json({
       stats: {
-        total_tenants: totalTenants,
-        active_tenants: activeTenants,
-        total_errors: totalErrors,
-        total_requests: totalRequests
+        ...tenantsStats.rows[0],
+        total_errors_24h: errorLogs.rows[0].total_errors || 0
       },
-      system_metrics: systemMetrics,
-      errors_by_tenant: errorsByTenant,
-      recent_logs: recentLogs
+      plan_stats: planStats.rows,
+      errors_by_tenant: tenantsWithErrors.rows,
+      recent_logs: recentLogs.rows,
+      system_metrics: systemMetrics
     });
   } catch (error) {
     console.error('Erro ao buscar dashboard:', error);
-    res.status(500).json({ error: 'Erro ao carregar dashboard' });
+    res.status(500).json({ error: 'Erro ao carregar dashboard', details: error.message });
   }
 });
 
-// Listar todos os tenants com estatísticas
+// Listar todos os tenants com estatísticas reais
 router.get('/tenants', superAdminAuth, async (req, res) => {
   try {
-    res.json({ tenants: mockTenants });
+    const { status, plano, search, limit = 50, offset = 0 } = req.query;
+
+    let query = `
+      SELECT 
+        id,
+        nome_empresa,
+        slug,
+        cnpj,
+        email_contato,
+        telefone,
+        plano,
+        status,
+        data_inicio,
+        data_expiracao,
+        limite_usuarios,
+        limite_produtos,
+        limite_pedidos_mes,
+        usuarios_ativos,
+        produtos_cadastrados,
+        pedidos_mes_atual,
+        criado_em,
+        atualizado_em
+      FROM tenants
+      WHERE deletado_em IS NULL
+    `;
+
+    const params: any[] = [];
+    let paramIndex = 1;
+
+    if (status) {
+      query += ` AND status = $${paramIndex}`;
+      params.push(status);
+      paramIndex++;
+    }
+
+    if (plano) {
+      query += ` AND plano = $${paramIndex}`;
+      params.push(plano);
+      paramIndex++;
+    }
+
+    if (search) {
+      query += ` AND (nome_empresa ILIKE $${paramIndex} OR slug ILIKE $${paramIndex} OR cnpj ILIKE $${paramIndex})`;
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY criado_em DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+
+    // Buscar total de registros
+    let countQuery = `SELECT COUNT(*) FROM tenants WHERE deletado_em IS NULL`;
+    const countParams: any[] = [];
+    let countParamIndex = 1;
+
+    if (status) {
+      countQuery += ` AND status = $${countParamIndex}`;
+      countParams.push(status);
+      countParamIndex++;
+    }
+
+    if (plano) {
+      countQuery += ` AND plano = $${countParamIndex}`;
+      countParams.push(plano);
+      countParamIndex++;
+    }
+
+    if (search) {
+      countQuery += ` AND (nome_empresa ILIKE $${countParamIndex} OR slug ILIKE $${countParamIndex} OR cnpj ILIKE $${countParamIndex})`;
+      countParams.push(`%${search}%`);
+    }
+
+    const countResult = await pool.query(countQuery, countParams);
+
+    res.json({
+      tenants: result.rows,
+      total: parseInt(countResult.rows[0].count),
+      limit: parseInt(limit as string),
+      offset: parseInt(offset as string)
+    });
   } catch (error) {
     console.error('Erro ao listar tenants:', error);
-    res.status(500).json({ error: 'Erro ao listar tenants' });
+    res.status(500).json({ error: 'Erro ao listar tenants', details: error.message });
   }
 });
 
-// Detalhes de um tenant específico
+// Detalhes de um tenant específico com dados reais
 router.get('/tenants/:id', superAdminAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const tenant = mockTenants.find(t => t.id === parseInt(id));
 
-    if (!tenant) {
+    // Buscar tenant
+    const tenantResult = await pool.query(`
+      SELECT * FROM tenants WHERE id = $1 AND deletado_em IS NULL
+    `, [id]);
+
+    if (tenantResult.rows.length === 0) {
       return res.status(404).json({ error: 'Tenant não encontrado' });
     }
 
-    const logs = mockLogs.filter(l => l.tenant_id === parseInt(id));
-    const errorsByLevel = {
-      info: logs.filter(l => l.level === 'info').length,
-      warning: logs.filter(l => l.level === 'warning').length,
-      error: logs.filter(l => l.level === 'error').length,
-      critical: logs.filter(l => l.level === 'critical').length
+    const tenant = tenantResult.rows[0];
+
+    // Buscar estatísticas detalhadas
+    const stats = await pool.query(`
+      SELECT
+        (SELECT COUNT(*) FROM users WHERE tenant_id = $1 AND deletado_em IS NULL) as total_users,
+        (SELECT COUNT(*) FROM products WHERE tenant_id = $1 AND deletado_em IS NULL) as total_products,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $1) as total_orders,
+        (SELECT COUNT(*) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', criado_em) = DATE_TRUNC('month', CURRENT_DATE)) as orders_this_month,
+        (SELECT COALESCE(SUM(valor_total), 0) FROM orders WHERE tenant_id = $1) as total_revenue,
+        (SELECT COALESCE(SUM(valor_total), 0) FROM orders WHERE tenant_id = $1 AND DATE_TRUNC('month', criado_em) = DATE_TRUNC('month', CURRENT_DATE)) as revenue_this_month
+    `, [id]);
+
+    // Buscar logs recentes do tenant
+    const logs = await pool.query(`
+      SELECT 
+        id,
+        nivel as level,
+        categoria as category,
+        mensagem as message,
+        criado_em as created_at
+      FROM audit_log
+      WHERE tenant_id = $1
+      ORDER BY criado_em DESC
+      LIMIT 50
+    `, [id]);
+
+    // Contar logs por nível
+    const errorsByLevel = await pool.query(`
+      SELECT 
+        nivel as level,
+        COUNT(*) as count
+      FROM audit_log
+      WHERE tenant_id = $1
+      AND criado_em > NOW() - INTERVAL '7 days'
+      GROUP BY nivel
+    `, [id]);
+
+    const errorsMap = {
+      info: 0,
+      warning: 0,
+      error: 0,
+      critical: 0
     };
+
+    errorsByLevel.rows.forEach(row => {
+      errorsMap[row.level] = parseInt(row.count);
+    });
 
     res.json({
       tenant,
-      stats: {
-        total_users: tenant.total_users,
-        total_orders: tenant.total_orders,
-        total_products: tenant.total_products,
-        total_revenue: tenant.total_revenue
-      },
-      logs,
-      errors_by_level: errorsByLevel
+      stats: stats.rows[0],
+      logs: logs.rows,
+      errors_by_level: errorsMap
     });
   } catch (error) {
     console.error('Erro ao buscar detalhes do tenant:', error);
-    res.status(500).json({ error: 'Erro ao buscar detalhes' });
+    res.status(500).json({ error: 'Erro ao buscar detalhes', details: error.message });
+  }
+});
+
+// Atualizar status de um tenant
+router.patch('/tenants/:id/status', superAdminAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['trial', 'active', 'suspended', 'cancelled'].includes(status)) {
+      return res.status(400).json({ error: 'Status inválido' });
+    }
+
+    await pool.query(`
+      UPDATE tenants
+      SET status = $1, atualizado_em = CURRENT_TIMESTAMP
+      WHERE id = $2 AND deletado_em IS NULL
+    `, [status, id]);
+
+    res.json({ success: true, message: 'Status atualizado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao atualizar status:', error);
+    res.status(500).json({ error: 'Erro ao atualizar status', details: error.message });
   }
 });
 
@@ -205,27 +387,54 @@ router.get('/logs', superAdminAuth, async (req, res) => {
       tenant_id,
       level,
       category,
-      limit = 100
+      limit = 100,
+      offset = 0
     } = req.query;
 
-    let filteredLogs = [...mockLogs];
+    let query = `
+      SELECT 
+        a.id,
+        a.tenant_id,
+        t.nome_empresa as tenant_name,
+        a.nivel as level,
+        a.categoria as category,
+        a.mensagem as message,
+        a.criado_em as created_at
+      FROM audit_log a
+      LEFT JOIN tenants t ON t.id = a.tenant_id
+      WHERE 1=1
+    `;
+
+    const params: any[] = [];
+    let paramIndex = 1;
 
     if (tenant_id) {
-      filteredLogs = filteredLogs.filter(l => l.tenant_id === parseInt(tenant_id as string));
+      query += ` AND a.tenant_id = $${paramIndex}`;
+      params.push(tenant_id);
+      paramIndex++;
     }
+
     if (level) {
-      filteredLogs = filteredLogs.filter(l => l.level === level);
+      query += ` AND a.nivel = $${paramIndex}`;
+      params.push(level);
+      paramIndex++;
     }
+
     if (category) {
-      filteredLogs = filteredLogs.filter(l => l.category === category);
+      query += ` AND a.categoria = $${paramIndex}`;
+      params.push(category);
+      paramIndex++;
     }
 
-    filteredLogs = filteredLogs.slice(0, parseInt(limit as string));
+    query += ` ORDER BY a.criado_em DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
 
-    res.json({ logs: filteredLogs });
+    const result = await pool.query(query, params);
+
+    res.json({ logs: result.rows });
   } catch (error) {
     console.error('Erro ao listar logs:', error);
-    res.status(500).json({ error: 'Erro ao listar logs' });
+    res.status(500).json({ error: 'Erro ao listar logs', details: error.message });
   }
 });
 
@@ -236,6 +445,14 @@ router.get('/metrics/system', superAdminAuth, async (req, res) => {
     const memUsage = process.memoryUsage();
     const uptime = process.uptime();
 
+    // Buscar métricas do banco de dados
+    const dbStats = await pool.query(`
+      SELECT 
+        COUNT(*) as total_connections
+      FROM pg_stat_activity
+      WHERE datname = current_database()
+    `);
+
     res.json({
       cpu_usage: parseFloat(((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2)),
       memory_usage: parseFloat((memUsage.heapUsed / 1024 / 1024).toFixed(2)),
@@ -243,11 +460,25 @@ router.get('/metrics/system', superAdminAuth, async (req, res) => {
       uptime_hours: parseFloat((uptime / 3600).toFixed(2)),
       platform: os.platform(),
       hostname: os.hostname(),
-      node_version: process.version
+      node_version: process.version,
+      database_connections: dbStats.rows[0].total_connections
     });
   } catch (error) {
     console.error('Erro ao buscar métricas:', error);
-    res.status(500).json({ error: 'Erro ao buscar métricas' });
+    res.status(500).json({ error: 'Erro ao buscar métricas', details: error.message });
+  }
+});
+
+// Verificar status do token (útil para frontend)
+router.get('/verify', superAdminAuth, async (req, res) => {
+  try {
+    res.json({
+      valid: true,
+      user: req.superAdmin
+    });
+  } catch (error) {
+    console.error('Erro ao verificar token:', error);
+    res.status(500).json({ error: 'Erro ao verificar token' });
   }
 });
 
