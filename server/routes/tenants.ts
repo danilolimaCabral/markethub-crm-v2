@@ -1,5 +1,5 @@
 import express from 'express';
-import sequelize from '../config/database';
+import { pool } from '../db';
 import bcrypt from 'bcryptjs';
 import format from 'pg-format';
 
@@ -28,7 +28,7 @@ function generateSlug(name: string): string {
 // Listar todos os tenants
 router.get('/', async (req, res) => {
   try {
-    const [tenants] = await sequelize.query(`
+    const [tenants] = await pool.query(`
       SELECT 
         t.*,
         COUNT(DISTINCT u.id) as user_count,
@@ -52,7 +52,7 @@ router.get('/', async (req, res) => {
 // Obter detalhes de um tenant específico
 router.get('/:id', async (req, res) => {
   try {
-    const [tenants] = await sequelize.query(`
+    const [tenants] = await pool.query(`
       SELECT * FROM tenants WHERE id = $1
     `, [req.params.id]);
     
@@ -63,7 +63,7 @@ router.get('/:id', async (req, res) => {
     const tenant = tenants[0];
     
     // Buscar estatísticas
-    const [stats] = await sequelize.query(`
+    const [stats] = await pool.query(`
       SELECT 
         (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as user_count,
         (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as product_count,
@@ -98,7 +98,7 @@ router.post('/', async (req, res) => {
     // Verificar se CNPJ já existe (apenas se fornecido)
     if (cnpj) {
       const checkQuery = format('SELECT id FROM tenants WHERE cnpj = %L', cnpj);
-      const [existing] = await sequelize.query(checkQuery);
+      const [existing] = await pool.query(checkQuery);
       if (Array.isArray(existing) && existing.length > 0) {
         return res.status(400).json({ error: 'CNPJ já cadastrado' });
       }
@@ -110,7 +110,7 @@ router.post('/', async (req, res) => {
     // Gerar slug único
     let slug = generateSlug(nome_empresa);
     const slugQuery = format('SELECT id FROM tenants WHERE slug = %L', slug);
-    const [slugExists] = await sequelize.query(slugQuery);
+    const [slugExists] = await pool.query(slugQuery);
     if (Array.isArray(slugExists) && slugExists.length > 0) {
       slug = `${slug}-${Date.now()}`;
     }
@@ -136,7 +136,7 @@ router.post('/', async (req, res) => {
     console.log('USANDO PG-FORMAT PARA ESCAPE SEGURO');
     
     // Criar tenant usando pg-format para escape seguro
-    const { QueryTypes } = await import('sequelize');
+    // QueryTypes não é mais necessário com pg
     const insertQuery = format(
       `INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
@@ -147,9 +147,7 @@ router.post('/', async (req, res) => {
       ...insertParams
     );
     
-    const [result] = await sequelize.query(insertQuery, {
-      type: QueryTypes.INSERT
-    });
+    const [result] = await pool.query(insertQuery);
     
     const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
     
@@ -170,9 +168,7 @@ router.post('/', async (req, res) => {
       tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa
     );
     
-    await sequelize.query(userQuery, {
-      type: QueryTypes.INSERT
-    });
+    await pool.query(userQuery);
     
     // Salvar integrações configuradas
     if (integrations.length > 0) {
@@ -183,7 +179,7 @@ router.post('/', async (req, res) => {
           tenantId, integration
         );
         
-        await sequelize.query(integrationQuery, {
+        await pool.query(integrationQuery, {
           type: QueryTypes.INSERT
         });
       }
@@ -262,7 +258,7 @@ router.put('/:id', async (req, res) => {
     updates.push('atualizado_em = NOW()');
     values.push(req.params.id);
     
-    await sequelize.query(`
+    await pool.query(`
       UPDATE tenants SET ${updates.join(', ')} WHERE id = $${paramIndex}
     `, values);
     
@@ -276,7 +272,7 @@ router.put('/:id', async (req, res) => {
 // Desativar tenant
 router.delete('/:id', async (req, res) => {
   try {
-    await sequelize.query(`
+    await pool.query(`
       UPDATE tenants SET status = 'suspended', atualizado_em = NOW() WHERE id = $1
     `, [req.params.id]);
     
@@ -290,7 +286,7 @@ router.delete('/:id', async (req, res) => {
 // Obter estatísticas de um tenant
 router.get('/:id/stats', async (req, res) => {
   try {
-    const [stats] = await sequelize.query(`
+    const [stats] = await pool.query(`
       SELECT 
         (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as total_users,
         (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as total_products,
