@@ -207,13 +207,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
               {/* Section Items */}
               <div className="space-y-1">
                 {section.items
-                  .filter(item => {
-                    // Admin tem acesso a tudo
-                    if (isAdmin) return true;
-                    // Verificar permissão para a rota
-                    const module = ROUTE_TO_MODULE[item.path];
-                    return module ? hasPermission(module) : true;
-                  })
+                  // TODOS OS MÓDULOS LIBERADOS - Removido filtro de permissões
                   .map((item) => {
                     const isActive = location === item.path;
                     return (
