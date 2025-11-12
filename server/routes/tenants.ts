@@ -179,9 +179,7 @@ router.post('/', async (req, res) => {
           tenantId, integration
         );
         
-        await pool.query(integrationQuery, {
-          type: QueryTypes.INSERT
-        });
+        await pool.query(integrationQuery);
       }
     }
     
