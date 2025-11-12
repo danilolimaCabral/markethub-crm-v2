@@ -97,7 +97,8 @@ router.post('/', async (req, res) => {
     
     // Verificar se CNPJ já existe (apenas se fornecido)
     if (cnpj) {
-      const [existing] = await sequelize.query('SELECT id FROM tenants WHERE cnpj = $1', [cnpj]);
+      const checkQuery = format('SELECT id FROM tenants WHERE cnpj = %L', cnpj);
+      const [existing] = await sequelize.query(checkQuery);
       if (Array.isArray(existing) && existing.length > 0) {
         return res.status(400).json({ error: 'CNPJ já cadastrado' });
       }
@@ -105,7 +106,8 @@ router.post('/', async (req, res) => {
     
     // Gerar slug único
     let slug = generateSlug(nome_empresa);
-    const [slugExists] = await sequelize.query('SELECT id FROM tenants WHERE slug = $1', [slug]);
+    const slugQuery = format('SELECT id FROM tenants WHERE slug = %L', slug);
+    const [slugExists] = await sequelize.query(slugQuery);
     if (Array.isArray(slugExists) && slugExists.length > 0) {
       slug = `${slug}-${Date.now()}`;
     }
