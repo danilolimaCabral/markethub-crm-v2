@@ -165,20 +165,81 @@ router.get('/dashboard', superAdminAuth, async (req, res) => {
     const memUsage = process.memoryUsage();
     const uptime = process.uptime();
 
+    // Métricas do banco de dados
+    const dbStats = await pool.query(`
+      SELECT 
+        COUNT(*) as total_connections,
+        COUNT(*) FILTER (WHERE state = 'active') as active_connections,
+        COUNT(*) FILTER (WHERE state = 'idle') as idle_connections
+      FROM pg_stat_activity
+      WHERE datname = current_database()
+    `);
+
+    // Estatísticas de uso por tenant
+    const tenantUsage = await pool.query(`
+      SELECT 
+        COUNT(DISTINCT t.id) as total_tenants,
+        COUNT(DISTINCT u.id) as total_users,
+        COUNT(DISTINCT p.id) as total_products,
+        COUNT(DISTINCT o.id) as total_orders,
+        COALESCE(SUM(o.total), 0) as total_revenue
+      FROM tenants t
+      LEFT JOIN users u ON u.tenant_id = t.id
+      LEFT JOIN products p ON p.tenant_id = t.id
+      LEFT JOIN orders o ON o.tenant_id = t.id
+      WHERE t.deletado_em IS NULL
+    `);
+
+    // Tenants mais ativos (últimos 7 dias)
+    const activeTenants = await pool.query(`
+      SELECT 
+        t.id,
+        t.nome_empresa,
+        t.slug,
+        t.status,
+        t.plano,
+        COUNT(DISTINCT o.id) as orders_count,
+        COALESCE(SUM(o.total), 0) as revenue
+      FROM tenants t
+      LEFT JOIN orders o ON o.tenant_id = t.id 
+        AND (o.created_at > NOW() - INTERVAL '7 days' OR o.criado_em > NOW() - INTERVAL '7 days')
+      WHERE t.deletado_em IS NULL
+      GROUP BY t.id, t.nome_empresa, t.slug, t.status, t.plano
+      ORDER BY orders_count DESC, revenue DESC
+      LIMIT 10
+    `);
+
     const systemMetrics = {
       cpu_usage: parseFloat(((cpuUsage.user + cpuUsage.system) / 1000000).toFixed(2)),
       memory_usage: parseFloat((memUsage.heapUsed / 1024 / 1024).toFixed(2)),
       memory_total: parseFloat((memUsage.heapTotal / 1024 / 1024).toFixed(2)),
+      memory_external: parseFloat((memUsage.external / 1024 / 1024).toFixed(2)),
       uptime_hours: parseFloat((uptime / 3600).toFixed(2)),
+      uptime_days: parseFloat((uptime / 86400).toFixed(2)),
       platform: os.platform(),
       hostname: os.hostname(),
-      node_version: process.version
+      node_version: process.version,
+      total_memory: parseFloat((os.totalmem() / 1024 / 1024 / 1024).toFixed(2)), // GB
+      free_memory: parseFloat((os.freemem() / 1024 / 1024 / 1024).toFixed(2)), // GB
+      cpu_count: os.cpus().length,
+      load_average: os.loadavg(),
+      database: {
+        total_connections: parseInt(dbStats.rows[0]?.total_connections || 0),
+        active_connections: parseInt(dbStats.rows[0]?.active_connections || 0),
+        idle_connections: parseInt(dbStats.rows[0]?.idle_connections || 0)
+      },
+      usage: tenantUsage.rows[0] || {},
+      top_tenants: activeTenants.rows
     };
 
     res.json({
       stats: {
         ...tenantsStats.rows[0],
-        total_errors_24h: errorLogs.rows[0].total_errors || 0
+        total_errors_24h: errorLogs.rows[0]?.total_errors || 0,
+        total_users: parseInt(systemMetrics.usage.total_users || 0),
+        total_products: parseInt(systemMetrics.usage.total_products || 0),
+        total_orders: parseInt(systemMetrics.usage.total_orders || 0),
+        total_revenue: parseFloat(systemMetrics.usage.total_revenue || 0)
       },
       plan_stats: planStats.rows,
       errors_by_tenant: tenantsWithErrors.rows,

@@ -32,17 +32,57 @@ interface DashboardData {
   stats: {
     total_tenants: number;
     active_tenants: number;
-    total_errors: number;
-    total_requests: number;
+    trial_tenants: number;
+    suspended_tenants: number;
+    cancelled_tenants: number;
+    total_errors_24h: number;
+    total_users: number;
+    total_products: number;
+    total_orders: number;
+    total_revenue: number;
   };
   system_metrics: {
     cpu_usage: number;
     memory_usage: number;
     memory_total: number;
+    memory_external: number;
     uptime_hours: number;
+    uptime_days: number;
     platform: string;
     hostname: string;
+    node_version: string;
+    total_memory: number;
+    free_memory: number;
+    cpu_count: number;
+    load_average: number[];
+    database: {
+      total_connections: number;
+      active_connections: number;
+      idle_connections: number;
+    };
+    usage: {
+      total_users: number;
+      total_products: number;
+      total_orders: number;
+      total_revenue: number;
+    };
+    top_tenants: Array<{
+      id: string;
+      nome_empresa: string;
+      slug: string;
+      status: string;
+      plano: string;
+      orders_count: number;
+      revenue: number;
+    }>;
   };
+  plan_stats: Array<{
+    plano: string;
+    count: number;
+    total_users: number;
+    total_products: number;
+    total_orders: number;
+  }>;
   errors_by_tenant: any[];
   recent_logs: any[];
 }
@@ -174,26 +214,41 @@ export default function SuperAdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">Total de Tenants</CardTitle>
+            <CardTitle className="text-sm font-medium text-slate-300">Total de Clientes</CardTitle>
             <Users className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">{data.stats.total_tenants}</div>
             <p className="text-xs text-slate-400 mt-1">
-              {data.stats.active_tenants} ativos nas últimas 24h
+              {data.stats.active_tenants} ativos • {data.stats.trial_tenants} trial
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">Requests (24h)</CardTitle>
-            <Activity className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-sm font-medium text-slate-300">Total de Usuários</CardTitle>
+            <Users className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{data.stats.total_requests.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-white">{data.stats.total_users || 0}</div>
             <p className="text-xs text-slate-400 mt-1">
-              {Math.round(data.stats.total_requests / 24)} req/hora
+              {data.stats.total_products || 0} produtos • {data.stats.total_orders || 0} pedidos
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-slate-300">Receita Total</CardTitle>
+            <TrendingUp className="h-4 w-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-white">
+              R$ {data.stats.total_revenue?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00'}
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Todos os clientes
             </p>
           </CardContent>
         </Card>
@@ -204,24 +259,9 @@ export default function SuperAdminDashboard() {
             <AlertTriangle className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{data.stats.total_errors}</div>
+            <div className="text-2xl font-bold text-white">{data.stats.total_errors_24h || 0}</div>
             <p className="text-xs text-slate-400 mt-1">
-              {data.stats.total_errors > 0 ? 'Requer atenção' : 'Sistema estável'}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-800 border-slate-700">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-slate-300">Uptime</CardTitle>
-            <Clock className="h-4 w-4 text-purple-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.system_metrics.uptime_hours.toFixed(0)}h
-            </div>
-            <p className="text-xs text-slate-400 mt-1">
-              {data.system_metrics.uptime_hours.toFixed(1)} horas
+              {data.stats.total_errors_24h > 0 ? 'Requer atenção' : 'Sistema estável'}
             </p>
           </CardContent>
         </Card>
@@ -276,14 +316,59 @@ export default function SuperAdminDashboard() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-700 grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-xs text-slate-400">Plataforma</p>
-                <p className="text-sm font-medium text-white">{data.system_metrics.platform}</p>
+            <div className="pt-4 border-t border-slate-700 space-y-3">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-slate-400">Memória Total</p>
+                  <p className="text-sm font-medium text-white">
+                    {data.system_metrics.total_memory?.toFixed(1) || 'N/A'} GB
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Memória Livre</p>
+                  <p className="text-sm font-medium text-white">
+                    {data.system_metrics.free_memory?.toFixed(1) || 'N/A'} GB
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">CPU Cores</p>
+                  <p className="text-sm font-medium text-white">
+                    {data.system_metrics.cpu_count || 'N/A'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Uptime</p>
+                  <p className="text-sm font-medium text-white">
+                    {data.system_metrics.uptime_days?.toFixed(1) || '0'} dias
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs text-slate-400">Hostname</p>
-                <p className="text-sm font-medium text-white">{data.system_metrics.hostname}</p>
+              <div className="pt-2 border-t border-slate-700 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-slate-400">Plataforma</p>
+                  <p className="text-sm font-medium text-white">{data.system_metrics.platform}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Hostname</p>
+                  <p className="text-sm font-medium text-white">{data.system_metrics.hostname}</p>
+                </div>
+              </div>
+              <div className="pt-2 border-t border-slate-700">
+                <p className="text-xs text-slate-400 mb-2">Banco de Dados</p>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <span className="text-slate-400">Total:</span>
+                    <span className="text-white ml-1 font-medium">{data.system_metrics.database?.total_connections || 0}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Ativas:</span>
+                    <span className="text-green-400 ml-1 font-medium">{data.system_metrics.database?.active_connections || 0}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400">Idle:</span>
+                    <span className="text-yellow-400 ml-1 font-medium">{data.system_metrics.database?.idle_connections || 0}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -317,6 +402,100 @@ export default function SuperAdminDashboard() {
                           {tenant.critical_errors} críticos
                         </Badge>
                       )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Top Tenants e Estatísticas por Plano */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Clientes Mais Ativos (7 dias)
+            </CardTitle>
+            <CardDescription className="text-slate-400">
+              Top 10 clientes por pedidos e receita
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              {data.system_metrics.top_tenants?.length === 0 ? (
+                <p className="text-slate-400 text-sm text-center py-4">
+                  Nenhum dado disponível
+                </p>
+              ) : (
+                data.system_metrics.top_tenants?.map((tenant: any, index: number) => (
+                  <div key={tenant.id} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{tenant.nome_empresa}</p>
+                        <p className="text-xs text-slate-400">
+                          {tenant.plano} • {tenant.status}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-white">
+                        {tenant.orders_count || 0} pedidos
+                      </p>
+                      <p className="text-xs text-green-400">
+                        R$ {parseFloat(tenant.revenue || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Estatísticas por Plano
+            </CardTitle>
+            <CardDescription className="text-slate-400">
+              Distribuição de clientes e uso por plano
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {data.plan_stats?.length === 0 ? (
+                <p className="text-slate-400 text-sm text-center py-4">
+                  Nenhum dado disponível
+                </p>
+              ) : (
+                data.plan_stats?.map((plan: any) => (
+                  <div key={plan.plano} className="p-3 bg-slate-700/50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-white capitalize">{plan.plano}</span>
+                      <Badge variant="outline" className="bg-purple-500/10 text-purple-300 border-purple-500">
+                        {plan.count} clientes
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <span className="text-slate-400">Usuários:</span>
+                        <span className="text-white ml-1 font-medium">{plan.total_users || 0}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Produtos:</span>
+                        <span className="text-white ml-1 font-medium">{plan.total_products || 0}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Pedidos:</span>
+                        <span className="text-white ml-1 font-medium">{plan.total_orders || 0}</span>
+                      </div>
                     </div>
                   </div>
                 ))
