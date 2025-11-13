@@ -1,56 +1,90 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import CRMLayout from "./components/CRMLayout";
-import DashboardCRM from "./pages/DashboardCRM";
-import Setup from "./pages/Setup";
-import API from "./pages/API";
-import Docs from "./pages/Docs";
-import Login from "./pages/Login";
-import Callback from "./pages/Callback";
-import LandingPage from "./pages/LandingPage";
-import Setup2FA from "./pages/Setup2FA";
-import Verify2FA from "./pages/Verify2FA";
-import Settings from './pages/Settings';
-import Metricas from './pages/Metricas';
-import ChatIA from './pages/ChatIA';
-import PosVendas from './pages/PosVendas';
-import Entregas from "@/pages/Entregas";
-import NotasFiscais from "@/pages/NotasFiscais";
-import Produtos from "@/pages/Produtos";
-import AnaliseVendas from "@/pages/AnaliseVendas";
-import Pedidos from './pages/Pedidos';
-import Importacao from './pages/Importacao';
-import InteligenciaMercado from './pages/InteligenciaMercado';
-import TabelaPreco from './pages/TabelaPreco';
-import ContasPagar from './pages/ContasPagar';
-import ContasReceber from './pages/ContasReceber';
-import FluxoCaixa from './pages/FluxoCaixa';
-import Users from './pages/Users';
-import MercadoLivre from './pages/MercadoLivre';
-import IntegracaoMercadoLivre from './pages/IntegracaoMercadoLivre';
-import ImportacaoFinanceira from './pages/ImportacaoFinanceira';
-import CalculadoraTaxasML from './pages/CalculadoraTaxasML';
-import Forbidden from './pages/Forbidden';
-import Cadastro from './pages/Cadastro';
-import Onboarding from './pages/Onboarding';
-import WebhookSimulator from './pages/WebhookSimulator';
-import AdminMaster from './pages/AdminMaster';
-import Anuncios from './pages/Anuncios';
-import SuperAdminLogin from './pages/SuperAdminLogin';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import SuperAdminTenants from './pages/SuperAdminTenants';
-import Sobre from './pages/Sobre';
-import Contato from './pages/Contato';
-import Termos from './pages/Termos';
-import Privacidade from './pages/Privacidade';
-import { Blog, Tutoriais, BaseConhecimento, APIDocs, Integracoes, Roadmap } from './pages/EmBreve';
 import { isAuthenticated } from "./lib/auth";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
+
+// Componente de loading
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <p className="text-muted-foreground">Carregando...</p>
+    </div>
+  </div>
+);
+
+// ========================================
+// LAZY LOADING - Páginas carregadas sob demanda
+// ========================================
+
+// Páginas públicas (carregar imediatamente)
+import Login from "./pages/Login";
+import LandingPage from "./pages/LandingPage";
+import NotFound from "@/pages/NotFound";
+import Forbidden from './pages/Forbidden';
+
+// Layout (carregar imediatamente)
+import CRMLayout from "./components/CRMLayout";
+
+// Páginas principais (lazy load)
+const DashboardCRM = lazy(() => import("./pages/DashboardCRM"));
+const Setup = lazy(() => import("./pages/Setup"));
+const API = lazy(() => import("./pages/API"));
+const Docs = lazy(() => import("./pages/Docs"));
+const Callback = lazy(() => import("./pages/Callback"));
+const Setup2FA = lazy(() => import("./pages/Setup2FA"));
+const Verify2FA = lazy(() => import("./pages/Verify2FA"));
+const Settings = lazy(() => import('./pages/Settings'));
+const Metricas = lazy(() => import('./pages/Metricas'));
+const ChatIA = lazy(() => import('./pages/ChatIA'));
+const PosVendas = lazy(() => import('./pages/PosVendas'));
+const Entregas = lazy(() => import("@/pages/Entregas"));
+const NotasFiscais = lazy(() => import("@/pages/NotasFiscais"));
+
+// Páginas operacionais
+const Produtos = lazy(() => import("@/pages/Produtos"));
+const AnaliseVendas = lazy(() => import("@/pages/AnaliseVendas"));
+const Pedidos = lazy(() => import('./pages/Pedidos'));
+const Importacao = lazy(() => import('./pages/Importacao'));
+const InteligenciaMercado = lazy(() => import('./pages/InteligenciaMercado'));
+const TabelaPreco = lazy(() => import('./pages/TabelaPreco'));
+const Anuncios = lazy(() => import('./pages/Anuncios'));
+
+// Páginas financeiras
+const ContasPagar = lazy(() => import('./pages/ContasPagar'));
+const ContasReceber = lazy(() => import('./pages/ContasReceber'));
+const FluxoCaixa = lazy(() => import('./pages/FluxoCaixa'));
+const ImportacaoFinanceira = lazy(() => import('./pages/ImportacaoFinanceira'));
+
+// Páginas de administração
+const Users = lazy(() => import('./pages/Users'));
+const AdminMaster = lazy(() => import('./pages/AdminMaster'));
+
+// Integrações
+const MercadoLivre = lazy(() => import('./pages/MercadoLivre'));
+const IntegracaoMercadoLivre = lazy(() => import('./pages/IntegracaoMercadoLivre'));
+const CalculadoraTaxasML = lazy(() => import('./pages/CalculadoraTaxasML'));
+const WebhookSimulator = lazy(() => import('./pages/WebhookSimulator'));
+
+// Super Admin
+const SuperAdminLogin = lazy(() => import('./pages/SuperAdminLogin'));
+const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
+const SuperAdminTenants = lazy(() => import('./pages/SuperAdminTenants'));
+
+// Páginas públicas (footer)
+const Cadastro = lazy(() => import('./pages/Cadastro'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const Sobre = lazy(() => import('./pages/Sobre'));
+const Contato = lazy(() => import('./pages/Contato'));
+const Termos = lazy(() => import('./pages/Termos'));
+const Privacidade = lazy(() => import('./pages/Privacidade'));
+
+// Páginas "Em breve"
+const EmBreve = lazy(() => import('./pages/EmBreve'));
 
 function Router() {
   // Check if user is authenticated via localStorage with state
@@ -93,69 +127,73 @@ function Router() {
   // Public routes (no authentication required)
   if (!authenticated) {
     return (
-      <Switch>
-        <Route path="/" component={LandingPage} />
-        <Route path="/login" component={Login} />
-        <Route path="/cadastro" component={Cadastro} />
-        <Route path="/onboarding" component={Onboarding} />
-        <Route path="/verify-2fa" component={Verify2FA} />
-        <Route path="/callback" component={Callback} />
-        <Route path="/sobre" component={Sobre} />
-        <Route path="/contato" component={Contato} />
-        <Route path="/termos" component={Termos} />
-        <Route path="/privacidade" component={Privacidade} />
-        <Route path="/blog" component={Blog} />
-        <Route path="/tutoriais" component={Tutoriais} />
-        <Route path="/base-conhecimento" component={BaseConhecimento} />
-        <Route path="/api-docs" component={APIDocs} />
-        <Route path="/integracoes" component={Integracoes} />
-        <Route path="/roadmap" component={Roadmap} />
-        <Route component={LandingPage} />
-      </Switch>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path="/" component={LandingPage} />
+          <Route path="/login" component={Login} />
+          <Route path="/cadastro" component={Cadastro} />
+          <Route path="/onboarding" component={Onboarding} />
+          <Route path="/verify-2fa" component={Verify2FA} />
+          <Route path="/callback" component={Callback} />
+          <Route path="/sobre" component={Sobre} />
+          <Route path="/contato" component={Contato} />
+          <Route path="/termos" component={Termos} />
+          <Route path="/privacidade" component={Privacidade} />
+          <Route path="/blog" component={EmBreve} />
+          <Route path="/tutoriais" component={EmBreve} />
+          <Route path="/base-conhecimento" component={EmBreve} />
+          <Route path="/api-docs" component={EmBreve} />
+          <Route path="/integracoes" component={EmBreve} />
+          <Route path="/roadmap" component={EmBreve} />
+          <Route component={LandingPage} />
+        </Switch>
+      </Suspense>
     );
   }
 
   // Protected routes (authentication required)
   return (
     <CRMLayout>
-      <Switch>
-        <Route path={"/"} component={DashboardCRM} />
-        <Route path="/home" component={LandingPage} />
-        <Route path="/landing" component={LandingPage} />
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path={"/"} component={DashboardCRM} />
+          <Route path="/home" component={LandingPage} />
+          <Route path="/landing" component={LandingPage} />
           <Route path="/chat" component={ChatIA} />
           <Route path="/pos-vendas" component={PosVendas} />
-        <Route path="/callback" component={Callback} />
-        <Route path="/pedidos" component={Pedidos} />
-        <Route path="/produtos" component={Produtos} />
-        <Route path={"/anuncios"} component={Anuncios} />
-        <Route path={"/clientes"} component={API} />
+          <Route path="/callback" component={Callback} />
+          <Route path="/pedidos" component={Pedidos} />
+          <Route path="/produtos" component={Produtos} />
+          <Route path={"/anuncios"} component={Anuncios} />
+          <Route path={"/clientes"} component={API} />
           <Route path="/entregas" component={Entregas} />
           <Route path="/notas-fiscais" component={NotasFiscais} />
-        <Route path="/contas-pagar" component={ContasPagar} />
-        <Route path="/contas-receber" component={ContasReceber} />
-        <Route path="/fluxo-caixa" component={FluxoCaixa} />
-        <Route path={"/notas"} component={API} />
-        <Route path="/relatorios" component={API} />
-        <Route path="/vendas" component={AnaliseVendas} />
-        <Route path="/configuracoes" component={Settings} />
-        <Route path="/setup-2fa" component={Setup2FA} />
-        <Route path="/importacao" component={Importacao} />
-        <Route path="/inteligencia-mercado" component={InteligenciaMercado} />
-        <Route path="/tabela-preco" component={TabelaPreco} />
-        <Route path="/metricas" component={Metricas} />
-        <Route path="/usuarios" component={Users} />
-        <Route path="/mercado-livre" component={MercadoLivre} />
-        <Route path="/integracoes/mercadolivre" component={IntegracaoMercadoLivre} />
-        <Route path="/importacao-financeira" component={ImportacaoFinanceira} />
-        <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
-        <Route path="/webhook-simulator" component={WebhookSimulator} />
-        <Route path="/admin-master" component={AdminMaster} />
-        <Route path={"/docs"} component={Docs} />
-        <Route path={"/403"} component={Forbidden} />
-        <Route path={"/404"} component={NotFound} />
-        {/* Final fallback route */}
-        <Route component={NotFound} />
-      </Switch>
+          <Route path="/contas-pagar" component={ContasPagar} />
+          <Route path="/contas-receber" component={ContasReceber} />
+          <Route path="/fluxo-caixa" component={FluxoCaixa} />
+          <Route path={"/notas"} component={API} />
+          <Route path="/relatorios" component={API} />
+          <Route path="/vendas" component={AnaliseVendas} />
+          <Route path="/configuracoes" component={Settings} />
+          <Route path="/setup-2fa" component={Setup2FA} />
+          <Route path="/importacao" component={Importacao} />
+          <Route path="/inteligencia-mercado" component={InteligenciaMercado} />
+          <Route path="/tabela-preco" component={TabelaPreco} />
+          <Route path="/metricas" component={Metricas} />
+          <Route path="/usuarios" component={Users} />
+          <Route path="/mercado-livre" component={MercadoLivre} />
+          <Route path="/integracoes/mercadolivre" component={IntegracaoMercadoLivre} />
+          <Route path="/importacao-financeira" component={ImportacaoFinanceira} />
+          <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
+          <Route path="/webhook-simulator" component={WebhookSimulator} />
+          <Route path="/admin-master" component={AdminMaster} />
+          <Route path={"/docs"} component={Docs} />
+          <Route path={"/403"} component={Forbidden} />
+          <Route path={"/404"} component={NotFound} />
+          {/* Final fallback route */}
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </CRMLayout>
   );
 }

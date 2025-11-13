@@ -1,62 +1,106 @@
-import { Router } from 'express';
-import { query } from '../db';
+import { Router, Response } from 'express';
+import { query, transaction } from '../db';
+import { AuthRequest, authenticateToken, enforceTenantIsolation, requirePermission } from '../middleware/auth';
+import { validate, validateQuery, productSchema, updateProductSchema, paginationSchema } from '../middleware/validation';
+import { apiLimiter, createLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
+// Aplicar autenticação em todas as rotas
+router.use(authenticateToken);
+router.use(enforceTenantIsolation);
+
 // GET /api/produtos - Listar todos os produtos
-router.get('/', async (req, res) => {
-  try {
-    const { categoria, status, limit = 50, offset = 0, search } = req.query;
-    
-    let sql = `
-      SELECT 
-        p.id, p.nome, p.sku, p.categoria, p.preco_venda, p.preco_custo,
-        p.estoque_atual, p.estoque_minimo, p.status, p.marketplace,
-        p.margem_lucro, p.created_at, p.updated_at
-      FROM produtos p
-      WHERE 1=1
-    `;
-    
-    const params: any[] = [];
-    let paramIndex = 1;
-    
-    if (categoria) {
-      sql += ` AND p.categoria = $${paramIndex}`;
-      params.push(categoria);
-      paramIndex++;
+router.get(
+  '/', 
+  apiLimiter,
+  requirePermission('produtos', 'view'),
+  validateQuery(paginationSchema),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { categoria, status, limit = 50, offset = 0, search, sortBy = 'name', order = 'asc' } = req.query;
+      const tenantId = req.tenant_id;
+      
+      let sql = `
+        SELECT 
+          p.id, p.sku, p.name, p.description, p.category, p.brand,
+          p.cost_price, p.sale_price, p.stock_quantity, p.min_stock,
+          p.weight, p.dimensions, p.images, p.is_active,
+          p.created_at, p.updated_at,
+          (p.sale_price - p.cost_price) as profit,
+          CASE 
+            WHEN p.cost_price > 0 THEN ((p.sale_price - p.cost_price) / p.cost_price * 100)
+            ELSE 0 
+          END as profit_margin
+        FROM products p
+        WHERE p.tenant_id = $1
+      `;
+      
+      const params: any[] = [tenantId];
+      let paramIndex = 2;
+      
+      if (categoria) {
+        sql += ` AND p.category = $${paramIndex}`;
+        params.push(categoria);
+        paramIndex++;
+      }
+      
+      if (status !== undefined) {
+        sql += ` AND p.is_active = $${paramIndex}`;
+        params.push(status === 'active' || status === 'true');
+        paramIndex++;
+      }
+      
+      if (search) {
+        sql += ` AND (p.name ILIKE $${paramIndex} OR p.sku ILIKE $${paramIndex} OR p.description ILIKE $${paramIndex})`;
+        params.push(`%${search}%`);
+        paramIndex++;
+      }
+      
+      // Ordenação segura
+      const validSortFields = ['name', 'sku', 'category', 'sale_price', 'stock_quantity', 'created_at'];
+      const sortField = validSortFields.includes(sortBy as string) ? sortBy : 'name';
+      const sortOrder = order === 'desc' ? 'DESC' : 'ASC';
+      
+      sql += ` ORDER BY p.${sortField} ${sortOrder} LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+      params.push(limit, offset);
+      
+      const result = await query(sql, params);
+      
+      // Buscar total de registros para paginação
+      const countSql = `
+        SELECT COUNT(*) 
+        FROM products p 
+        WHERE p.tenant_id = $1
+        ${categoria ? ` AND p.category = $2` : ''}
+        ${status !== undefined ? ` AND p.is_active = ${status === 'active'}` : ''}
+        ${search ? ` AND (p.name ILIKE '%${search}%' OR p.sku ILIKE '%${search}%')` : ''}
+      `;
+      const countResult = await query(countSql, categoria ? [tenantId, categoria] : [tenantId]);
+      
+      const total = parseInt(countResult.rows[0].count);
+      const totalPages = Math.ceil(total / parseInt(limit as string));
+      
+      res.json({
+        data: result.rows,
+        pagination: {
+          total,
+          totalPages,
+          currentPage: Math.floor(parseInt(offset as string) / parseInt(limit as string)) + 1,
+          perPage: parseInt(limit as string),
+          hasNext: (parseInt(offset as string) + parseInt(limit as string)) < total,
+          hasPrev: parseInt(offset as string) > 0
+        }
+      });
+    } catch (error: any) {
+      console.error('Erro ao listar produtos:', error);
+      res.status(500).json({ 
+        error: 'Erro ao listar produtos',
+        code: 'PRODUCTS_LIST_ERROR'
+      });
     }
-    
-    if (status) {
-      sql += ` AND p.status = $${paramIndex}`;
-      params.push(status);
-      paramIndex++;
-    }
-    
-    if (search) {
-      sql += ` AND (p.nome ILIKE $${paramIndex} OR p.sku ILIKE $${paramIndex})`;
-      params.push(`%${search}%`);
-      paramIndex++;
-    }
-    
-    sql += ` ORDER BY p.nome ASC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-    params.push(limit, offset);
-    
-    const result = await query(sql, params);
-    
-    // Buscar total de registros
-    const countResult = await query('SELECT COUNT(*) FROM produtos');
-    
-    res.json({
-      data: result.rows,
-      total: parseInt(countResult.rows[0].count),
-      limit: parseInt(limit as string),
-      offset: parseInt(offset as string)
-    });
-  } catch (error) {
-    console.error('Erro ao listar produtos:', error);
-    res.status(500).json({ error: 'Erro ao listar produtos' });
   }
-});
+);
 
 // GET /api/produtos/:id - Buscar produto por ID
 router.get('/:id', async (req, res) => {

@@ -10,6 +10,7 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 // Importar rotas
+import authRouter from "./routes/auth";
 import clientesRouter from "./routes/clientes";
 import pedidosRouter from "./routes/pedidos";
 import produtosRouter from "./routes/produtos";
@@ -20,6 +21,11 @@ import tenantsRouter from "./routes/tenants";
 import integrationsRouter from "./routes/api/v1/integrations";
 import paymentsRouter from "./routes/payments";
 // import ticketsRouter from "./routes/tickets";
+
+// Importar middlewares
+import { requestLogger, errorLogger } from "./middleware/logger";
+import { apiLimiter } from "./middleware/rateLimiter";
+import { sanitize } from "./middleware/validation";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -51,11 +57,24 @@ async function startServer() {
   const server = createServer(app);
 
   // Middlewares
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true
+  }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  
+  // Middleware de logging para todas as requisições
+  app.use(requestLogger);
+  
+  // Middleware para sanitizar dados
+  app.use(sanitize);
+  
+  // Rate limiting global
+  app.use('/api/', apiLimiter);
 
   // API Routes
+  app.use("/api/auth", authRouter); // Autenticação (nova rota)
   app.use("/api/clientes", clientesRouter);
   app.use("/api/pedidos", pedidosRouter);
   app.use("/api/produtos", produtosRouter);
@@ -66,6 +85,9 @@ async function startServer() {
   app.use("/api/v1/integrations", integrationsRouter);
   app.use("/api/payments", paymentsRouter);
   // app.use("/api/tickets", ticketsRouter);
+  
+  // Middleware de tratamento de erros (deve ser o último)
+  app.use(errorLogger);
 
   // Health check
   app.get("/api/health", (_req, res) => {
