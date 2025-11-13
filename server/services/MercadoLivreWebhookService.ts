@@ -4,9 +4,7 @@
  */
 
 import { Request, Response } from 'express';
-import Mercado
-
-LiveSyncService from './MercadoLivreSyncService';
+import MercadoLivreSyncService from './MercadoLivreSyncService';
 import MercadoLivreAPIClient from './MercadoLivreAPIClient';
 import { query } from '../db';
 

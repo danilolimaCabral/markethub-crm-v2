@@ -1,0 +1,224 @@
+{
+  "timestamp": "2025-11-13T19:32:08.595Z",
+  "summary": {
+    "total": 14,
+    "passed": 0,
+    "failed": 13,
+    "skipped": 1,
+    "warnings": 0,
+    "score": 0,
+    "avgTime": 2.5,
+    "slowTests": 0
+  },
+  "byModule": {
+    "Autenticação": {
+      "passed": 0,
+      "failed": 5,
+      "total": 5
+    },
+    "Clientes": {
+      "passed": 0,
+      "failed": 3,
+      "total": 3
+    },
+    "Produtos": {
+      "passed": 0,
+      "failed": 2,
+      "total": 2
+    },
+    "Pedidos": {
+      "passed": 0,
+      "failed": 0,
+      "total": 1
+    },
+    "Integrações": {
+      "passed": 0,
+      "failed": 2,
+      "total": 2
+    },
+    "IA": {
+      "passed": 0,
+      "failed": 1,
+      "total": 1
+    }
+  },
+  "tests": [
+    {
+      "module": "Autenticação",
+      "test": "Health Check API",
+      "status": "FALHOU",
+      "time": 26,
+      "error": "API não está saudável"
+    },
+    {
+      "module": "Autenticação",
+      "test": "Registro de novo usuário",
+      "status": "FALHOU",
+      "time": 5,
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Autenticação",
+      "test": "Login com credenciais válidas",
+      "status": "FALHOU",
+      "time": 2,
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Autenticação",
+      "test": "GET /api/auth/me",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Autenticação",
+      "test": "Login Super Admin",
+      "status": "FALHOU",
+      "time": 1,
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Clientes",
+      "test": "POST /api/clientes - Criar cliente",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'post')"
+    },
+    {
+      "module": "Clientes",
+      "test": "GET /api/clientes - Listar todos",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Clientes",
+      "test": "GET /api/clientes/stats/geral",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Produtos",
+      "test": "POST /api/produtos - Criar produto",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'post')"
+    },
+    {
+      "module": "Produtos",
+      "test": "GET /api/produtos - Listar todos",
+      "status": "FALHOU",
+      "time": 1,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Pedidos",
+      "test": "Testes de pedidos",
+      "status": "PULADO",
+      "time": 0,
+      "error": "Requer cliente e produto criados anteriormente"
+    },
+    {
+      "module": "Integrações",
+      "test": "GET /api/integrations/mercadolivre/status",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Integrações",
+      "test": "GET /api/v1/integrations",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "IA",
+      "test": "POST /api/ai/chat - Enviar mensagem",
+      "status": "FALHOU",
+      "time": 0,
+      "error": "Cannot read properties of undefined (reading 'post')"
+    }
+  ],
+  "errors": [
+    {
+      "module": "Autenticação",
+      "test": "Health Check API",
+      "error": "API não está saudável"
+    },
+    {
+      "module": "Autenticação",
+      "test": "Registro de novo usuário",
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Autenticação",
+      "test": "Login com credenciais válidas",
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Autenticação",
+      "test": "GET /api/auth/me",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Autenticação",
+      "test": "Login Super Admin",
+      "error": "Request failed with status code 404",
+      "details": ""
+    },
+    {
+      "module": "Clientes",
+      "test": "POST /api/clientes - Criar cliente",
+      "error": "Cannot read properties of undefined (reading 'post')"
+    },
+    {
+      "module": "Clientes",
+      "test": "GET /api/clientes - Listar todos",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Clientes",
+      "test": "GET /api/clientes/stats/geral",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Produtos",
+      "test": "POST /api/produtos - Criar produto",
+      "error": "Cannot read properties of undefined (reading 'post')"
+    },
+    {
+      "module": "Produtos",
+      "test": "GET /api/produtos - Listar todos",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Integrações",
+      "test": "GET /api/integrations/mercadolivre/status",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "Integrações",
+      "test": "GET /api/v1/integrations",
+      "error": "Cannot read properties of undefined (reading 'get')"
+    },
+    {
+      "module": "IA",
+      "test": "POST /api/ai/chat - Enviar mensagem",
+      "error": "Cannot read properties of undefined (reading 'post')"
+    }
+  ],
+  "resources": {
+    "users_created": 0,
+    "clientes_created": 0,
+    "produtos_created": 0,
+    "pedidos_created": 0
+  }
+}

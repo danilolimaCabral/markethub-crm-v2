@@ -252,7 +252,7 @@ router.post('/sync', async (req: AuthRequest, res: Response) => {
 
     // Verificar se já está sincronizando
     const syncKey = `ml_sync_in_progress:${tenantId}`;
-    const isSync in progress = await cache.exists(syncKey);
+    const isSyncInProgress = await cache.exists(syncKey);
 
     if (isSyncInProgress) {
       return res.status(409).json({

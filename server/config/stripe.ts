@@ -1,10 +1,21 @@
 import Stripe from 'stripe';
 
-// Inicializar Stripe com chave secreta
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia',
-  typescript: true,
-});
+// Inicializar Stripe com chave secreta (null se não configurado)
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+
+export const stripe = stripeKey 
+  ? new Stripe(stripeKey, {
+      apiVersion: '2024-11-20.acacia',
+      typescript: true,
+    })
+  : null;
+
+export const isStripeConfigured = !!stripeKey;
+
+// Log de aviso se não estiver configurado
+if (!isStripeConfigured) {
+  console.warn('⚠️  Stripe não configurado. Configure STRIPE_SECRET_KEY no .env para habilitar pagamentos.');
+}
 
 // Planos de assinatura
 export const STRIPE_PLANS = {
