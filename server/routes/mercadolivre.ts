@@ -292,31 +292,51 @@ router.get('/stats', async (req: Request, res: Response) => {
  */
 router.post('/webhook', async (req: Request, res: Response) => {
   try {
-    const { resource, topic, user_id } = req.body;
+    const payload = req.body;
 
-    console.log('Webhook recebido:', { resource, topic, user_id });
-
-    // TODO: Processar notificação baseado no topic
-    // - orders_v2: Novo pedido ou atualização
-    // - items: Atualização em produto
-    // - questions: Nova pergunta
-
-    if (topic === 'orders_v2') {
-      // Busca integração do usuário
-      const integration = await MercadoLivreIntegration.findOne({
-        where: { mlUserId: user_id.toString(), isActive: true },
+    // Processa webhook de forma assíncrona (não bloqueia resposta)
+    import('../services/MercadoLivreWebhookService').then(({ default: WebhookService }) => {
+      WebhookService.processWebhook(payload).catch((error) => {
+        console.error('Erro ao processar webhook:', error);
       });
+    });
 
-      if (integration) {
-        // Sincroniza o pedido específico
-        // TODO: Implementar sincronização de pedido individual
-      }
-    }
-
+    // Responde imediatamente ao ML
     res.status(200).send('OK');
   } catch (error: any) {
     console.error('Erro ao processar webhook:', error);
     res.status(500).send('Error');
+  }
+});
+
+/**
+ * POST /api/integrations/mercadolivre/setup-webhook
+ * Configura webhooks no Mercado Livre
+ */
+router.post('/setup-webhook', async (req: Request, res: Response) => {
+  try {
+    const { tenantId } = (req as any).user;
+    const { webhookUrl } = req.body;
+
+    if (!webhookUrl) {
+      return res.status(400).json({ error: 'URL do webhook é obrigatória' });
+    }
+
+    const integration = await MercadoLivreIntegration.findOne({
+      where: { tenantId, isActive: true },
+    });
+
+    if (!integration) {
+      return res.status(404).json({ error: 'Integração não encontrada' });
+    }
+
+    const WebhookService = (await import('../services/MercadoLivreWebhookService')).default;
+    await WebhookService.setupWebhook(integration, webhookUrl);
+
+    res.json({ success: true, message: 'Webhooks configurados com sucesso' });
+  } catch (error: any) {
+    console.error('Erro ao configurar webhook:', error);
+    res.status(500).json({ error: 'Erro ao configurar webhook' });
   }
 });
 

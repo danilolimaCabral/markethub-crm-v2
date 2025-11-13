@@ -62,6 +62,17 @@ async function startServer() {
   // Executar migrations antes de iniciar o servidor
   await runMigrations();
   
+  // Iniciar scheduler de sincronização automática
+  if (process.env.ENABLE_AUTO_SYNC !== 'false') {
+    try {
+      const SyncScheduler = (await import('./services/SyncScheduler')).default;
+      SyncScheduler.start();
+      console.log('✅ Sincronização automática ativada');
+    } catch (error: any) {
+      console.warn('⚠️  Erro ao iniciar scheduler:', error.message);
+    }
+  }
+  
   const app = express();
   const server = createServer(app);
 
@@ -83,6 +94,8 @@ async function startServer() {
   app.use("/api/produtos", produtosRouter);
   app.use("/api/ai", aiRouter);
   app.use("/api/integrations/mercadolivre", mercadolivreRouter);
+  app.use("/api/integrations/amazon", (await import("./routes/amazon")).default);
+  app.use("/api/integrations/shopee", (await import("./routes/shopee")).default);
   app.use("/api/superadmin", superadminRouter);
   app.use("/api/tenants", tenantsRouter);
   app.use("/api/v1/integrations", integrationsRouter);
