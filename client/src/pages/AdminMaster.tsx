@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,47 +65,39 @@ interface Cliente {
 }
 
 export default function AdminMaster() {
-  const [clientes, setClientes] = useState<Cliente[]>([
-    {
-      id: '1',
-      nome: 'João Silva',
-      empresa: 'Silva E-commerce',
-      email: 'joao@silva.com',
-      telefone: '(11) 98765-4321',
-      plano: 'professional',
-      status: 'ativo',
-      dataCriacao: '2024-01-15',
-      faturamentoMensal: 45000,
-      pedidosMes: 234,
-      produtosAtivos: 156
-    },
-    {
-      id: '2',
-      nome: 'Maria Santos',
-      empresa: 'Santos Store',
-      email: 'maria@santos.com',
-      telefone: '(21) 97654-3210',
-      plano: 'business',
-      status: 'ativo',
-      dataCriacao: '2024-02-20',
-      faturamentoMensal: 78000,
-      pedidosMes: 456,
-      produtosAtivos: 289
-    },
-    {
-      id: '3',
-      nome: 'Pedro Oliveira',
-      empresa: 'Oliveira Imports',
-      email: 'pedro@oliveira.com',
-      telefone: '(31) 96543-2109',
-      plano: 'starter',
-      status: 'trial',
-      dataCriacao: '2024-11-01',
-      faturamentoMensal: 12000,
-      pedidosMes: 89,
-      produtosAtivos: 45
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carregar clientes do backend
+  useEffect(() => {
+    loadClientes();
+  }, []);
+
+  const loadClientes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/api/clientes');
+      const clientesFormatados = response.data.map((c: any) => ({
+        id: c.id.toString(),
+        nome: c.nome,
+        empresa: c.empresa,
+        email: c.email,
+        telefone: c.telefone || '',
+        plano: c.plano,
+        status: c.status,
+        dataCriacao: c.created_at.split('T')[0],
+        faturamentoMensal: parseFloat(c.faturamento_total) || 0,
+        pedidosMes: c.total_pedidos || 0,
+        produtosAtivos: c.total_produtos || 0
+      }));
+      setClientes(clientesFormatados);
+    } catch (error) {
+      console.error('Erro ao carregar clientes:', error);
+      toast.error('Erro ao carregar clientes');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -126,46 +119,50 @@ export default function AdminMaster() {
     pedidosTotal: clientes.reduce((acc, c) => acc + c.pedidosMes, 0)
   };
 
-  const handleAddCliente = () => {
+  const handleAddCliente = async () => {
     if (!formData.nome || !formData.empresa || !formData.email) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
 
-    const novoCliente: Cliente = {
-      id: Date.now().toString(),
-      ...formData,
-      dataCriacao: new Date().toISOString().split('T')[0],
-      faturamentoMensal: 0,
-      pedidosMes: 0,
-      produtosAtivos: 0
-    };
-
-    setClientes([...clientes, novoCliente]);
-    setIsDialogOpen(false);
-    resetForm();
-    toast.success('Cliente adicionado com sucesso!');
+    try {
+      await axios.post('/api/clientes', formData);
+      await loadClientes();
+      setIsDialogOpen(false);
+      resetForm();
+      toast.success('Cliente adicionado com sucesso!');
+    } catch (error: any) {
+      console.error('Erro ao adicionar cliente:', error);
+      toast.error(error.response?.data?.error || 'Erro ao adicionar cliente');
+    }
   };
 
-  const handleEditCliente = () => {
+  const handleEditCliente = async () => {
     if (!editingCliente) return;
 
-    setClientes(clientes.map(c =>
-      c.id === editingCliente.id
-        ? { ...c, ...formData }
-        : c
-    ));
-
-    setIsDialogOpen(false);
-    setEditingCliente(null);
-    resetForm();
-    toast.success('Cliente atualizado com sucesso!');
+    try {
+      await axios.put(`/api/clientes/${editingCliente.id}`, formData);
+      await loadClientes();
+      setIsDialogOpen(false);
+      setEditingCliente(null);
+      resetForm();
+      toast.success('Cliente atualizado com sucesso!');
+    } catch (error: any) {
+      console.error('Erro ao atualizar cliente:', error);
+      toast.error(error.response?.data?.error || 'Erro ao atualizar cliente');
+    }
   };
 
-  const handleDeleteCliente = (id: string) => {
-    if (confirm('Tem certeza que deseja remover este cliente?')) {
-      setClientes(clientes.filter(c => c.id !== id));
+  const handleDeleteCliente = async (id: string) => {
+    if (!confirm('Tem certeza que deseja remover este cliente?')) return;
+
+    try {
+      await axios.delete(`/api/clientes/${id}`);
+      await loadClientes();
       toast.success('Cliente removido com sucesso!');
+    } catch (error: any) {
+      console.error('Erro ao remover cliente:', error);
+      toast.error(error.response?.data?.error || 'Erro ao remover cliente');
     }
   };
 
