@@ -1,13 +1,42 @@
-import axios from 'axios';
-import MercadoLivreIntegration from '../models/MercadoLivreIntegration';
+import axios, { AxiosError } from 'axios';
+import { query } from '../db';
+import { cache } from '../utils/cache';
 
 const ML_API_BASE = 'https://api.mercadolibre.com';
 const ML_AUTH_URL = 'https://auth.mercadolivre.com.br/authorization';
 
-// Estas credenciais devem ser configuradas nas variáveis de ambiente
+// Credenciais - DEVEM ser configuradas nas variáveis de ambiente
 const ML_CLIENT_ID = process.env.ML_CLIENT_ID || '';
 const ML_CLIENT_SECRET = process.env.ML_CLIENT_SECRET || '';
 const ML_REDIRECT_URI = process.env.ML_REDIRECT_URI || 'http://localhost:3000/api/integrations/mercadolivre/callback';
+
+// Validar configuração na inicialização
+if (!ML_CLIENT_ID || !ML_CLIENT_SECRET) {
+  console.warn('⚠️  Mercado Livre não configurado. Configure ML_CLIENT_ID e ML_CLIENT_SECRET no .env');
+}
+
+interface MLTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  user_id: number;
+  token_type: string;
+  scope: string;
+}
+
+interface MLUserInfo {
+  id: number;
+  nickname: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  permalink?: string;
+  registration_date?: string;
+  country_id?: string;
+  address?: any;
+  phone?: any;
+  seller_reputation?: any;
+}
 
 class MercadoLivreOAuthService {
   /**
@@ -27,33 +56,47 @@ class MercadoLivreOAuthService {
   /**
    * Troca o código de autorização por access token
    */
-  static async exchangeCodeForToken(code: string): Promise<{
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-    user_id: string;
-  }> {
+  static async exchangeCodeForToken(code: string): Promise<MLTokenResponse> {
     try {
-      const response = await axios.post(`${ML_API_BASE}/oauth/token`, {
+      const params = new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: ML_CLIENT_ID,
         client_secret: ML_CLIENT_SECRET,
         code: code,
         redirect_uri: ML_REDIRECT_URI,
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
       });
 
-      return {
-        access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token,
+      const response = await axios.post<MLTokenResponse>(
+        `${ML_API_BASE}/oauth/token`,
+        params.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json',
+          },
+          timeout: 10000,
+        }
+      );
+
+      console.log('✅ Token obtido com sucesso:', {
+        user_id: response.data.user_id,
         expires_in: response.data.expires_in,
-        user_id: response.data.user_id.toString(),
-      };
+        scope: response.data.scope,
+      });
+
+      return response.data;
     } catch (error: any) {
-      console.error('Erro ao trocar código por token:', error.response?.data || error.message);
+      const axiosError = error as AxiosError;
+      console.error('❌ Erro ao trocar código por token:', {
+        status: axiosError.response?.status,
+        data: axiosError.response?.data,
+        message: axiosError.message,
+      });
+      
+      if (axiosError.response?.status === 400) {
+        throw new Error('Código de autorização inválido ou expirado');
+      }
+      
       throw new Error('Falha na autenticação com Mercado Livre');
     }
   }
