@@ -1,12 +1,30 @@
 import { Router } from 'express';
 import { query } from '../db';
+import { authenticateToken } from '../middleware/auth';
+import { extractTenant, addTenantFilter, TenantRequest } from '../middleware/tenant';
+import { asyncHandler, errors } from '../middleware/errorHandler';
+import { validate, validateQuery, commonSchemas } from '../middleware/validation';
+import { z } from 'zod';
 
 const router = Router();
 
-// GET /api/pedidos - Listar todos os pedidos
-router.get('/', async (req, res) => {
-  try {
+// Aplicar autenticação e tenant em todas as rotas
+router.use(authenticateToken);
+router.use(extractTenant);
+
+// Schema de validação para query de pedidos
+const pedidosQuerySchema = z.object({
+  status: z.string().optional(),
+  marketplace: z.string().optional(),
+  ...commonSchemas.pagination.shape
+});
+
+// GET /api/pedidos - Listar todos os pedidos (com filtro de tenant)
+router.get('/', 
+  validateQuery(pedidosQuerySchema),
+  asyncHandler(async (req: TenantRequest, res) => {
     const { status, marketplace, limit = 50, offset = 0 } = req.query;
+    const tenantId = req.tenant_id!;
     
     let sql = `
       SELECT 
@@ -14,11 +32,16 @@ router.get('/', async (req, res) => {
         p.valor_total, p.status, p.data_pedido, p.data_entrega,
         p.rastreio, p.observacoes, p.created_at
       FROM pedidos p
-      WHERE 1=1
     `;
     
     const params: any[] = [];
-    let paramIndex = 1;
+    
+    // Adicionar filtro de tenant
+    const filtered = addTenantFilter(sql, params, tenantId, 'p');
+    sql = filtered.sql;
+    params.push(...filtered.params);
+    
+    let paramIndex = params.length + 1;
     
     if (status) {
       sql += ` AND p.status = $${paramIndex}`;
@@ -37,8 +60,9 @@ router.get('/', async (req, res) => {
     
     const result = await query(sql, params);
     
-    // Buscar total de registros
-    const countResult = await query('SELECT COUNT(*) FROM pedidos');
+    // Buscar total de registros (com filtro de tenant)
+    const countSql = addTenantFilter('SELECT COUNT(*) FROM pedidos', [], tenantId);
+    const countResult = await query(countSql.sql, countSql.params);
     
     res.json({
       data: result.rows,
@@ -46,31 +70,28 @@ router.get('/', async (req, res) => {
       limit: parseInt(limit as string),
       offset: parseInt(offset as string)
     });
-  } catch (error) {
-    console.error('Erro ao listar pedidos:', error);
-    res.status(500).json({ error: 'Erro ao listar pedidos' });
-  }
-});
+  })
+);
 
-// GET /api/pedidos/:id - Buscar pedido por ID
-router.get('/:id', async (req, res) => {
-  try {
+// GET /api/pedidos/:id - Buscar pedido por ID (com validação de tenant)
+router.get('/:id',
+  validate(z.object({ id: commonSchemas.uuid })),
+  asyncHandler(async (req: TenantRequest, res) => {
     const { id } = req.params;
+    const tenantId = req.tenant_id!;
+    
     const result = await query(
-      'SELECT * FROM pedidos WHERE id = $1',
-      [id]
+      'SELECT * FROM pedidos WHERE id = $1 AND tenant_id = $2',
+      [id, tenantId]
     );
     
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Pedido não encontrado' });
+      throw errors.notFound('Pedido');
     }
     
     res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Erro ao buscar pedido:', error);
-    res.status(500).json({ error: 'Erro ao buscar pedido' });
-  }
-});
+  })
+);
 
 // POST /api/pedidos - Criar novo pedido
 router.post('/', async (req, res) => {
