@@ -31,6 +31,7 @@ pool.on('error', (err) => {
 });
 
 export default pool;
+export { pool };
 
 // Helper para executar queries
 export async function query(text: string, params?: any[]) {
