@@ -1,34 +1,41 @@
-import cron from 'node-cron';
-import { query } from '../db';
 import MercadoLivreIntegration from '../models/MercadoLivreIntegration';
 import MercadoLivreOrderService from './MercadoLivreOrderService';
 import MercadoLivreProductService from './MercadoLivreProductService';
 import { logInfo, logError } from '../middleware/logger';
 
+// Importação dinâmica de node-cron será feita no método start()
+
 class SyncScheduler {
-  private static jobs: Map<string, cron.ScheduledTask> = new Map();
+  private static jobs: Map<string, any> = new Map();
 
   /**
    * Inicia o scheduler de sincronização automática
    */
-  static start(): void {
-    logInfo('Iniciando scheduler de sincronização automática');
+  static async start(): Promise<void> {
+    try {
+      const cron = await import('node-cron');
+      
+      logInfo('Iniciando scheduler de sincronização automática');
 
-    // Sincronização de pedidos a cada 15 minutos
-    const ordersJob = cron.schedule('*/15 * * * *', async () => {
-      await this.syncAllOrders();
-    });
+      // Sincronização de pedidos a cada 15 minutos
+      const ordersJob = cron.default.schedule('*/15 * * * *', async () => {
+        await this.syncAllOrders();
+      });
 
-    this.jobs.set('orders', ordersJob);
+      this.jobs.set('orders', ordersJob);
 
-    // Sincronização de produtos a cada 30 minutos
-    const productsJob = cron.schedule('*/30 * * * *', async () => {
-      await this.syncAllProducts();
-    });
+      // Sincronização de produtos a cada 30 minutos
+      const productsJob = cron.default.schedule('*/30 * * * *', async () => {
+        await this.syncAllProducts();
+      });
 
-    this.jobs.set('products', productsJob);
+      this.jobs.set('products', productsJob);
 
-    logInfo('Scheduler iniciado com sucesso');
+      logInfo('Scheduler iniciado com sucesso');
+    } catch (error: any) {
+      logError('Erro ao iniciar scheduler. node-cron pode não estar instalado.', error);
+      console.warn('⚠️  Sincronização automática desabilitada. Instale node-cron: pnpm add node-cron');
+    }
   }
 
   /**
@@ -119,20 +126,23 @@ class SyncScheduler {
   /**
    * Agenda sincronização personalizada para uma integração
    */
-  static scheduleCustomSync(
+  static async scheduleCustomSync(
     integrationId: number,
     cronExpression: string,
     syncType: 'orders' | 'products' | 'both'
-  ): void {
-    const jobId = `custom_${integrationId}_${syncType}`;
+  ): Promise<void> {
+    try {
+      const cron = await import('node-cron');
+      
+      const jobId = `custom_${integrationId}_${syncType}`;
 
-    // Remove job existente se houver
-    const existingJob = this.jobs.get(jobId);
-    if (existingJob) {
-      existingJob.stop();
-    }
+      // Remove job existente se houver
+      const existingJob = this.jobs.get(jobId);
+      if (existingJob) {
+        existingJob.stop();
+      }
 
-    const job = cron.schedule(cronExpression, async () => {
+      const job = cron.default.schedule(cronExpression, async () => {
       try {
         const integration = await MercadoLivreIntegration.findByPk(integrationId);
         if (!integration || !integration.isActive) {
@@ -153,8 +163,12 @@ class SyncScheduler {
       }
     });
 
-    this.jobs.set(jobId, job);
-    logInfo('Sincronização personalizada agendada', { integrationId, cronExpression, syncType });
+      this.jobs.set(jobId, job);
+      logInfo('Sincronização personalizada agendada', { integrationId, cronExpression, syncType });
+    } catch (error: any) {
+      logError('Erro ao agendar sincronização personalizada', error);
+      throw error;
+    }
   }
 }
 

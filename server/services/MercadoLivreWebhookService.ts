@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { query } from '../db';
 import MercadoLivreIntegration from '../models/MercadoLivreIntegration';
 import MercadoLivreOrderService from './MercadoLivreOrderService';
 import MercadoLivreProductService from './MercadoLivreProductService';
@@ -77,52 +76,45 @@ class MercadoLivreWebhookService {
       const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration);
       const orderDetails = await this.fetchOrderDetails(accessToken, orderId);
 
-      // Sincroniza o pedido específico
-      const existingOrder = await query(
-        'SELECT id FROM ml_orders WHERE ml_order_id = $1 AND tenant_id = $2',
-        [orderId, integration.tenantId]
-      );
+      // Sincroniza o pedido específico usando o serviço de pedidos
+      // Isso garante consistência com o resto do sistema
+      const MLOrder = (await import('../models/MLOrder')).default;
+      
+      const existingOrder = await MLOrder.findOne({
+        where: { mlOrderId: orderId, tenantId: integration.tenantId },
+      });
 
-      if (existingOrder.rows.length > 0) {
+      if (existingOrder) {
         // Atualiza pedido existente
-        await query(
-          `UPDATE ml_orders 
-           SET status = $1, total_amount = $2, paid_amount = $3, 
-               items = $4, payments = $5, shipping = $6, last_sync_at = NOW()
-           WHERE ml_order_id = $7 AND tenant_id = $8`,
-          [
-            orderDetails.status,
-            orderDetails.total_amount,
-            orderDetails.paid_amount,
-            JSON.stringify(orderDetails.order_items),
-            JSON.stringify(orderDetails.payments),
-            JSON.stringify(orderDetails.shipping),
-            orderId,
-            integration.tenantId,
-          ]
-        );
+        await existingOrder.update({
+          status: orderDetails.status,
+          totalAmount: orderDetails.total_amount,
+          paidAmount: orderDetails.paid_amount,
+          items: orderDetails.order_items,
+          payments: orderDetails.payments,
+          shipping: orderDetails.shipping,
+          lastSyncAt: new Date(),
+        });
       } else {
         // Cria novo pedido
-        await query(
-          `INSERT INTO ml_orders 
-           (tenant_id, integration_id, ml_order_id, status, date_created, total_amount, 
-            paid_amount, currency_id, buyer_id, items, payments, shipping, last_sync_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())`,
-          [
-            integration.tenantId,
-            integration.id,
-            orderId,
-            orderDetails.status,
-            new Date(orderDetails.date_created),
-            orderDetails.total_amount,
-            orderDetails.paid_amount,
-            orderDetails.currency_id,
-            orderDetails.buyer.id.toString(),
-            JSON.stringify(orderDetails.order_items),
-            JSON.stringify(orderDetails.payments),
-            JSON.stringify(orderDetails.shipping),
-          ]
-        );
+        await MLOrder.create({
+          tenantId: integration.tenantId,
+          integrationId: integration.id,
+          orderId: null,
+          mlOrderId: orderId,
+          status: orderDetails.status,
+          dateCreated: new Date(orderDetails.date_created),
+          dateClosed: orderDetails.date_closed ? new Date(orderDetails.date_closed) : null,
+          totalAmount: orderDetails.total_amount,
+          paidAmount: orderDetails.paid_amount,
+          currencyId: orderDetails.currency_id,
+          buyerId: orderDetails.buyer.id.toString(),
+          buyerNickname: orderDetails.buyer.nickname || null,
+          items: orderDetails.order_items,
+          payments: orderDetails.payments,
+          shipping: orderDetails.shipping,
+          lastSyncAt: new Date(),
+        });
       }
 
       logInfo('Pedido sincronizado via webhook', { orderId, tenantId: integration.tenantId });

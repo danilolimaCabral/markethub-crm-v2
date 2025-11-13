@@ -66,7 +66,7 @@ async function startServer() {
   if (process.env.ENABLE_AUTO_SYNC !== 'false') {
     try {
       const SyncScheduler = (await import('./services/SyncScheduler')).default;
-      SyncScheduler.start();
+      await SyncScheduler.start();
       console.log('✅ Sincronização automática ativada');
     } catch (error: any) {
       console.warn('⚠️  Erro ao iniciar scheduler:', error.message);
