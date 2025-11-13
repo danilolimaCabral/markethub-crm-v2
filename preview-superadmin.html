@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - Super Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white">
+    <div class="min-h-screen p-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Super Admin Panel</h1>
+                    <p class="text-slate-400 text-sm">Monitoramento e gestão do sistema</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="px-4 py-2 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800 text-sm">
+                    🔄 Atualizar
+                </button>
+                <button class="px-4 py-2 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-800 text-sm">
+                    🚪 Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Total de Clientes -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-slate-300">Total de Clientes</h3>
+                    <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-white mb-2">42</div>
+                <p class="text-xs text-slate-400">35 ativos • 7 trial</p>
+            </div>
+
+            <!-- Total de Usuários -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-slate-300">Total de Usuários</h3>
+                    <svg class="h-4 w-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-white mb-2">1.247</div>
+                <p class="text-xs text-slate-400">8.532 produtos • 15.890 pedidos</p>
+            </div>
+
+            <!-- Receita Total -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-slate-300">Receita Total</h3>
+                    <svg class="h-4 w-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-white mb-2">R$ 2.847.392,50</div>
+                <p class="text-xs text-slate-400">Todos os clientes</p>
+            </div>
+
+            <!-- Erros (24h) -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-slate-300">Erros (24h)</h3>
+                    <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div class="text-2xl font-bold text-white mb-2">3</div>
+                <p class="text-xs text-slate-400">Sistema estável</p>
+            </div>
+        </div>
+
+        <!-- System Metrics e Erros -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Métricas do Sistema -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <h2 class="text-white text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                    </svg>
+                    Métricas do Sistema
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- CPU -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-300 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                                </svg>
+                                CPU
+                            </span>
+                            <span class="text-sm font-medium text-white">24.5%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style="width: 24.5%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Memória -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-slate-300 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                                </svg>
+                                Memória
+                            </span>
+                            <span class="text-sm font-medium text-white">
+                                1.247 MB
+                                <span class="text-slate-400 ml-2">/ 2.048 MB</span>
+                            </span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: 61%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Informações do Sistema -->
+                    <div class="pt-4 border-t border-slate-700 space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-slate-400">Memória Total</p>
+                                <p class="text-sm font-medium text-white">16.0 GB</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Memória Livre</p>
+                                <p class="text-sm font-medium text-white">8.5 GB</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">CPU Cores</p>
+                                <p class="text-sm font-medium text-white">8</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Uptime</p>
+                                <p class="text-sm font-medium text-white">12.5 dias</p>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-700 grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-slate-400">Plataforma</p>
+                                <p class="text-sm font-medium text-white">linux</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Hostname</p>
+                                <p class="text-sm font-medium text-white">server-01</p>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-slate-700">
+                            <p class="text-xs text-slate-400 mb-2">Banco de Dados</p>
+                            <div class="grid grid-cols-3 gap-2 text-xs">
+                                <div>
+                                    <span class="text-slate-400">Total:</span>
+                                    <span class="text-white ml-1 font-medium">45</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400">Ativas:</span>
+                                    <span class="text-green-400 ml-1 font-medium">12</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-400">Idle:</span>
+                                    <span class="text-yellow-400 ml-1 font-medium">33</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erros por Tenant -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <h2 class="text-white text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    Erros por Tenant (24h)
+                </h2>
+                <div class="space-y-3 max-h-[400px] overflow-y-auto">
+                    <div class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium text-white">Empresa ABC Ltda</p>
+                            <p class="text-xs text-slate-400">2 erros, 5 avisos</p>
+                        </div>
+                        <span class="px-2 py-1 bg-red-500/10 text-red-700 border border-red-200 rounded text-xs">1 crítico</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div>
+                            <p class="text-sm font-medium text-white">XYZ Comércio</p>
+                            <p class="text-xs text-slate-400">1 erro, 2 avisos</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-sm text-center py-4">Nenhum erro registrado 🎉</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Tenants e Estatísticas por Plano -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Clientes Mais Ativos -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <h2 class="text-white text-lg font-semibold mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    Clientes Mais Ativos (7 dias)
+                </h2>
+                <p class="text-slate-400 text-sm mb-4">Top 10 clientes por pedidos e receita</p>
+                <div class="space-y-3 max-h-[400px] overflow-y-auto">
+                    <div class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">1</div>
+                            <div>
+                                <p class="text-sm font-medium text-white">Empresa Premium</p>
+                                <p class="text-xs text-slate-400">enterprise • active</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-white">247 pedidos</p>
+                            <p class="text-xs text-green-400">R$ 89.450,00</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+                            <div>
+                                <p class="text-sm font-medium text-white">Mega Store</p>
+                                <p class="text-xs text-slate-400">business • active</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-white">189 pedidos</p>
+                            <p class="text-xs text-green-400">R$ 67.230,50</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">3</div>
+                            <div>
+                                <p class="text-sm font-medium text-white">Tech Solutions</p>
+                                <p class="text-xs text-slate-400">professional • active</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-medium text-white">156 pedidos</p>
+                            <p class="text-xs text-green-400">R$ 45.890,00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estatísticas por Plano -->
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+                <h2 class="text-white text-lg font-semibold mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Estatísticas por Plano
+                </h2>
+                <p class="text-slate-400 text-sm mb-4">Distribuição de clientes e uso por plano</p>
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-white capitalize">Enterprise</span>
+                            <span class="px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500 rounded text-xs">8 clientes</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-slate-400">Usuários:</span>
+                                <span class="text-white ml-1 font-medium">245</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Produtos:</span>
+                                <span class="text-white ml-1 font-medium">3.421</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Pedidos:</span>
+                                <span class="text-white ml-1 font-medium">8.932</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-white capitalize">Business</span>
+                            <span class="px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500 rounded text-xs">15 clientes</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-slate-400">Usuários:</span>
+                                <span class="text-white ml-1 font-medium">378</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Produtos:</span>
+                                <span class="text-white ml-1 font-medium">2.156</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Pedidos:</span>
+                                <span class="text-white ml-1 font-medium">4.521</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-white capitalize">Professional</span>
+                            <span class="px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500 rounded text-xs">12 clientes</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-slate-400">Usuários:</span>
+                                <span class="text-white ml-1 font-medium">120</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Produtos:</span>
+                                <span class="text-white ml-1 font-medium">1.234</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Pedidos:</span>
+                                <span class="text-white ml-1 font-medium">2.437</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-700/50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-white capitalize">Starter</span>
+                            <span class="px-2 py-1 bg-purple-500/10 text-purple-300 border border-purple-500 rounded text-xs">7 clientes</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-slate-400">Usuários:</span>
+                                <span class="text-white ml-1 font-medium">21</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Produtos:</span>
+                                <span class="text-white ml-1 font-medium">721</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400">Pedidos:</span>
+                                <span class="text-white ml-1 font-medium">1.234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Recentes -->
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+            <h2 class="text-white text-lg font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                </svg>
+                Logs Recentes
+            </h2>
+            <p class="text-slate-400 text-sm mb-4">Últimas 20 entradas do sistema</p>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-slate-700">
+                            <th class="text-left text-slate-300 py-3 px-4 text-sm font-medium">Nível</th>
+                            <th class="text-left text-slate-300 py-3 px-4 text-sm font-medium">Categoria</th>
+                            <th class="text-left text-slate-300 py-3 px-4 text-sm font-medium">Mensagem</th>
+                            <th class="text-left text-slate-300 py-3 px-4 text-sm font-medium">Tenant</th>
+                            <th class="text-left text-slate-300 py-3 px-4 text-sm font-medium">Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-700">
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 bg-blue-500/10 text-blue-700 border border-blue-200 rounded text-xs">info</span>
+                            </td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">auth</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm max-w-md truncate">Usuário logado com sucesso</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">abc-123</td>
+                            <td class="py-3 px-4 text-slate-400 text-sm">15/01/2025 14:32</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-200 rounded text-xs">warning</span>
+                            </td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">api</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm max-w-md truncate">Rate limit quase atingido</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">xyz-456</td>
+                            <td class="py-3 px-4 text-slate-400 text-sm">15/01/2025 14:28</td>
+                        </tr>
+                        <tr class="border-b border-slate-700">
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-1 bg-red-500/10 text-red-700 border border-red-200 rounded text-xs">error</span>
+                            </td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">integration</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm max-w-md truncate">Falha ao sincronizar produto</td>
+                            <td class="py-3 px-4 text-slate-300 text-sm">def-789</td>
+                            <td class="py-3 px-4 text-slate-400 text-sm">15/01/2025 14:15</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
