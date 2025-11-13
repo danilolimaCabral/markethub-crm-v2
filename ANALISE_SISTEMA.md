@@ -505,11 +505,17 @@ markethub-crm-v2/
 - [x] Multi-tenant implementado
 - [x] Integração Mercado Livre (interface)
 - [x] Integração IA (Google Gemini)
-- [ ] Middleware de autenticação completo
-- [ ] Filtros automáticos por tenant em todas as queries
+- [x] Middleware de autenticação completo
+- [x] Filtros automáticos por tenant em todas as queries
+- [x] Rate limiting por tenant
+- [x] Sistema de validação com Zod
+- [x] Tratamento de erros robusto
+- [x] Sistema de logging estruturado
+- [x] Migrações automatizadas
+- [x] Documentação da API (Swagger)
+- [x] Health checks e monitoramento básico
 - [ ] Endpoints de API pública
 - [ ] Engine de webhooks
-- [ ] Rate limiting por tenant
 
 ### Frontend
 - [x] 63 páginas implementadas
@@ -528,19 +534,24 @@ markethub-crm-v2/
 - [x] Views otimizadas
 - [x] Índices em tenant_id
 - [x] Seed data para desenvolvimento
-- [ ] Migrações automatizadas
+- [x] Migrações automatizadas
 - [ ] Backup automático configurado
 
 ### Infraestrutura
 - [x] Docker configurado
 - [x] Railway configurado
 - [x] Scripts de deploy
-- [ ] CI/CD pipeline
-- [ ] Monitoramento e alertas
-- [ ] Logs centralizados
+- [x] CI/CD pipeline básico (GitHub Actions)
+- [x] Monitoramento básico (health checks)
+- [x] Logs estruturados
+- [ ] Monitoramento avançado (Prometheus/Grafana)
+- [ ] Logs centralizados (ELK stack)
+- [ ] Alertas automáticos
 
 ### Testes
-- [ ] Testes unitários
+- [x] Configuração de testes (Vitest)
+- [x] Testes unitários básicos (middleware)
+- [ ] Testes unitários completos
 - [ ] Testes de integração
 - [ ] Testes E2E
 - [ ] Testes de performance

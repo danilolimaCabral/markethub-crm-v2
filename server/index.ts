@@ -19,7 +19,14 @@ import superadminRouter from "./routes/superadmin";
 import tenantsRouter from "./routes/tenants";
 import integrationsRouter from "./routes/api/v1/integrations";
 import paymentsRouter from "./routes/payments";
+import apiDocsRouter from "./routes/api-docs";
 // import ticketsRouter from "./routes/tickets";
+
+// Importar middlewares
+import { requestLogger, errorLogger } from "./middleware/logger";
+import { errorHandler } from "./middleware/errorHandler";
+import { globalRateLimit } from "./middleware/rateLimit";
+import { healthCheck, simpleHealthCheck } from "./monitoring/healthCheck";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -33,10 +40,18 @@ async function runMigrations() {
   console.log("============================================================\n");
   
   try {
-    const { stdout, stderr } = await execAsync("node scripts/migrate.js");
-    if (stdout) console.log(stdout);
-    if (stderr) console.error(stderr);
-    console.log("\n✅ Migrações concluídas com sucesso!\n");
+    // Tentar usar sistema de migrações automático primeiro
+    try {
+      const { runAllMigrations } = await import("./migrations/migrationRunner");
+      await runAllMigrations();
+    } catch (migrationError: any) {
+      // Se falhar, tentar método antigo
+      console.log("⚠️  Tentando método de migração alternativo...");
+      const { stdout, stderr } = await execAsync("node scripts/migrate.js");
+      if (stdout) console.log(stdout);
+      if (stderr) console.error(stderr);
+      console.log("\n✅ Migrações concluídas com sucesso!\n");
+    }
   } catch (error: any) {
     console.error("\n❌ Erro ao executar migrações:", error.message);
     console.error("\n⚠️  Servidor continuará sem as migrações...\n");
@@ -50,12 +65,19 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Middlewares
+  // Middlewares globais
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  
+  // Rate limiting global
+  app.use(globalRateLimit);
+  
+  // Logging de requisições
+  app.use(requestLogger);
 
   // API Routes
+  app.use("/api/docs", apiDocsRouter); // Documentação da API
   app.use("/api/clientes", clientesRouter);
   app.use("/api/pedidos", pedidosRouter);
   app.use("/api/produtos", produtosRouter);
@@ -66,15 +88,14 @@ async function startServer() {
   app.use("/api/v1/integrations", integrationsRouter);
   app.use("/api/payments", paymentsRouter);
   // app.use("/api/tickets", ticketsRouter);
-
-  // Health check
-  app.get("/api/health", (_req, res) => {
-    res.json({ 
-      status: "ok", 
-      timestamp: new Date().toISOString(),
-      database: process.env.DB_NAME || "not configured"
-    });
-  });
+  
+  // Health check (antes do error handler)
+  app.get("/api/health", healthCheck);
+  app.get("/api/health/simple", simpleHealthCheck);
+  
+  // Error handler (deve ser o último middleware)
+  app.use(errorLogger);
+  app.use(errorHandler);
   
   // Diagnostic endpoint
   app.get("/api/diagnostic", async (_req, res) => {

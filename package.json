@@ -8,6 +8,7 @@
     "dev:safe": "bash scripts/cleanup.sh && vite --host",
     "build": "rm -rf dist && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "migrate": "node scripts/migrate.js",
+    "migrate:auto": "tsx server/migrations/migrationRunner.ts",
     "start": "NODE_ENV=production node dist/index.js",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
@@ -17,7 +18,11 @@
     "sync:external": "tsx scripts/extract-external-data.ts",
     "sync:sheets": "tsx scripts/extract-google-sheets.ts",
     "sync:all": "tsx scripts/sync-data.ts",
-    "scheduler": "tsx scripts/scheduler.ts"
+    "scheduler": "tsx scripts/scheduler.ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
