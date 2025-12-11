@@ -22,6 +22,16 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'lucide': ['lucide-react'],
+        },
+      },
+    },
+  },
+  optimizeDeps: {
+    include: ['lucide-react'],
   },
   server: {
     port: 3000,
