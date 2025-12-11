@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import CRMLayout from '@/components/CRMLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -220,7 +219,7 @@ export default function ImportacaoFinanceira() {
   };
 
   return (
-    <CRMLayout>
+    
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-start">
@@ -468,6 +467,6 @@ export default function ImportacaoFinanceira() {
           </CardContent>
         </Card>
       </div>
-    </CRMLayout>
+    
   );
 }

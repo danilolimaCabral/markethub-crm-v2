@@ -1,4 +1,3 @@
-import CRMLayout from "@/components/CRMLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,7 +135,7 @@ export default function Importacao() {
   }));
 
   return (
-    <CRMLayout>
+    
       <div className="p-6 space-y-6">
         {/* Header */}
         <div>
@@ -398,6 +397,6 @@ export default function Importacao() {
           )}
         </div>
       </div>
-    </CRMLayout>
+    
   );
 }

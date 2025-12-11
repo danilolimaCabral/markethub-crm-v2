@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import CRMLayout from '@/components/CRMLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -164,8 +163,7 @@ export default function MercadoLivre() {
   };
 
   return (
-    <CRMLayout>
-      <div className="p-6 space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-start">
           <div>
@@ -489,7 +487,6 @@ export default function MercadoLivre() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
-    </CRMLayout>
+    </div>
   );
 }

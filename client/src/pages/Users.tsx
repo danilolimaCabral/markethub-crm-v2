@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import CRMLayout from '@/components/CRMLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -241,7 +240,7 @@ export default function Users() {
   };
 
   return (
-    <CRMLayout>
+    
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
@@ -463,6 +462,6 @@ export default function Users() {
           </Table>
         </div>
       </div>
-    </CRMLayout>
+    
   );
 }

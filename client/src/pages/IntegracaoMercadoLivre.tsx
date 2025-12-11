@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import CRMLayout from '@/components/CRMLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -273,17 +272,17 @@ export default function IntegracaoMercadoLivre() {
 
   if (isLoading) {
     return (
-      <CRMLayout>
+      
         <div className="flex items-center justify-center h-96">
           <RefreshCw className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </CRMLayout>
+      
     );
   }
 
   if (!connected) {
     return (
-      <CRMLayout>
+      
         <div className="max-w-4xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold">Integração Mercado Livre</h1>
@@ -362,12 +361,12 @@ export default function IntegracaoMercadoLivre() {
             </CardContent>
           </Card>
         </div>
-      </CRMLayout>
+      
     );
   }
 
   return (
-    <CRMLayout>
+    
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -547,6 +546,6 @@ export default function IntegracaoMercadoLivre() {
           </TabsContent>
         </Tabs>
       </div>
-    </CRMLayout>
+    
   );
 }

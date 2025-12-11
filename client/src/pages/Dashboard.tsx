@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CRMLayout from "@/components/CRMLayout";
 import { Package, ShoppingCart, Users, DollarSign, TrendingUp, AlertTriangle, RefreshCw, ArrowUpRight, ArrowDownRight, Calculator } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -75,7 +74,7 @@ export default function Dashboard() {
   };
 
   return (
-    <CRMLayout>
+    
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -229,6 +228,6 @@ export default function Dashboard() {
           </Card>
         )}
       </div>
-    </CRMLayout>
+    
   );
 }
