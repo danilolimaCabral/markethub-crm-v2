@@ -12,6 +12,7 @@ WORKDIR /app
 
 # Copiar arquivos de dependências
 COPY package.json pnpm-lock.yaml ./
+COPY patches ./patches
 
 # Instalar dependências
 RUN pnpm install --frozen-lockfile
@@ -37,6 +38,7 @@ WORKDIR /app
 
 # Copiar package.json e pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
+COPY patches ./patches
 
 # Instalar apenas dependências de produção
 RUN pnpm install --prod --frozen-lockfile
