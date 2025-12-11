@@ -23,11 +23,17 @@ export function ThemeProvider({
   switchable = false,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
+    // FORÇAR TEMA LIGHT - Layout Moderno 2025
+    // Limpar qualquer tema dark do localStorage
+    if (typeof window !== 'undefined') {
       const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      if (stored === 'dark') {
+        localStorage.removeItem("theme");
+      }
     }
-    return defaultTheme;
+    
+    // Sempre retornar light como padrão
+    return "light";
   });
 
   useEffect(() => {
