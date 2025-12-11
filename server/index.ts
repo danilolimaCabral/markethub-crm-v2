@@ -29,7 +29,7 @@ import { apiLimiter } from "./middleware/rateLimiter";
 import { sanitize } from "./middleware/validation";
 
 // Importar Swagger
-import { setupSwagger } from "./swagger";
+// import { setupSwagger } from "./swagger";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -78,7 +78,7 @@ async function startServer() {
   app.use('/api/', apiLimiter);
 
   // Configurar Swagger Documentation
-  setupSwagger(app);
+  // setupSwagger(app); // Temporariamente desabilitado
 
   // API Routes
   app.use("/api/info", apiInfoRouter); // Informações da API
@@ -128,7 +128,7 @@ async function startServer() {
       // Testar query simples
       let queryTest = "not tested";
       try {
-        await sequelize.query("SELECT 1 as test", []);
+        await sequelize.query("SELECT 1 as test");
         queryTest = "success";
       } catch (e: any) {
         queryTest = `failed: ${e.message}`;
@@ -139,7 +139,7 @@ async function startServer() {
       try {
         await sequelize.query(
           "SELECT $1 as param1, $2 as param2, $3 as param3",
-          ["test1", "test2", "test3"]
+          { bind: ["test1", "test2", "test3"] }
         );
         insertTest = "success";
       } catch (e: any) {
@@ -147,7 +147,7 @@ async function startServer() {
       }
       
       res.json({
-        sequelize_version: Sequelize.version || "unknown",
+        sequelize_version: "8.x",
         node_version: process.version,
         env: process.env.NODE_ENV,
         database_url: process.env.DATABASE_URL ? "configured" : "not configured",
