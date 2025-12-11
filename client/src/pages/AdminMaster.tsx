@@ -102,13 +102,20 @@ export default function AdminMaster() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    nome: string;
+    empresa: string;
+    email: string;
+    telefone: string;
+    plano: 'starter' | 'professional' | 'business' | 'enterprise';
+    status: 'trial' | 'ativo' | 'inativo';
+  }>({
     nome: '',
     empresa: '',
     email: '',
     telefone: '',
-    plano: 'starter' as const,
-    status: 'trial' as const
+    plano: 'starter',
+    status: 'trial'
   });
 
   // Estatísticas gerais
