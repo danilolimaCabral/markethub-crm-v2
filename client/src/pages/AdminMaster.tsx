@@ -372,7 +372,7 @@ export default function AdminMaster() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-blue-400">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -385,7 +385,7 @@ export default function AdminMaster() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-green-400">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Faturamento Total</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -403,7 +403,7 @@ export default function AdminMaster() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-purple-400">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pedidos Totais</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -416,7 +416,7 @@ export default function AdminMaster() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-orange-400">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Ativação</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
