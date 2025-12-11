@@ -20,12 +20,16 @@ import superadminRouter from "./routes/superadmin";
 import tenantsRouter from "./routes/tenants";
 import integrationsRouter from "./routes/api/v1/integrations";
 import paymentsRouter from "./routes/payments";
+import apiInfoRouter from "./routes/api-info";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
 import { requestLogger, errorLogger } from "./middleware/logger";
 import { apiLimiter } from "./middleware/rateLimiter";
 import { sanitize } from "./middleware/validation";
+
+// Importar Swagger
+import { setupSwagger } from "./swagger";
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -73,7 +77,11 @@ async function startServer() {
   // Rate limiting global
   app.use('/api/', apiLimiter);
 
+  // Configurar Swagger Documentation
+  setupSwagger(app);
+
   // API Routes
+  app.use("/api/info", apiInfoRouter); // Informações da API
   app.use("/api/auth", authRouter); // Autenticação (nova rota)
   app.use("/api/clientes", clientesRouter);
   app.use("/api/pedidos", pedidosRouter);
@@ -89,7 +97,20 @@ async function startServer() {
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorLogger);
 
-  // Health check
+  /**
+   * @swagger
+   * /api/health:
+   *   get:
+   *     summary: Verifica o status da API
+   *     tags: [Sistema]
+   *     responses:
+   *       200:
+   *         description: API está funcionando
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/HealthCheck'
+   */
   app.get("/api/health", (_req, res) => {
     res.json({ 
       status: "ok", 
