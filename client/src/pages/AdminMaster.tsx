@@ -370,63 +370,84 @@ export default function AdminMaster() {
         </Dialog>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-blue-400">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Clientes</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+      {/* Stats Cards - Design Moderno 2025 */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Card 1 - Total de Clientes */}
+        <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-blue-500 hover:border-l-blue-600">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 transition-all duration-300 group-hover:scale-150" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-gray-600">Total de Clientes</CardTitle>
+            <div className="p-2 bg-blue-500/10 rounded-lg transition-all duration-300 group-hover:bg-blue-500/20">
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalClientes}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.clientesAtivos} ativos
-            </p>
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalClientes}</div>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-700 hover:bg-blue-500/20">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                {stats.clientesAtivos} ativos
+              </Badge>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-green-400">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Faturamento Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+        {/* Card 2 - Faturamento Total */}
+        <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-green-500 hover:border-l-green-600">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -mr-16 -mt-16 transition-all duration-300 group-hover:scale-150" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-gray-600">Faturamento Total</CardTitle>
+            <div className="p-2 bg-green-500/10 rounded-lg transition-all duration-300 group-hover:bg-green-500/20">
+              <DollarSign className="h-5 w-5 text-green-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
-                currency: 'BRL'
+                currency: 'BRL',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
               }).format(stats.faturamentoTotal)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Mensal combinado
+            <p className="text-xs text-gray-500 font-medium">
+              💰 Mensal combinado
             </p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-purple-400">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pedidos Totais</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+        {/* Card 3 - Pedidos Totais */}
+        <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-purple-500 hover:border-l-purple-600">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -mr-16 -mt-16 transition-all duration-300 group-hover:scale-150" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-gray-600">Pedidos Totais</CardTitle>
+            <div className="p-2 bg-purple-500/10 rounded-lg transition-all duration-300 group-hover:bg-purple-500/20">
+              <ShoppingCart className="h-5 w-5 text-purple-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.pedidosTotal}</div>
-            <p className="text-xs text-muted-foreground">
-              Este mês
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-gray-900 mb-1">{stats.pedidosTotal}</div>
+            <p className="text-xs text-gray-500 font-medium">
+              📦 Este mês
             </p>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 hover:border-orange-400">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Ativação</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+        {/* Card 4 - Taxa de Ativação */}
+        <Card className="group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-l-4 border-l-orange-500 hover:border-l-orange-600">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full -mr-16 -mt-16 transition-all duration-300 group-hover:scale-150" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 relative z-10">
+            <CardTitle className="text-sm font-semibold text-gray-600">Taxa de Ativação</CardTitle>
+            <div className="p-2 bg-orange-500/10 rounded-lg transition-all duration-300 group-hover:bg-orange-500/20">
+              <Activity className="h-5 w-5 text-orange-600" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="relative z-10">
+            <div className="text-3xl font-bold text-gray-900 mb-1">
               {Math.round((stats.clientesAtivos / stats.totalClientes) * 100)}%
             </div>
-            <p className="text-xs text-muted-foreground">
-              Clientes ativos
+            <p className="text-xs text-gray-500 font-medium">
+              ⚡ Clientes ativos
             </p>
           </CardContent>
         </Card>
