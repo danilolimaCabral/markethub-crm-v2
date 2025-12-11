@@ -4,8 +4,19 @@ import { pool } from '../db';
 
 const router = express.Router();
 
+// Middleware para verificar se Stripe está configurado
+const checkStripe = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (!stripe) {
+    return res.status(503).json({ 
+      error: 'Serviço de pagamento não configurado',
+      code: 'STRIPE_NOT_CONFIGURED'
+    });
+  }
+  next();
+};
+
 // Criar sessão de checkout
-router.post('/create-checkout-session', async (req, res) => {
+router.post('/create-checkout-session', checkStripe, async (req, res) => {
   try {
     const { plan, tenantId, email, successUrl, cancelUrl } = req.body;
 
@@ -132,7 +143,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
 });
 
 // Obter status da assinatura
-router.get('/subscription-status/:tenantId', async (req, res) => {
+router.get('/subscription-status/:tenantId', checkStripe, async (req, res) => {
   try {
     const { tenantId } = req.params;
 
@@ -172,7 +183,7 @@ router.get('/subscription-status/:tenantId', async (req, res) => {
 });
 
 // Cancelar assinatura
-router.post('/cancel-subscription/:tenantId', async (req, res) => {
+router.post('/cancel-subscription/:tenantId', checkStripe, async (req, res) => {
   try {
     const { tenantId } = req.params;
 

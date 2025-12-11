@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { query } from '../db';
 import { cache } from '../utils/cache';
+import { MercadoLivreIntegration } from '../models/MercadoLivreIntegration';
 
 const ML_API_BASE = 'https://api.mercadolibre.com';
 const ML_AUTH_URL = 'https://auth.mercadolivre.com.br/authorization';

@@ -92,3 +92,4 @@ MercadoLivreIntegration.init(
 );
 
 export default MercadoLivreIntegration;
+export { MercadoLivreIntegration };

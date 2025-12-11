@@ -15,7 +15,7 @@ export const validate = (schema: ZodSchema) => {
         return res.status(400).json({
           error: 'Dados inválidos',
           code: 'VALIDATION_ERROR',
-          details: error.errors.map(err => ({
+          details: error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message
           }))
@@ -42,7 +42,7 @@ export const validateQuery = (schema: ZodSchema) => {
         return res.status(400).json({
           error: 'Parâmetros de consulta inválidos',
           code: 'QUERY_VALIDATION_ERROR',
-          details: error.errors.map(err => ({
+          details: error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message
           }))
@@ -69,7 +69,7 @@ export const validateParams = (schema: ZodSchema) => {
         return res.status(400).json({
           error: 'Parâmetros da URL inválidos',
           code: 'PARAMS_VALIDATION_ERROR',
-          details: error.errors.map(err => ({
+          details: error.issues.map(err => ({
             field: err.path.join('.'),
             message: err.message
           }))
@@ -263,9 +263,9 @@ export const marketplaceIntegrationSchema = z.object({
   marketplace: z.string().min(1, 'Nome do marketplace é obrigatório'),
   client_id: z.string().optional(),
   client_secret: z.string().optional(),
-  is_active: z.boolean().default(false),
-  sync_frequency: z.number().int().min(5).default(15),
-  config: z.record(z.any()).optional()
+  is_active: z.boolean().optional(),
+  sync_frequency: z.number().int().min(5).optional(),
+  config: z.record(z.string(), z.any()).optional()
 });
 
 /**

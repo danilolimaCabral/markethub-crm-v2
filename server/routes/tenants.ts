@@ -28,7 +28,7 @@ function generateSlug(name: string): string {
 // Listar todos os tenants
 router.get('/', async (req, res) => {
   try {
-    const [tenants] = await pool.query(`
+    const result = await pool.query(`
       SELECT 
         t.*,
         COUNT(DISTINCT u.id) as user_count,
@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
       ORDER BY t.criado_em DESC
     `);
     
-    res.json(tenants);
+    res.json(result.rows);
   } catch (error) {
     console.error('Erro ao listar tenants:', error);
     res.status(500).json({ error: 'Erro ao listar tenants' });
@@ -52,18 +52,18 @@ router.get('/', async (req, res) => {
 // Obter detalhes de um tenant específico
 router.get('/:id', async (req, res) => {
   try {
-    const [tenants] = await pool.query(`
+    const tenantsResult = await pool.query(`
       SELECT * FROM tenants WHERE id = $1
     `, [req.params.id]);
     
-    if (!Array.isArray(tenants) || tenants.length === 0) {
+    if (!tenantsResult.rows || tenantsResult.rows.length === 0) {
       return res.status(404).json({ error: 'Tenant não encontrado' });
     }
     
-    const tenant = tenants[0];
+    const tenant = tenantsResult.rows[0];
     
     // Buscar estatísticas
-    const [stats] = await pool.query(`
+    const statsResult = await pool.query(`
       SELECT 
         (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as user_count,
         (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as product_count,
@@ -71,7 +71,7 @@ router.get('/:id', async (req, res) => {
         (SELECT COUNT(*) FROM orders WHERE tenant_id = $4 AND DATE(criado_em) = CURRENT_DATE) as orders_today
     `, [req.params.id, req.params.id, req.params.id, req.params.id]);
     
-    res.json({ ...tenant, stats: Array.isArray(stats) ? stats[0] : {} });
+    res.json({ ...tenant, stats: statsResult.rows[0] || {} });
   } catch (error) {
     console.error('Erro ao buscar tenant:', error);
     res.status(500).json({ error: 'Erro ao buscar tenant' });
@@ -98,8 +98,8 @@ router.post('/', async (req, res) => {
     // Verificar se CNPJ já existe (apenas se fornecido)
     if (cnpj) {
       const checkQuery = format('SELECT id FROM tenants WHERE cnpj = %L', cnpj);
-      const [existing] = await pool.query(checkQuery);
-      if (Array.isArray(existing) && existing.length > 0) {
+      const existingResult = await pool.query(checkQuery);
+      if (existingResult.rows && existingResult.rows.length > 0) {
         return res.status(400).json({ error: 'CNPJ já cadastrado' });
       }
     }
@@ -110,8 +110,8 @@ router.post('/', async (req, res) => {
     // Gerar slug único
     let slug = generateSlug(nome_empresa);
     const slugQuery = format('SELECT id FROM tenants WHERE slug = %L', slug);
-    const [slugExists] = await pool.query(slugQuery);
-    if (Array.isArray(slugExists) && slugExists.length > 0) {
+    const slugExistsResult = await pool.query(slugQuery);
+    if (slugExistsResult.rows && slugExistsResult.rows.length > 0) {
       slug = `${slug}-${Date.now()}`;
     }
     
@@ -147,9 +147,9 @@ router.post('/', async (req, res) => {
       ...insertParams
     );
     
-    const [result] = await pool.query(insertQuery);
+    const insertResult = await pool.query(insertQuery);
     
-    const tenantId = Array.isArray(result) && result.length > 0 ? (result[0] as any).id : null;
+    const tenantId = insertResult.rows && insertResult.rows.length > 0 ? (insertResult.rows[0] as any).id : null;
     
     if (!tenantId) {
       throw new Error('Falha ao obter ID do tenant criado');
@@ -284,7 +284,7 @@ router.delete('/:id', async (req, res) => {
 // Obter estatísticas de um tenant
 router.get('/:id/stats', async (req, res) => {
   try {
-    const [stats] = await pool.query(`
+    const statsResult = await pool.query(`
       SELECT 
         (SELECT COUNT(*) FROM users WHERE tenant_id = $1) as total_users,
         (SELECT COUNT(*) FROM products WHERE tenant_id = $2) as total_products,
@@ -294,7 +294,7 @@ router.get('/:id/stats', async (req, res) => {
         (SELECT criado_em FROM users WHERE tenant_id = $6 ORDER BY criado_em DESC LIMIT 1) as last_activity
     `, [req.params.id, req.params.id, req.params.id, req.params.id, req.params.id, req.params.id]);
     
-    res.json(Array.isArray(stats) && stats.length > 0 ? stats[0] : {});
+    res.json(statsResult.rows[0] || {});
   } catch (error) {
     console.error('Erro ao buscar estatísticas:', error);
     res.status(500).json({ error: 'Erro ao buscar estatísticas' });

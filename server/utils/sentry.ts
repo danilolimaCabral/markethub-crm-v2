@@ -6,7 +6,7 @@
  */
 
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { Express, Request, Response, NextFunction } from 'express';
 
 const SENTRY_DSN = process.env.SENTRY_DSN;
@@ -33,7 +33,7 @@ export function initSentry(): void {
     // Profiling
     profilesSampleRate: NODE_ENV === 'production' ? 0.1 : 1.0,
     integrations: [
-      new ProfilingIntegration(),
+      nodeProfilingIntegration(),
     ],
     
     // Filter sensitive data
@@ -72,8 +72,8 @@ export function initSentry(): void {
 export function setupSentryRequestHandler(app: Express): void {
   if (!SENTRY_DSN) return;
   
-  app.use(Sentry.Handlers.requestHandler());
-  app.use(Sentry.Handlers.tracingHandler());
+  // Sentry request handler - nova API v8+
+  app.use(Sentry.setupExpressErrorHandler);
 }
 
 /**
@@ -83,15 +83,7 @@ export function setupSentryRequestHandler(app: Express): void {
 export function setupSentryErrorHandler(app: Express): void {
   if (!SENTRY_DSN) return;
   
-  app.use(Sentry.Handlers.errorHandler({
-    shouldHandleError(error) {
-      // Capture all errors in production
-      if (NODE_ENV === 'production') return true;
-      
-      // In development, only capture 5xx errors
-      return error.status >= 500;
-    },
-  }));
+  // Error handler já configurado no setupExpressErrorHandler
 }
 
 /**
@@ -160,10 +152,10 @@ export function clearUser(): void {
 export function startTransaction(name: string, op: string = 'http.request') {
   if (!SENTRY_DSN) return null;
   
-  return Sentry.startTransaction({
+  return Sentry.startSpan({
     name,
     op,
-  });
+  }, () => {});
 }
 
 /**
