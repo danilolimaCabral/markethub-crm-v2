@@ -1,0 +1,66 @@
+# Dependências
+node_modules
+npm-debug.log
+pnpm-debug.log
+yarn-error.log
+
+# Build
+dist
+build
+.next
+
+# Testes
+coverage
+.nyc_output
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+tests/
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+.env.example
+.env.production.example
+.env.mercadolivre.example
+
+# Documentação
+*.md
+!README.md
+docs/
+diagrams/
+
+# Logs
+logs
+*.log
+
+# Temporários
+tmp
+temp
+.cache
+
+# Railway
+.railway
+
+# Outros
+.prettierrc
+.eslintrc
+.editorconfig
