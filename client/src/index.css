@@ -43,39 +43,62 @@
 }
 
 :root {
-  --primary: var(--color-purple-600);
+  /* Primary - Azul profissional */
+  --primary: var(--color-blue-600);
   --primary-foreground: var(--color-white);
-  --sidebar-primary: var(--color-purple-600);
+  --sidebar-primary: var(--color-blue-600);
   --sidebar-primary-foreground: var(--color-white);
-  --chart-1: var(--color-blue-400);
-  --chart-2: var(--color-purple-400);
-  --chart-3: var(--color-purple-600);
-  --chart-4: var(--color-indigo-600);
-  --chart-5: var(--color-blue-600);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  
+  /* Charts - Cores suaves e profissionais */
+  --chart-1: var(--color-blue-500);
+  --chart-2: var(--color-indigo-500);
+  --chart-3: var(--color-purple-500);
+  --chart-4: var(--color-teal-500);
+  --chart-5: var(--color-cyan-500);
+  
+  /* Border radius - Mais suave */
+  --radius: 0.5rem;
+  
+  /* Background - Cinza muito claro (estilo Salesforce/HubSpot) */
+  --background: oklch(0.98 0.002 264);
+  --foreground: oklch(0.2 0.015 264);
+  
+  /* Cards - Branco puro com sombra sutil */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.2 0.015 264);
+  
+  /* Popover */
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --popover-foreground: oklch(0.2 0.015 264);
+  
+  /* Secondary - Cinza claro */
+  --secondary: oklch(0.96 0.002 264);
+  --secondary-foreground: oklch(0.3 0.015 264);
+  
+  /* Muted - Cinza médio */
+  --muted: oklch(0.94 0.003 264);
+  --muted-foreground: oklch(0.5 0.012 264);
+  
+  /* Accent - Azul claro */
+  --accent: oklch(0.96 0.01 240);
+  --accent-foreground: oklch(0.25 0.05 240);
+  
+  /* Destructive - Vermelho suave */
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  
+  /* Border - Cinza bem claro */
+  --border: oklch(0.9 0.003 264);
+  --input: oklch(0.95 0.002 264);
+  --ring: oklch(0.6 0.18 240);
+  
+  /* Sidebar - Branco com borda sutil */
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.25 0.015 264);
+  --sidebar-accent: oklch(0.96 0.01 240);
+  --sidebar-accent-foreground: oklch(0.2 0.05 240);
+  --sidebar-border: oklch(0.92 0.003 264);
+  --sidebar-ring: oklch(0.6 0.18 240);
 }
 
 .dark {

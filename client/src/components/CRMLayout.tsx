@@ -175,37 +175,37 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar - Responsive */}
       <aside className={`
         fixed md:relative inset-y-0 left-0 z-40
-        w-64 bg-card border-r border-border flex flex-col overflow-hidden
-        transition-transform duration-300 ease-in-out
+        w-64 bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden
+        transition-transform duration-300 ease-in-out shadow-sm
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         {/* Logo/Header */}
-        <div className="p-3 md:p-4 border-b border-border">
+        <div className="p-4 md:p-5 border-b border-sidebar-border bg-sidebar">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-              <TrendingUp className="h-6 w-6 text-white" />
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="font-bold text-base md:text-lg bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent truncate">Markthub CRM</h1>
-              <p className="text-xs text-muted-foreground hidden md:block">Venda mais, lucre mais</p>
+              <h1 className="font-bold text-base text-sidebar-foreground truncate">Markthub CRM</h1>
+              <p className="text-xs text-muted-foreground hidden md:block">Gestão Inteligente</p>
             </div>
             <Notifications />
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-2 md:p-3 space-y-4 md:space-y-6">
+        <nav className="flex-1 overflow-y-auto p-3 md:p-4 space-y-5 md:space-y-6 bg-sidebar">
           {navSections.map((section, sectionIndex) => (
             <div key={sectionIndex}>
               {/* Section Title */}
-              <div className="px-3 mb-2">
-                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <div className="px-2 mb-2">
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   {section.title}
                 </h2>
               </div>
               
               {/* Section Items */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {section.items
                   // TODOS OS MÓDULOS LIBERADOS - Removido filtro de permissões
                   .map((item) => {
@@ -215,18 +215,18 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
                         <div
                           onClick={() => setSidebarOpen(false)}
                           className={`
-                            flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer
-                            transition-all duration-200
+                            flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer
+                            transition-all duration-150 group
                             ${isActive 
-                              ? 'bg-primary text-primary-foreground shadow-sm' 
-                              : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                              ? 'bg-primary text-primary-foreground shadow-sm font-medium' 
+                              : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                             }
                           `}
                         >
-                          <span className={isActive ? 'text-primary-foreground' : item.color}>
+                          <span className={`transition-colors ${isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-sidebar-accent-foreground'}`}>
                             {item.icon}
                           </span>
-                          <span className="flex-1 font-medium text-sm">{item.label}</span>
+                          <span className={`flex-1 text-sm ${isActive ? 'font-medium' : 'font-normal'}`}>{item.label}</span>
                           {item.badge && (
                             <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                               {item.badge}
@@ -271,8 +271,10 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
+      <main className="flex-1 overflow-y-auto bg-background">
+        <div className="p-6 md:p-8">
+          {children}
+        </div>
       </main>
 
       {/* Global Search */}

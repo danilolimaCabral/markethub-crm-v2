@@ -61,17 +61,17 @@ export default function NotasFiscais() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Notas Fiscais</h1>
-        <p className="text-muted-foreground">Gestão de NF-e emitidas</p>
+        <h1 className="text-2xl font-bold text-foreground">Notas Fiscais</h1>
+        <p className="text-sm text-muted-foreground mt-1">Gestão de NF-e emitidas</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
+        <Card className="shadow-sm border-border">
+          <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total de NF-e</p>
