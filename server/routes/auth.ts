@@ -100,6 +100,7 @@ router.post('/register', authLimiter, validate(registerUserSchema), async (req: 
 router.post('/login', authLimiter, validate(loginSchema), async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    console.log('[LOGIN] Tentativa de login:', { email });
 
     // Buscar usuário por email OU username
     const result = await query(
@@ -110,6 +111,7 @@ router.post('/login', authLimiter, validate(loginSchema), async (req: Request, r
        WHERE email = $1 OR username = $1`,
       [email]
     );
+    console.log('[LOGIN] Usuários encontrados:', result.rows.length);
 
     if (result.rows.length === 0) {
       return res.status(401).json({
@@ -129,7 +131,9 @@ router.post('/login', authLimiter, validate(loginSchema), async (req: Request, r
     }
 
     // Verificar senha
+    console.log('[LOGIN] Verificando senha...');
     const validPassword = await bcrypt.compare(password, user.password_hash);
+    console.log('[LOGIN] Senha válida:', validPassword);
 
     if (!validPassword) {
       return res.status(401).json({
