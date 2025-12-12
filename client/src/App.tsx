@@ -63,6 +63,7 @@ const ImportacaoFinanceira = lazy(() => import('./pages/ImportacaoFinanceira'));
 // Páginas de administração
 const Users = lazy(() => import('./pages/Users'));
 const AdminMaster = lazy(() => import('./pages/AdminMaster'));
+const SystemStatus = lazy(() => import('./pages/SystemStatus'));
 
 // Integrações
 const MercadoLivre = lazy(() => import('./pages/MercadoLivre'));
@@ -187,6 +188,7 @@ function Router() {
           <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
           <Route path="/webhook-simulator" component={WebhookSimulator} />
           <Route path="/admin-master" component={AdminMaster} />
+          <Route path="/system-status" component={SystemStatus} />
           <Route path={"/docs"} component={Docs} />
           <Route path={"/403"} component={Forbidden} />
           <Route path={"/404"} component={NotFound} />

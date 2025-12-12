@@ -21,6 +21,7 @@ import tenantsRouter from "./routes/tenants";
 import integrationsRouter from "./routes/api/v1/integrations";
 import paymentsRouter from "./routes/payments";
 import apiInfoRouter from "./routes/api-info";
+import systemStatusRouter from "./routes/system-status";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
@@ -82,6 +83,7 @@ async function startServer() {
 
   // API Routes
   app.use("/api/info", apiInfoRouter); // Informações da API
+  app.use("/api/system", systemStatusRouter); // Status do sistema
   app.use("/api/auth", authRouter); // Autenticação (nova rota)
   app.use("/api/clientes", clientesRouter);
   app.use("/api/pedidos", pedidosRouter);
