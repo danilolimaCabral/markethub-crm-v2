@@ -24,6 +24,10 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
+        // Cache-busting: adiciona timestamp em todos os arquivos
+        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash]-${Date.now()}.[ext]`,
         manualChunks: {
           'lucide': ['lucide-react'],
         },
