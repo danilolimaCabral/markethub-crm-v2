@@ -287,8 +287,16 @@ export default function IntegracaoMercadoLivre() {
         <div className="max-w-4xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold">Integração Mercado Livre</h1>
-            <p className="text-muted-foreground">Conecte sua conta do Mercado Livre ao Markthub CRM</p>
+            <p className="text-muted-foreground">Gerenc ie suas vendas, produtos e pedidos do Mercado Livre</p>
           </div>
+
+          <Tabs defaultValue="config" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="config">Configuração</TabsTrigger>
+              <TabsTrigger value="monitor">Monitoramento API</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="config" className="space-y-4">
 
           <Card>
             <CardHeader>
@@ -361,6 +369,12 @@ export default function IntegracaoMercadoLivre() {
               </div>
             </CardContent>
           </Card>
+            </TabsContent>
+
+            <TabsContent value="monitor" className="space-y-4">
+              <MLAPIMonitor />
+            </TabsContent>
+          </Tabs>
         </div>
       
     );
