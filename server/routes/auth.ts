@@ -158,11 +158,11 @@ router.post('/login', authLimiter, validate(loginSchema), async (req: Request, r
       });
     }
 
-    // Atualizar último login
-    await query(
-      'UPDATE users SET last_login_at = NOW() WHERE id = $1',
-      [user.id]
-    );
+    // Atualizar último login (comentado temporariamente devido a trigger com erro)
+    // await query(
+    //   'UPDATE users SET last_login_at = NOW() WHERE id = $1',
+    //   [user.id]
+    // );
 
     // Gerar tokens
     const tokens = generateTokens({

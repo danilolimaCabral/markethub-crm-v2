@@ -1,0 +1,27 @@
+🎉 PROGRESSO! O login está quase funcionando!
+
+✅ Usuário encontrado: 1
+✅ Senha válida: true
+
+❌ MAS... há um TRIGGER no banco que está falhando!
+
+ERRO: column "data_pedido" does not exist
+
+O erro acontece no TRIGGER `trigger_atualizar_metricas()` que é executado automaticamente quando fazemos UPDATE na tabela `users`.
+
+TRIGGER PROBLEMÁTICO:
+```sql
+UPDATE users SET last_login_at = NOW() WHERE id = $1
+```
+
+Esse UPDATE dispara o trigger `trigger_atualizar_metricas()` que tenta atualizar métricas do tenant, mas a função `atualizar_metricas_tenant()` está tentando acessar a coluna `data_pedido` que não existe na tabela `orders`.
+
+SOLUÇÃO RÁPIDA:
+Desabilitar o trigger temporariamente ou corrigir a função para usar o nome correto da coluna.
+
+VERIFICAR NO BANCO:
+1. Qual é o nome correto da coluna de data na tabela orders?
+2. Pode ser: created_at, order_date, data_criacao, etc.
+
+ALTERNATIVA:
+Remover o UPDATE de last_login_at temporariamente para permitir login funcionar.
