@@ -1,0 +1,11 @@
+
+JWT_SECRET="8cFyy.c<^nk[<R[k6d0CG-r|?RrRhtL*nfUs(=uDt3ulwQZCF{;k{r}JCZwF=hL["
+JWT_REFRESH_SECRET="1;R?-8oF?eM6Ri[p=Vd7yYhAajP#|&Rc(v9iE#5fXIVM.G*rzqoGjibb-M]6w{2S"
+JWT_EXPIRES_IN="7d"
+JWT_REFRESH_EXPIRES_IN="30d"
+ENCRYPTION_KEY="A)2UGo90I5<W!cS3-jjH=7wPeFSe{N7t"
+ML_CLIENT_ID="7719573488458"
+ML_CLIENT_SECRET="mxaqy7Emv46WNUA9K9nc3s1LPaVPR6RD"
+ML_REDIRECT_URI="https://markethub-crm-v2-production.up.railway.app/api/mercadolivre/callback"
+CORS_ORIGIN="https://markethub-crm-v2-production.up.railway.app"
+EMAIL_FROM="noreply@markethub.com"

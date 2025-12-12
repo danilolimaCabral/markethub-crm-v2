@@ -1,0 +1,9 @@
+[
+  {"name": "JWT_REFRESH_EXPIRES_IN", "value": "30d"},
+  {"name": "ENCRYPTION_KEY", "value": "A)2UGo90I5<W!cS3-jjH=7wPeFSe{N7t"},
+  {"name": "ML_CLIENT_ID", "value": "7719573488458"},
+  {"name": "ML_CLIENT_SECRET", "value": "mxaqy7Emv46WNUA9K9nc3s1LPaVPR6RD"},
+  {"name": "ML_REDIRECT_URI", "value": "https://markethub-crm-v2-production.up.railway.app/api/mercadolivre/callback"},
+  {"name": "CORS_ORIGIN", "value": "https://markethub-crm-v2-production.up.railway.app"},
+  {"name": "EMAIL_FROM", "value": "noreply@markethub.com"}
+]

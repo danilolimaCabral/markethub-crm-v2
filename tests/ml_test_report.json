@@ -1,0 +1,130 @@
+{
+  "timestamp": "2025-12-12T11:09:42.112806",
+  "total_tests": 15,
+  "passed": 9,
+  "failed": 6,
+  "total_time": 2.616002082824707,
+  "avg_response_time": 0.07229337692260743,
+  "tests": [
+    {
+      "name": "Listar Categorias",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB/categories",
+      "status": "failed",
+      "response_time": 0.07253050804138184,
+      "status_code": 403,
+      "error": "At least one policy returned UNAUTHORIZED."
+    },
+    {
+      "name": "Categoria Eletrônicos",
+      "endpoint": "GET https://api.mercadolibre.com/categories/MLB1000",
+      "status": "success",
+      "response_time": 0.08268570899963379,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Listar Moedas",
+      "endpoint": "GET https://api.mercadolibre.com/currencies",
+      "status": "success",
+      "response_time": 0.07036328315734863,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Moeda BRL",
+      "endpoint": "GET https://api.mercadolibre.com/currencies/BRL",
+      "status": "success",
+      "response_time": 0.06670713424682617,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Listar Sites",
+      "endpoint": "GET https://api.mercadolibre.com/sites",
+      "status": "success",
+      "response_time": 0.06248879432678223,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Site Brasil",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB",
+      "status": "success",
+      "response_time": 0.06897878646850586,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Listar Países",
+      "endpoint": "GET https://api.mercadolibre.com/countries",
+      "status": "success",
+      "response_time": 0.07951545715332031,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "País Brasil",
+      "endpoint": "GET https://api.mercadolibre.com/countries/BR",
+      "status": "success",
+      "response_time": 0.07889890670776367,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Listar Estados (BR)",
+      "endpoint": "GET https://api.mercadolibre.com/countries/BR/states",
+      "status": "failed",
+      "response_time": 0.06912112236022949,
+      "status_code": 404,
+      "error": "not_found"
+    },
+    {
+      "name": "Estado São Paulo",
+      "endpoint": "GET https://api.mercadolibre.com/states/BR-SP",
+      "status": "success",
+      "response_time": 0.08932209014892578,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Listar Cidades (SP)",
+      "endpoint": "GET https://api.mercadolibre.com/states/BR-SP/cities",
+      "status": "failed",
+      "response_time": 0.06617951393127441,
+      "status_code": 404,
+      "error": "not_found"
+    },
+    {
+      "name": "Tipos de Listagem",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB/listing_types",
+      "status": "failed",
+      "response_time": 0.06737065315246582,
+      "status_code": 403,
+      "error": "At least one policy returned UNAUTHORIZED."
+    },
+    {
+      "name": "Exposições",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB/listing_exposures",
+      "status": "failed",
+      "response_time": 0.06642556190490723,
+      "status_code": 403,
+      "error": "At least one policy returned UNAUTHORIZED."
+    },
+    {
+      "name": "Métodos de Pagamento",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB/payment_methods",
+      "status": "success",
+      "response_time": 0.07708740234375,
+      "status_code": 200,
+      "error": null
+    },
+    {
+      "name": "Tipos de Identificação",
+      "endpoint": "GET https://api.mercadolibre.com/sites/MLB/identification_types",
+      "status": "failed",
+      "response_time": 0.0667257308959961,
+      "status_code": 404,
+      "error": "resource not found"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Chaves JWT Geradas para Markethub CRM V2
+# Gerado em: 2025-12-12T07:52:42.628183
+
+JWT_SECRET=8cFyy.c<^nk[<R[k6d0CG-r|?RrRhtL*nfUs(=uDt3ulwQZCF{;k{r}JCZwF=hL[
+JWT_REFRESH_SECRET=1;R?-8oF?eM6Ri[p=Vd7yYhAajP#|&Rc(v9iE#5fXIVM.G*rzqoGjibb-M]6w{2S
+ENCRYPTION_KEY=A)2UGo90I5<W!cS3-jjH=7wPeFSe{N7t
+
+# IMPORTANTE: Guarde estas chaves em local seguro!
+# Elas são necessárias para descriptografar dados e validar tokens.

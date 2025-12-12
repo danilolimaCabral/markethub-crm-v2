@@ -1,3 +1,4 @@
+// Build: 2025-12-12T12:35:00 - Force rebuild with cache bust
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

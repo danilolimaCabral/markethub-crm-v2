@@ -1,0 +1,39 @@
+Análise dos Logs do Railway - Markethub CRM V2
+===============================================
+
+Data: 12 de dezembro de 2025
+Período analisado: Última hora (14:48 - 15:17 UTC)
+
+ERROS IDENTIFICADOS:
+====================
+
+1. Tabelas do sistema não existem:
+   - system_metrics (código 42P01)
+   - system_logs (código 42P01)
+   - users (código 42P01) ← CRÍTICO!
+
+2. Erro ao consultar tabela "users":
+   Query: SELECT id, email, password_hash, full_name, username, role, tenant_id, is_active, two_factor_enabled FROM users WHERE email = $1
+   Erro: relation "users" does not exist
+   
+DIAGNÓSTICO:
+============
+
+O erro "relation 'users' does not exist" indica que as migrations NÃO foram executadas com sucesso no banco de dados do Railway.
+
+Embora tenhamos executado as migrations localmente, elas foram aplicadas no banco de dados local (via psql), mas o serviço no Railway está tentando acessar as tabelas e elas não existem.
+
+CAUSA RAIZ:
+===========
+
+As migrations foram executadas no banco de dados ERRADO. Executamos no banco local via psql, mas o serviço no Railway está configurado para usar o banco de dados do Railway (via DATABASE_URL).
+
+SOLUÇÃO:
+========
+
+Precisamos executar as migrations diretamente no banco de dados do Railway, não localmente.
+
+Opções:
+1. Criar um script que execute as migrations via DATABASE_URL do Railway
+2. Usar o Railway CLI para executar as migrations
+3. Fazer deploy de um script de migration que rode automaticamente no Railway
