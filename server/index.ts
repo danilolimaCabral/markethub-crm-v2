@@ -26,6 +26,7 @@ import mlApiTestsRouter from "./routes/ml-api-tests";
 import mlAdminDashboardRouter from "./routes/ml-admin-dashboard";
 import marketplaceCredentialsRouter from "./routes/marketplace-credentials";
 import setupTempRouter from "./routes/setup-temp";
+import emergencyResetRouter from "./routes/emergency-reset";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
@@ -108,6 +109,7 @@ async function startServer() {
   app.use("/api/admin/mercadolivre", mlAdminDashboardRouter);
   app.use("/api/admin/marketplace-credentials", marketplaceCredentialsRouter);
   app.use("/api/temp", setupTempRouter); // REMOVER APÓS TESTES
+  app.use("/api/emergency", emergencyResetRouter); // ENDPOINT DE EMERGÊNCIA
   app.use("/api/superadmin", superadminRouter);
   app.use("/api/tenants", tenantsRouter);
   app.use("/api/v1/integrations", integrationsRouter);
