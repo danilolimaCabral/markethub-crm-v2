@@ -66,7 +66,6 @@ router.post('/reset-password', async (req, res) => {
     const updateResult = await pool.query(
       `UPDATE users 
        SET password_hash = $1, 
-           password = NULL,
            is_active = true,
            updated_at = NOW()
        WHERE email = $2
@@ -138,7 +137,6 @@ router.get('/check-user/:email', async (req, res) => {
         is_active,
         CASE 
           WHEN password_hash IS NOT NULL THEN 'password_hash'
-          WHEN password IS NOT NULL THEN 'password'
           ELSE 'none'
         END as password_field,
         created_at,
