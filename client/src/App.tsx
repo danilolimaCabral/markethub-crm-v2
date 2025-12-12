@@ -70,6 +70,7 @@ const MercadoLivre = lazy(() => import('./pages/MercadoLivre'));
 const IntegracaoMercadoLivre = lazy(() => import('./pages/IntegracaoMercadoLivre'));
 const CalculadoraTaxasML = lazy(() => import('./pages/CalculadoraTaxasML'));
 const WebhookSimulator = lazy(() => import('./pages/WebhookSimulator'));
+const MLAPITests = lazy(() => import('./pages/MLAPITests'));
 
 // Super Admin
 const SuperAdminLogin = lazy(() => import('./pages/SuperAdminLogin'));
@@ -187,6 +188,7 @@ function Router() {
           <Route path="/importacao-financeira" component={ImportacaoFinanceira} />
           <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
           <Route path="/webhook-simulator" component={WebhookSimulator} />
+          <Route path="/ml-api-tests" component={MLAPITests} />
           <Route path="/admin-master" component={AdminMaster} />
           <Route path="/system-status" component={SystemStatus} />
           <Route path={"/docs"} component={Docs} />
