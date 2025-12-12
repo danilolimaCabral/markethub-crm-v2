@@ -1,7 +1,49 @@
 import { Router } from 'express';
 import { query } from '../db';
+import { authenticateToken } from '../middleware/auth';
+import { pool } from '../db';
 
 const router = Router();
+
+// GET /api/pedidos/recent - Buscar pedidos recentes
+router.get('/recent', authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user.userId;
+    const limit = parseInt(req.query.limit as string) || 5;
+    
+    // Buscar tenant_id do usuário
+    const userResult = await pool.query(
+      'SELECT tenant_id FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+    
+    const tenantId = userResult.rows[0].tenant_id;
+    
+    // Buscar pedidos recentes
+    const ordersResult = await pool.query(
+      `SELECT 
+        id,
+        customer_name,
+        total_amount,
+        status,
+        created_at
+      FROM orders 
+      WHERE tenant_id = $1
+      ORDER BY created_at DESC
+      LIMIT $2`,
+      [tenantId, limit]
+    );
+    
+    res.json(ordersResult.rows);
+  } catch (error) {
+    console.error('Erro ao buscar pedidos recentes:', error);
+    res.status(500).json({ message: 'Erro ao buscar pedidos recentes' });
+  }
+});
 
 // GET /api/pedidos - Listar todos os pedidos
 router.get('/', async (req, res) => {
