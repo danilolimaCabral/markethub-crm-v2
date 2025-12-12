@@ -1,0 +1,14 @@
+ERRO 404 na página de login
+
+URL acessada: https://www.markthubcrm.com.br/login
+Resultado: 404 Page Not Found
+
+Isso indica que:
+1. O deploy do Railway pode não ter completado
+2. O frontend não está servindo corretamente
+3. Pode haver problema com o roteamento
+
+Próximos passos:
+1. Tentar acessar a home: https://www.markthubcrm.com.br/
+2. Verificar logs do Railway
+3. Aguardar mais tempo para deploy completar

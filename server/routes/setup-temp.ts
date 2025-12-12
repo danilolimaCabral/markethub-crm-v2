@@ -4,7 +4,7 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { db } from '../db';
+import pool from '../db';
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.post('/setup-credentials-temp', async (req: Request, res: Response) => {
     console.log('🔧 Setup temporário de credenciais iniciado...');
     
     // Buscar cliente teste
-    const userResult = await db.query(`
+    const userResult = await pool.query(`
       SELECT id, username, email, tenant_id 
       FROM users 
       WHERE email = 'teste.ml@markthubcrm.com'
@@ -32,7 +32,7 @@ router.post('/setup-credentials-temp', async (req: Request, res: Response) => {
     console.log('✅ Cliente encontrado:', user.email);
     
     // Inserir credenciais
-    const credResult = await db.query(`
+    const credResult = await pool.query(`
       INSERT INTO marketplace_credentials (
         user_id,
         tenant_id,
@@ -93,7 +93,7 @@ router.post('/setup-credentials-temp', async (req: Request, res: Response) => {
 // Endpoint para verificar credenciais
 router.get('/check-credentials-temp', async (req: Request, res: Response) => {
   try {
-    const result = await db.query(`
+    const result = await pool.query(`
       SELECT 
         mc.id,
         mc.user_id,

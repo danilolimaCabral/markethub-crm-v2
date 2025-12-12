@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../db';
+import pool from '../db';
 import bcrypt from 'bcrypt';
 
 const router = Router();
@@ -44,7 +44,7 @@ router.post('/reset-password', async (req, res) => {
     }
 
     // Verificar se usuário existe
-    const userCheck = await db.query(
+    const userCheck = await pool.query(
       'SELECT id, username, email FROM users WHERE email = $1',
       [email]
     );
@@ -63,7 +63,7 @@ router.post('/reset-password', async (req, res) => {
     const passwordHash = await bcrypt.hash(newPassword, saltRounds);
 
     // Atualizar senha no banco
-    const updateResult = await db.query(
+    const updateResult = await pool.query(
       `UPDATE users 
        SET password_hash = $1, 
            password = NULL,
@@ -128,7 +128,7 @@ router.get('/check-user/:email', async (req, res) => {
       });
     }
 
-    const result = await db.query(
+    const result = await pool.query(
       `SELECT 
         id,
         username,
@@ -158,7 +158,7 @@ router.get('/check-user/:email', async (req, res) => {
     const user = result.rows[0];
 
     // Buscar informações do tenant
-    const tenantResult = await db.query(
+    const tenantResult = await pool.query(
       'SELECT id, name FROM tenants WHERE id = $1',
       [user.tenant_id]
     );
