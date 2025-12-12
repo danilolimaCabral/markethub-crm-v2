@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import MLAPIMonitor from '@/components/MLAPIMonitor';
+import MLAdminDashboard from '@/components/MLAdminDashboard';
 
 interface Integration {
   id: number;
@@ -70,6 +71,7 @@ interface Stats {
 
 export default function IntegracaoMercadoLivre() {
   const [connected, setConnected] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [integration, setIntegration] = useState<Integration | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [products, setProducts] = useState<MLProduct[]>([]);
@@ -78,6 +80,10 @@ export default function IntegracaoMercadoLivre() {
   const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
+    // Verificar se é superadmin
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setIsSuperAdmin(user.role === 'superadmin' || user.username === 'superadmin');
+    
     checkIntegrationStatus();
   }, []);
 
@@ -281,13 +287,26 @@ export default function IntegracaoMercadoLivre() {
     );
   }
 
+  // Se for superadmin, mostrar dashboard de todos os clientes
+  if (isSuperAdmin) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Integração Mercado Livre - Admin Master</h1>
+          <p className="text-muted-foreground">Visualização de todas as integrações dos clientes</p>
+        </div>
+        <MLAdminDashboard />
+      </div>
+    );
+  }
+
   if (!connected) {
     return (
       
         <div className="max-w-4xl mx-auto space-y-6">
           <div>
             <h1 className="text-3xl font-bold">Integração Mercado Livre</h1>
-            <p className="text-muted-foreground">Gerenc ie suas vendas, produtos e pedidos do Mercado Livre</p>
+            <p className="text-muted-foreground">Gerencie suas vendas, produtos e pedidos do Mercado Livre</p>
           </div>
 
           <Tabs defaultValue="config" className="space-y-4">

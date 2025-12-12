@@ -23,6 +23,7 @@ import paymentsRouter from "./routes/payments";
 import apiInfoRouter from "./routes/api-info";
 import systemStatusRouter from "./routes/system-status";
 import mlApiTestsRouter from "./routes/ml-api-tests";
+import mlAdminDashboardRouter from "./routes/ml-admin-dashboard";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
@@ -102,6 +103,7 @@ async function startServer() {
   app.use("/api/ai", aiRouter);
   app.use("/api/integrations/mercadolivre", mercadolivreRouter);
   app.use("/api/mercadolivre", mlApiTestsRouter);
+  app.use("/api/admin/mercadolivre", mlAdminDashboardRouter);
   app.use("/api/superadmin", superadminRouter);
   app.use("/api/tenants", tenantsRouter);
   app.use("/api/v1/integrations", integrationsRouter);
