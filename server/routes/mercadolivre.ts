@@ -11,6 +11,7 @@ import MercadoLivreSyncService from '../services/MercadoLivreSyncService';
 import MercadoLivreWebhookService from '../services/MercadoLivreWebhookService';
 import { query } from '../db';
 import { cache } from '../utils/cache';
+import { getClientCredentials } from '../utils/getClientCredentials';
 
 const router = Router();
 
@@ -42,6 +43,9 @@ router.get('/auth/url', async (req: AuthRequest, res: Response) => {
   try {
     const { tenant_id, id: user_id } = req.user!;
 
+    // Buscar credenciais específicas do cliente
+    const credentials = await getClientCredentials(user_id, 'mercado_livre');
+
     // Gerar state único para segurança (CSRF protection)
     const state = Buffer.from(
       JSON.stringify({
@@ -54,7 +58,11 @@ router.get('/auth/url', async (req: AuthRequest, res: Response) => {
     // Armazenar state no cache por 10 minutos
     await cache.set(`ml_oauth_state:${state}`, { tenant_id, user_id }, 600);
 
-    const authUrl = MercadoLivreOAuthService.getAuthorizationUrl(state);
+    const authUrl = MercadoLivreOAuthService.getAuthorizationUrl(
+      state,
+      credentials.client_id,
+      credentials.redirect_uri
+    );
 
     res.json({
       authUrl,
@@ -101,8 +109,16 @@ router.get('/auth/callback', async (req, res) => {
     // Limpar state
     await cache.delete(`ml_oauth_state:${state}`);
 
-    // Trocar código por tokens
-    const tokenData = await MercadoLivreOAuthService.exchangeCodeForToken(code as string);
+    // Buscar credenciais específicas do cliente
+    const credentials = await getClientCredentials(stateData.user_id, 'mercado_livre');
+
+    // Trocar código por tokens usando credenciais do cliente
+    const tokenData = await MercadoLivreOAuthService.exchangeCodeForToken(
+      code as string,
+      credentials.client_id,
+      credentials.client_secret,
+      credentials.redirect_uri
+    );
 
     // Obter informações do usuário ML
     const userInfo = await MercadoLivreOAuthService.getUserInfo(tokenData.access_token);

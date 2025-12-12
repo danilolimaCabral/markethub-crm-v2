@@ -43,11 +43,14 @@ class MercadoLivreOAuthService {
   /**
    * Gera URL de autorização do Mercado Livre
    */
-  static getAuthorizationUrl(state: string): string {
+  static getAuthorizationUrl(state: string, customClientId?: string, customRedirectUri?: string): string {
+    const clientId = customClientId || ML_CLIENT_ID;
+    const redirectUri = customRedirectUri || ML_REDIRECT_URI;
+    
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: ML_CLIENT_ID,
-      redirect_uri: ML_REDIRECT_URI,
+      client_id: clientId,
+      redirect_uri: redirectUri,
       state: state,
     });
 
@@ -57,14 +60,23 @@ class MercadoLivreOAuthService {
   /**
    * Troca o código de autorização por access token
    */
-  static async exchangeCodeForToken(code: string): Promise<MLTokenResponse> {
+  static async exchangeCodeForToken(
+    code: string,
+    customClientId?: string,
+    customClientSecret?: string,
+    customRedirectUri?: string
+  ): Promise<MLTokenResponse> {
     try {
+      const clientId = customClientId || ML_CLIENT_ID;
+      const clientSecret = customClientSecret || ML_CLIENT_SECRET;
+      const redirectUri = customRedirectUri || ML_REDIRECT_URI;
+      
       const params = new URLSearchParams({
         grant_type: 'authorization_code',
-        client_id: ML_CLIENT_ID,
-        client_secret: ML_CLIENT_SECRET,
+        client_id: clientId,
+        client_secret: clientSecret,
         code: code,
-        redirect_uri: ML_REDIRECT_URI,
+        redirect_uri: redirectUri,
       });
 
       const response = await axios.post<MLTokenResponse>(
