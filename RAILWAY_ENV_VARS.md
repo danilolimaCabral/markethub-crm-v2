@@ -45,8 +45,8 @@ SESSION_SECRET=chave_secreta_para_sessoes_min_32_caracteres
 
 ### **Mercado Livre (Integração)**
 ```
-ML_CLIENT_ID=seu_app_id_do_mercado_livre
-ML_CLIENT_SECRET=seu_client_secret_do_mercado_livre
+ML_CLIENT_ID=7719573488458
+ML_CLIENT_SECRET=mxaqy7Emv46WNUA9K9nc3s1LPaVPR6RD
 ML_REDIRECT_URI=https://seu-dominio.railway.app/api/mercadolivre/callback
 ```
 
