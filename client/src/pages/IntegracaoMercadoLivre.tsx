@@ -19,6 +19,7 @@ import {
   Eye,
 } from 'lucide-react';
 import axios from 'axios';
+import MLAPIMonitor from '@/components/MLAPIMonitor';
 
 interface Integration {
   id: number;
@@ -439,6 +440,7 @@ export default function IntegracaoMercadoLivre() {
           <TabsList>
             <TabsTrigger value="products">Produtos</TabsTrigger>
             <TabsTrigger value="orders">Pedidos</TabsTrigger>
+            <TabsTrigger value="monitor">Monitoramento API</TabsTrigger>
           </TabsList>
 
           {/* Products Tab */}
@@ -543,6 +545,11 @@ export default function IntegracaoMercadoLivre() {
                 </Card>
               )}
             </div>
+          </TabsContent>
+
+          {/* Monitor Tab */}
+          <TabsContent value="monitor" className="space-y-4">
+            <MLAPIMonitor />
           </TabsContent>
         </Tabs>
       </div>
