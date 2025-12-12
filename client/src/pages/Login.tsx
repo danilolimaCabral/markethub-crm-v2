@@ -36,25 +36,26 @@ export default function Login() {
     
     try {
       // Fazer chamada real para a API
-      const response = await fetch('/api/superadmin/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        // Salvar token e dados do usuário
-        localStorage.setItem('markethub_token', data.token);
+      if (response.ok && data.accessToken) {
+        // Salvar tokens e dados do usuário
+        localStorage.setItem('markethub_token', data.accessToken);
+        localStorage.setItem('markethub_refresh_token', data.refreshToken);
         localStorage.setItem('markethub_user', JSON.stringify(data.user));
         
-        toast.success('Login realizado com sucesso!');
-        setLocation('/superadmin');
+        toast.success(data.message || 'Login realizado com sucesso!');
+        setLocation('/');
       } else {
-        toast.error(data.error || 'Usuário ou senha incorretos');
+        toast.error(data.message || 'Usuário ou senha incorretos');
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
