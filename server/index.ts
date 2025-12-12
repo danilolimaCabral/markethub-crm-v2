@@ -76,6 +76,16 @@ async function startServer() {
   // Middleware para sanitizar dados
   app.use(sanitize);
   
+  // Middleware para desabilitar cache de arquivos estáticos
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.js') || req.path.endsWith('.css') || req.path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+    next();
+  });
+  
   // Rate limiting global
   app.use('/api/', apiLimiter);
 
