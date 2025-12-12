@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUp, ArrowDown, ShoppingCart, Package, DollarSign, TrendingUp, Clock, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import CurrencyWidget from '@/components/CurrencyWidget';
 import { REAL_METRICS, REAL_CATEGORIES, REAL_MARKETPLACES, REAL_DAILY_SALES, REAL_RECENT_ORDERS } from '@/data/real-data';
@@ -88,8 +88,60 @@ export default function DashboardCRM() {
     conferente: ['João Silva', 'Maria Santos', 'Pedro Costa'][Math.floor(Math.random() * 3)]
   }));
 
+  // Buscar dados do usuário logado
+  const userStr = localStorage.getItem('markethub_user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const [tenantInfo, setTenantInfo] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchTenantInfo = async () => {
+      try {
+        const token = localStorage.getItem('markethub_token');
+        const response = await fetch('/api/tenants/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTenantInfo(data);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do tenant:', error);
+      }
+    };
+    fetchTenantInfo();
+  }, []);
+
   return (
     <div className="p-6 space-y-6">
+      {/* Tenant Info Header */}
+      {tenantInfo && (
+        <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">{tenantInfo.nome_empresa}</h2>
+                <div className="flex gap-4 mt-2 text-sm opacity-90">
+                  <span>CNPJ: {tenantInfo.cnpj}</span>
+                  <span>•</span>
+                  <span>{tenantInfo.email_contato}</span>
+                  {tenantInfo.telefone && (
+                    <>
+                      <span>•</span>
+                      <span>{tenantInfo.telefone}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                Plano {tenantInfo.plano}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>

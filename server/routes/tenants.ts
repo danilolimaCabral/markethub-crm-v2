@@ -2,6 +2,7 @@ import express from 'express';
 import { pool } from '../db';
 import bcrypt from 'bcryptjs';
 import format from 'pg-format';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -46,6 +47,56 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('Erro ao listar tenants:', error);
     res.status(500).json({ error: 'Erro ao listar tenants' });
+  }
+});
+
+// GET /api/tenants/me - Buscar dados do tenant do usuário logado
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const userId = (req as any).user.userId;
+    
+    // Buscar tenant_id do usuário
+    const userResult = await pool.query(
+      'SELECT tenant_id FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+    
+    const tenantId = userResult.rows[0].tenant_id;
+    
+    // Buscar dados do tenant
+    const tenantResult = await pool.query(
+      `SELECT 
+        id,
+        nome_empresa,
+        slug,
+        cnpj,
+        email_contato,
+        telefone,
+        endereco,
+        cidade,
+        estado,
+        cep,
+        plano,
+        status,
+        logo_url,
+        cor_primaria
+      FROM tenants 
+      WHERE id = $1`,
+      [tenantId]
+    );
+    
+    if (tenantResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Tenant não encontrado' });
+    }
+    
+    res.json(tenantResult.rows[0]);
+  } catch (error) {
+    console.error('Erro ao buscar dados do tenant:', error);
+    res.status(500).json({ message: 'Erro ao buscar dados do tenant' });
   }
 });
 

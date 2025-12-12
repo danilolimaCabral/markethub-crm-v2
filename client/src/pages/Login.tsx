@@ -47,6 +47,15 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok && data.accessToken) {
+        // Limpar localStorage anterior para evitar dados de outros tenants
+        const keysToKeep = ['theme', 'language'];
+        const currentKeys = Object.keys(localStorage);
+        currentKeys.forEach(key => {
+          if (!keysToKeep.includes(key)) {
+            localStorage.removeItem(key);
+          }
+        });
+        
         // Salvar tokens e dados do usuário
         localStorage.setItem('markethub_token', data.accessToken);
         localStorage.setItem('markethub_refresh_token', data.refreshToken);
