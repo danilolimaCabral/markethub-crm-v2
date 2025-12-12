@@ -104,8 +104,7 @@ router.post('/login', authLimiter, validate(loginSchema), async (req: Request, r
 
     // Buscar usuário por email OU username
     const result = await query(
-      `SELECT id, email, 
-              COALESCE(password_hash, password) as password_hash, 
+      `SELECT id, email, password_hash, 
               full_name, username, role, tenant_id, is_active, two_factor_enabled
        FROM users 
        WHERE email = $1 OR username = $1`,

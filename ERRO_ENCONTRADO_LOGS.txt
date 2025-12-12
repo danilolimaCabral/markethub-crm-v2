@@ -1,0 +1,41 @@
+🔴 ERRO ENCONTRADO NOS LOGS DO RAILWAY
+
+Data: 12/12/2025 22:01:26 UTC
+
+ERRO: column "password" does not exist
+
+Query que falhou:
+```sql
+SELECT id, email, 
+       COALESCE(password_hash, password) as password_hash, 
+       full_name, username, role, tenant_id, is_active, two_factor_enabled
+FROM users 
+WHERE email = $1 OR username = $1
+```
+
+CAUSA DO PROBLEMA:
+O COALESCE está tentando acessar a coluna "password" que NÃO EXISTE no banco de dados!
+
+O banco só tem a coluna "password_hash", mas o COALESCE está fazendo:
+COALESCE(password_hash, password)  ❌
+
+Isso causa erro porque o PostgreSQL tenta verificar se a coluna "password" existe ANTES de executar o COALESCE.
+
+SOLUÇÃO:
+Remover o COALESCE completamente e usar apenas password_hash:
+
+```sql
+SELECT id, email, 
+       password_hash, 
+       full_name, username, role, tenant_id, is_active, two_factor_enabled
+FROM users 
+WHERE email = $1 OR username = $1
+```
+
+ARQUIVO A CORRIGIR:
+/home/ubuntu/markethub-crm-v2/server/routes/auth.ts
+Linha 107
+
+CORREÇÃO NECESSÁRIA:
+- ANTES: COALESCE(password_hash, password) as password_hash
+- DEPOIS: password_hash
