@@ -123,7 +123,7 @@ export const dateFilterSchema = z.object({
  * Schema para login
  */
 export const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.string().min(1, 'Usuário ou email é obrigatório'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres')
 });
 
