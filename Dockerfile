@@ -2,7 +2,7 @@
 # Otimizado para produção no Railway
 
 # Stage 1: Build
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Instalar pnpm
 RUN npm install -g pnpm@10.4.1
@@ -24,7 +24,7 @@ COPY . .
 RUN pnpm build
 
 # Stage 2: Production
-FROM node:18-alpine
+FROM node:22-alpine
 
 # Instalar pnpm
 RUN npm install -g pnpm@10.4.1
