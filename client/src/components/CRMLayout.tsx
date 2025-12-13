@@ -76,6 +76,23 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { hasPermission, isAdmin } = usePermissions();
+  const [userInfo, setUserInfo] = useState<any>(null);
+
+  // Buscar dados do usuário
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userStr = localStorage.getItem('markethub_user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          setUserInfo(user);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
 
   // Atalho Ctrl+K para abrir pesquisa
   useEffect(() => {
@@ -252,11 +269,17 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
           
           <div className="flex items-center gap-3 px-3 py-2.5 mb-3">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">U</span>
+              <span className="text-white font-bold text-sm">
+                {userInfo?.full_name?.charAt(0).toUpperCase() || 'U'}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">Usuário</p>
-              <p className="text-xs text-muted-foreground truncate">contato@markthubcrm.com.br</p>
+              <p className="text-sm font-medium text-foreground truncate">
+                {userInfo?.full_name || 'Usuário'}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {userInfo?.email || 'carregando...'}
+              </p>
             </div>
           </div>
 
