@@ -1,4 +1,3 @@
-import CRMLayout from "@/components/CRMLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -255,7 +254,6 @@ export default function Produtos() {
   const valorTotalEstoque = produtos.reduce((acc, p) => acc + (p.sale_price * p.stock_quantity), 0);
 
   return (
-    <CRMLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -761,6 +759,5 @@ export default function Produtos() {
           </DialogContent>
         </Dialog>
       </div>
-    </CRMLayout>
   );
 }
