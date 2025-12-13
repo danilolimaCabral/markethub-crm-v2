@@ -656,6 +656,7 @@ export default function MonitoramentoAPIs() {
           )}
         </DialogContent>
       </Dialog>
+    </div>
   );
 }
 
