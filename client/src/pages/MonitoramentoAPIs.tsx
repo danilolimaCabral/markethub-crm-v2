@@ -468,7 +468,7 @@ export default function MonitoramentoAPIs() {
                     {apis.map((api, index) => (
                       <div 
                         key={index}
-                        className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors"
+                        className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors gap-4"
                       >
                         <div className="flex items-center gap-4 flex-1">
                           <div className={getStatusColor(api.status)}>
@@ -486,30 +486,30 @@ export default function MonitoramentoAPIs() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-6 text-sm">
+                        <div className="flex items-center gap-4 lg:gap-6 text-sm flex-wrap lg:flex-nowrap">
                           {api.responseTime !== undefined && (
-                            <div className="text-center">
-                              <p className="text-muted-foreground text-xs">Tempo de Resposta</p>
+                            <div className="text-center min-w-[100px]">
+                              <p className="text-muted-foreground text-xs whitespace-nowrap">Tempo de Resposta</p>
                               <p className="font-semibold">{api.responseTime}ms</p>
                             </div>
                           )}
                           {api.uptime !== undefined && (
-                            <div className="text-center">
+                            <div className="text-center min-w-[80px]">
                               <p className="text-muted-foreground text-xs">Uptime</p>
-                              <p className="font-semibold">{api.uptime}%</p>
+                              <p className="font-semibold">{api.uptime.toFixed(1)}%</p>
                             </div>
                           )}
                           {api.requestsToday !== undefined && (
-                            <div className="text-center">
-                              <p className="text-muted-foreground text-xs">Requisições Hoje</p>
+                            <div className="text-center min-w-[100px]">
+                              <p className="text-muted-foreground text-xs whitespace-nowrap">Requisições Hoje</p>
                               <p className="font-semibold">{api.requestsToday.toLocaleString()}</p>
                             </div>
                           )}
                           {api.errorRate !== undefined && (
-                            <div className="text-center">
-                              <p className="text-muted-foreground text-xs">Taxa de Erro</p>
+                            <div className="text-center min-w-[90px]">
+                              <p className="text-muted-foreground text-xs whitespace-nowrap">Taxa de Erro</p>
                               <p className={`font-semibold ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
-                                {api.errorRate}%
+                                {api.errorRate.toFixed(1)}%
                               </p>
                             </div>
                           )}
