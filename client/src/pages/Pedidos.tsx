@@ -1,52 +1,26 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, Download, Eye, Package, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
-import { REAL_METRICS } from "@/data/real-data";
 import SyncIndicator from "@/components/SyncIndicator";
 
-// Gerar pedidos mockados baseados nos dados reais
-const generateOrders = () => {
-  const statuses = ['pendente', 'conferido', 'enviado', 'entregue', 'cancelado'];
-  const produtos = [
-    'Antena Digital 4K HDTV',
-    'Conversor HDMI para VGA',
-    'Acabamento Rack 19" 1U',
-    'Adaptador USB WiFi AC1200',
-    'Gel Blaster Pistola Tática',
-    'Cabo HDMI 2.0 3m',
-    'Drone Mini Brinquedo',
-    'Tablet 10" Android'
-  ];
-  
-  const clientes = [
-    'João Silva', 'Maria Santos', 'Pedro Oliveira', 'Ana Costa', 'Carlos Mendes',
-    'Juliana Lima', 'Roberto Alves', 'Fernanda Souza', 'Lucas Pereira', 'Camila Rocha'
-  ];
+interface Order {
+  id: string;
+  cliente: string;
+  produto: string;
+  valor: number;
+  status: string;
+  marketplace: string;
+  data: string;
+}
 
-  const orders = [];
-  for (let i = 1; i <= REAL_METRICS.totalPedidos; i++) {
-    const status = i <= REAL_METRICS.pedidosConferidos ? 'conferido' : 
-                   i <= REAL_METRICS.pedidosConferidos + 50 ? 'enviado' :
-                   i <= REAL_METRICS.pedidosConferidos + 80 ? 'entregue' :
-                   i <= REAL_METRICS.pedidosConferidos + 90 ? 'cancelado' : 'pendente';
-    
-    orders.push({
-      id: `ML-2025${String(i).padStart(6, '0')}`,
-      cliente: clientes[Math.floor(Math.random() * clientes.length)],
-      produto: produtos[Math.floor(Math.random() * produtos.length)],
-      valor: Math.floor(Math.random() * 500) + 50,
-      status,
-      marketplace: 'Mercado Livre',
-      data: new Date(2025, 9, Math.floor(Math.random() * 30) + 1).toLocaleDateString('pt-BR')
-    });
-  }
-  
-  return orders.reverse(); // Mais recentes primeiro
-};
-
-const allOrders = generateOrders();
+interface OrderStats {
+  total: number;
+  pendentes: number;
+  conferidos: number;
+  ticketMedio: number;
+}
 
 const getStatusBadge = (status: string) => {
   const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", icon: React.ReactNode, label: string }> = {
@@ -68,79 +42,134 @@ const getStatusBadge = (status: string) => {
 };
 
 export default function Pedidos() {
-  const recentOrders = allOrders.slice(0, 50); // Mostrar primeiros 50
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [stats, setStats] = useState<OrderStats>({
+    total: 0,
+    pendentes: 0,
+    conferidos: 0,
+    ticketMedio: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const stats = [
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('accessToken');
+      
+      // Buscar pedidos
+      const ordersResponse = await fetch('/api/pedidos/recent', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (ordersResponse.ok) {
+        const ordersData = await ordersResponse.json();
+        setOrders(ordersData);
+      }
+
+      // Buscar estatísticas
+      const statsResponse = await fetch('/api/dashboard/metrics', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats({
+          total: statsData.totalPedidos || 0,
+          pendentes: statsData.pedidosPendentes || 0,
+          conferidos: statsData.pedidosConferidos || 0,
+          ticketMedio: statsData.ticketMedio || 0
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao buscar pedidos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredOrders = orders.filter(order =>
+    order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.produto.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const statsCards = [
     {
       title: "Total de Pedidos",
-      value: REAL_METRICS.totalPedidos.toString(),
+      value: stats.total.toString(),
       icon: Package,
       color: "text-blue-600",
       bgColor: "bg-blue-100"
     },
     {
       title: "Pedidos Pendentes",
-      value: REAL_METRICS.pedidosPendentes.toString(),
+      value: stats.pendentes.toString(),
       icon: Clock,
       color: "text-orange-600",
       bgColor: "bg-orange-100"
     },
     {
       title: "Pedidos Conferidos",
-      value: REAL_METRICS.pedidosConferidos.toString(),
+      value: stats.conferidos.toString(),
       icon: CheckCircle,
       color: "text-green-600",
       bgColor: "bg-green-100"
     },
     {
       title: "Ticket Médio",
-      value: `R$ ${REAL_METRICS.ticketMedio}`,
+      value: `R$ ${stats.ticketMedio}`,
       icon: Package,
       color: "text-purple-600",
       bgColor: "bg-purple-100"
-    },
+    }
   ];
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Pedidos</h1>
-        <p className="text-muted-foreground">Gerencie todos os pedidos do seu e-commerce</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Pedidos</h1>
+          <p className="text-gray-600 mt-1">Gerencie todos os pedidos do seu e-commerce</p>
+        </div>
+        <SyncIndicator />
       </div>
 
-      {/* Sync Indicator */}
-      <SyncIndicator />
-
-      {/* Stats Grid */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold text-foreground mt-2">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                    <Icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {statsCards.map((stat, index) => (
+          <div key={index} className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">{stat.title}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              </div>
+              <div className={`${stat.bgColor} p-3 rounded-lg`}>
+                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Filters and Actions */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
+      {/* Orders List */}
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-6 border-b">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div>
-              <CardTitle>Lista de Pedidos</CardTitle>
-              <CardDescription>Últimos 50 pedidos do Mercado Livre</CardDescription>
+              <h2 className="text-xl font-semibold text-gray-900">Lista de Pedidos</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {orders.length > 0 ? `Últimos ${orders.length} pedidos` : 'Nenhum pedido encontrado'}
+              </p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
@@ -153,43 +182,87 @@ export default function Pedidos() {
               </Button>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          {/* Search */}
-          <div className="mb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Buscar por ID, cliente ou produto..."
-                className="pl-10"
-              />
-            </div>
+          
+          <div className="mt-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar por ID, cliente ou produto..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
+        </div>
 
-          {/* Orders Table */}
-          <div className="border rounded-lg overflow-hidden">
+        {loading ? (
+          <div className="p-12 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="text-gray-600 mt-4">Carregando pedidos...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="p-12 text-center">
+            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhum pedido encontrado</h3>
+            <p className="text-gray-600">
+              {searchTerm 
+                ? 'Tente ajustar os filtros de busca'
+                : 'Conecte sua conta do Mercado Livre para sincronizar pedidos'
+              }
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-muted/50">
+              <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="text-left p-3 text-sm font-medium">ID Pedido</th>
-                  <th className="text-left p-3 text-sm font-medium">Cliente</th>
-                  <th className="text-left p-3 text-sm font-medium">Produto</th>
-                  <th className="text-left p-3 text-sm font-medium">Valor</th>
-                  <th className="text-left p-3 text-sm font-medium">Data</th>
-                  <th className="text-left p-3 text-sm font-medium">Status</th>
-                  <th className="text-left p-3 text-sm font-medium">Ações</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ID Pedido
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Cliente
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Produto
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Valor
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Data
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                {recentOrders.map((order, index) => (
-                  <tr key={order.id} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/20'}>
-                    <td className="p-3 text-sm font-mono">{order.id}</td>
-                    <td className="p-3 text-sm">{order.cliente}</td>
-                    <td className="p-3 text-sm">{order.produto}</td>
-                    <td className="p-3 text-sm font-medium">R$ {order.valor.toFixed(2)}</td>
-                    <td className="p-3 text-sm text-muted-foreground">{order.data}</td>
-                    <td className="p-3">{getStatusBadge(order.status)}</td>
-                    <td className="p-3">
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{order.id}</div>
+                      <div className="text-xs text-gray-500">{order.marketplace}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{order.cliente}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-900">{order.produto}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        R$ {order.valor.toFixed(2)}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">{order.data}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getStatusBadge(order.status)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Button variant="ghost" size="sm">
                         <Eye className="w-4 h-4" />
                       </Button>
@@ -199,13 +272,8 @@ export default function Pedidos() {
               </tbody>
             </table>
           </div>
-
-          {/* Pagination Info */}
-          <div className="mt-4 text-sm text-muted-foreground text-center">
-            Mostrando 50 de {REAL_METRICS.totalPedidos} pedidos
-          </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
     </div>
   );
 }

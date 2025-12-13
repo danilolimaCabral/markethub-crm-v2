@@ -24,7 +24,8 @@ import {
   Headphones,
   Menu,
   X,
-  Target
+  Target,
+  Activity
 } from 'lucide-react';
 import { logout } from '@/lib/auth';
 
@@ -69,6 +70,7 @@ const ROUTE_TO_MODULE: Record<string, string> = {
   '/calculadora-taxas-ml': 'calculadora-taxas-ml',
   '/importacao-financeira': 'importacao-financeira',
   '/admin-master': 'admin-master',
+  '/status-integracoes': 'configuracoes',
 };
 
 export default function CRMLayout({ children }: { children: React.ReactNode }) {
@@ -166,6 +168,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       items: [
         { path: "/admin-master", icon: <Users size={20} />, label: "Painel Master", color: "text-pink-500" },
         { path: "/usuarios", icon: <Users size={20} />, label: "Usuários", color: "text-purple-500" },
+        { path: "/status-integracoes", icon: <Activity size={20} />, label: "Status das Integrações", color: "text-blue-500" },
         { path: "/configuracoes", icon: <Settings size={20} />, label: "Configurações", color: "text-slate-500" },
       ]
     }
