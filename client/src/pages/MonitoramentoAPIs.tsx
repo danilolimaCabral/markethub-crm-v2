@@ -483,9 +483,9 @@ export default function MonitoramentoAPIs() {
                           setSelectedAPI(api);
                           setDetailsOpen(true);
                         }}
-                        className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors cursor-pointer space-y-3"
+                        className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors cursor-pointer"
                       >
-                        {/* Header do Card */}
+                        {/* Card Simplificado - Apenas Nome, Status e Descrição */}
                         <div className="flex items-center gap-4">
                           <div className={getStatusColor(api.status)}>
                             {api.icon}
@@ -495,46 +495,8 @@ export default function MonitoramentoAPIs() {
                               <h4 className="font-semibold">{api.name}</h4>
                               {getStatusBadge(api.status)}
                             </div>
-                            <p className="text-sm text-muted-foreground">{api.description}</p>
-                            {api.endpoint && (
-                              <p className="text-xs text-muted-foreground font-mono mt-1">{api.endpoint}</p>
-                            )}
+                            <p className="text-sm text-muted-foreground line-clamp-1">{api.description}</p>
                           </div>
-                        </div>
-
-                        {/* Métricas em Grid - Oculto em mobile, visível em tablet+ */}
-                        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-3 border-t border-border">
-                          {api.responseTime !== undefined && (
-                            <div className="p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Tempo</p>
-                              <p className="font-semibold text-xs">{api.responseTime}ms</p>
-                            </div>
-                          )}
-                          {api.uptime !== undefined && (
-                            <div className="p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Uptime</p>
-                              <p className="font-semibold text-xs">{api.uptime.toFixed(1)}%</p>
-                            </div>
-                          )}
-                          {api.requestsToday !== undefined && (
-                            <div className="p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Req.</p>
-                              <p className="font-semibold text-xs">{api.requestsToday.toLocaleString()}</p>
-                            </div>
-                          )}
-                          {api.errorRate !== undefined && (
-                            <div className="p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Erro</p>
-                              <p className={`font-semibold text-xs ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
-                                {api.errorRate.toFixed(1)}%
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Hint para mobile */}
-                        <div className="sm:hidden pt-2 border-t border-border">
-                          <p className="text-xs text-muted-foreground text-center">Clique para ver detalhes</p>
                         </div>
                       </div>
                     ))}

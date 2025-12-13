@@ -125,28 +125,28 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
       endpoint: '/api/integrations/mercadolivre'
     });
 
-    // Shopee (não implementado)
+    // Shopee (em desenvolvimento)
     apis.push({
       name: 'Shopee API',
       category: 'marketplace',
-      status: 'offline',
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 100,
-      requestsToday: 0,
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
       description: 'Integração com Shopee (Em desenvolvimento)',
       endpoint: '/api/integrations/shopee'
     });
 
-    // Amazon (não implementado)
+    // Amazon (em desenvolvimento)
     apis.push({
       name: 'Amazon API',
       category: 'marketplace',
-      status: 'offline',
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 100,
-      requestsToday: 0,
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
       description: 'Integração com Amazon (Em desenvolvimento)',
       endpoint: '/api/integrations/amazon'
     });
@@ -156,11 +156,11 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
       name: 'Magalu API',
       category: 'marketplace',
       status: 'unknown',
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 0,
-      requestsToday: 0,
-      description: 'Integração com Magazine Luiza (Planejado)',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
+      description: 'Integração com Magazine Luiza (Em desenvolvimento)',
       endpoint: '/api/integrations/magalu'
     });
 
@@ -195,12 +195,12 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
     apis.push({
       name: 'PagSeguro API',
       category: 'payment',
-      status: 'offline',
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 0,
-      requestsToday: 0,
-      description: 'Gateway de pagamento PagSeguro (Planejado)',
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
+      description: 'Gateway de pagamento PagSeguro (Em desenvolvimento)',
       endpoint: '/api/payments/pagseguro'
     });
 
@@ -211,11 +211,11 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
     apis.push({
       name: 'Correios API',
       category: 'logistics',
-      status: 'online',
-      responseTime: 280,
-      uptime: 98.5,
-      errorRate: 1.5,
-      requestsToday: 0,
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
       description: 'Rastreamento e cálculo de frete (Em desenvolvimento)',
       endpoint: '/api/logistics/correios'
     });
@@ -223,11 +223,11 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
     apis.push({
       name: 'Melhor Envio API',
       category: 'logistics',
-      status: 'online',
-      responseTime: 150,
-      uptime: 99.2,
-      errorRate: 0.8,
-      requestsToday: 0,
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
       description: 'Cotação e envio de encomendas (Em desenvolvimento)',
       endpoint: '/api/logistics/melhorenvio'
     });
@@ -235,12 +235,12 @@ router.get('/apis', async (req: AuthRequest, res: Response) => {
     apis.push({
       name: 'Jadlog API',
       category: 'logistics',
-      status: 'offline',
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 0,
-      requestsToday: 0,
-      description: 'Transportadora Jadlog (Planejado)',
+      status: 'unknown',
+      responseTime: undefined,
+      uptime: undefined,
+      errorRate: undefined,
+      requestsToday: undefined,
+      description: 'Transportadora Jadlog (Em desenvolvimento)',
       endpoint: '/api/logistics/jadlog'
     });
 
