@@ -13,7 +13,7 @@
     <link rel="icon" type="image/png" href="%VITE_APP_LOGO%" />
     <link rel="apple-touch-icon" href="%VITE_APP_LOGO%" />
     <title>Markthub CRM - Venda Mais no Mercado Livre com Inteligência</title>
-    <!-- Build: 2025-12-13T10:55:00 - FORCE REBUILD MENU FIX v9 -->
+    <!-- Build: 2025-12-13T11:35:00 - NO SERVICE WORKER v11 -->
     <!-- Add Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,15 +24,14 @@
   <body>
     <div id="root"></div>
     <script>
-      // Registrar service worker para limpar cache
+      // Remover service worker antigo se existir
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js?v=' + Date.now())
-          .then(reg => {
-            console.log('[App] Service Worker registered:', reg);
-            // Força atualização imediata
-            reg.update();
-          })
-          .catch(err => console.log('[App] SW registration failed:', err));
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(registration => {
+            registration.unregister();
+            console.log('[App] Service Worker unregistered');
+          });
+        });
       }
     </script>
     <script type="module" src="/src/main.tsx"></script>
