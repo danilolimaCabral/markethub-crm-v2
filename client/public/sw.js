@@ -1,5 +1,5 @@
 // Service Worker para forçar limpeza de cache
-const CACHE_VERSION = 'v8-' + Date.now();
+const CACHE_VERSION = 'v10-force-clear-' + Date.now();
 
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing version:', CACHE_VERSION);
