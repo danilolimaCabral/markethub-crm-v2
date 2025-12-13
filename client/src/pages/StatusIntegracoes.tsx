@@ -5,38 +5,30 @@ import { Button } from "@/components/ui/button";
 import { 
   CheckCircle, 
   XCircle, 
-  AlertCircle, 
   RefreshCw, 
   ExternalLink,
   Package,
   DollarSign,
   ShoppingCart,
-  Database
+  Database,
+  Truck,
+  CreditCard
 } from "lucide-react";
 
 interface Integration {
   id: string;
   name: string;
-  type: 'marketplace' | 'payment' | 'api';
-  status: 'connected' | 'disconnected' | 'error';
+  type: 'marketplace' | 'payment' | 'logistics' | 'system';
+  status: 'connected' | 'disconnected';
+  description: string;
   lastSync?: string;
   itemsSynced?: number;
-  error?: string;
   connectUrl?: string;
-}
-
-interface IntegrationStatus {
-  marketplaces: Integration[];
-  payments: Integration[];
-  apis: Integration[];
+  icon: string;
 }
 
 export default function StatusIntegracoes() {
-  const [integrations, setIntegrations] = useState<IntegrationStatus>({
-    marketplaces: [],
-    payments: [],
-    apis: []
-  });
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,18 +38,88 @@ export default function StatusIntegracoes() {
   const fetchIntegrationStatus = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('accessToken');
       
-      const response = await fetch('/api/integrations/status', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      // Dados mockados das integrações disponíveis
+      const availableIntegrations: Integration[] = [
+        // Marketplaces
+        {
+          id: 'mercadolivre',
+          name: 'Mercado Livre',
+          type: 'marketplace',
+          status: 'disconnected',
+          description: 'Sincronize produtos, pedidos e estoque',
+          connectUrl: '/integracoes/mercadolivre',
+          icon: 'mercadolivre'
+        },
+        {
+          id: 'shopee',
+          name: 'Shopee',
+          type: 'marketplace',
+          status: 'disconnected',
+          description: 'Integração com Shopee (Em desenvolvimento)',
+          icon: 'shopee'
+        },
+        {
+          id: 'amazon',
+          name: 'Amazon',
+          type: 'marketplace',
+          status: 'disconnected',
+          description: 'Integração com Amazon SP-API (Em desenvolvimento)',
+          icon: 'amazon'
+        },
+        {
+          id: 'magalu',
+          name: 'Magazine Luiza',
+          type: 'marketplace',
+          status: 'disconnected',
+          description: 'Integração com Magalu Marketplace (Em desenvolvimento)',
+          icon: 'magalu'
+        },
+        // Pagamento
+        {
+          id: 'pagbank',
+          name: 'PagBank',
+          type: 'payment',
+          status: 'disconnected',
+          description: 'Gateway de pagamento PagSeguro (Em desenvolvimento)',
+          icon: 'pagbank'
+        },
+        {
+          id: 'stripe',
+          name: 'Stripe',
+          type: 'payment',
+          status: 'disconnected',
+          description: 'Gateway de pagamento internacional (Planejado)',
+          icon: 'stripe'
+        },
+        // Logística
+        {
+          id: 'correios',
+          name: 'Correios',
+          type: 'logistics',
+          status: 'disconnected',
+          description: 'Cálculo de frete e rastreamento (Em desenvolvimento)',
+          icon: 'correios'
+        },
+        {
+          id: 'melhorenvio',
+          name: 'Melhor Envio',
+          type: 'logistics',
+          status: 'disconnected',
+          description: 'Cotação e gestão de envios (Em desenvolvimento)',
+          icon: 'melhorenvio'
+        },
+        {
+          id: 'jadlog',
+          name: 'Jadlog',
+          type: 'logistics',
+          status: 'disconnected',
+          description: 'Transportadora Jadlog (Em desenvolvimento)',
+          icon: 'jadlog'
         }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setIntegrations(data);
-      }
+      ];
+
+      setIntegrations(availableIntegrations);
     } catch (error) {
       console.error('Erro ao buscar status das integrações:', error);
     } finally {
@@ -65,58 +127,74 @@ export default function StatusIntegracoes() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'connected':
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5 text-yellow-600" />;
-      case 'disconnected':
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'marketplace':
+        return <ShoppingCart className="w-6 h-6" />;
+      case 'payment':
+        return <CreditCard className="w-6 h-6" />;
+      case 'logistics':
+        return <Truck className="w-6 h-6" />;
+      case 'system':
+        return <Database className="w-6 h-6" />;
       default:
-        return <XCircle className="w-5 h-5 text-red-600" />;
+        return <Package className="w-6 h-6" />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'connected':
-        return <Badge className="bg-green-100 text-green-800">Conectado</Badge>;
-      case 'error':
-        return <Badge className="bg-yellow-100 text-yellow-800">Com Erro</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Conectada
+          </Badge>
+        );
       case 'disconnected':
+        return (
+          <Badge variant="outline" className="text-gray-600">
+            <XCircle className="w-3 h-3 mr-1" />
+            Desconectada
+          </Badge>
+        );
       default:
-        return <Badge className="bg-red-100 text-red-800">Desconectado</Badge>;
+        return null;
     }
   };
 
   const renderIntegrationCard = (integration: Integration) => (
-    <Card key={integration.id} className="p-6">
+    <Card key={integration.id} className="p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between">
-        <div className="flex items-start gap-4">
-          {getStatusIcon(integration.status)}
-          <div>
-            <h3 className="font-semibold text-gray-900">{integration.name}</h3>
-            <div className="mt-2 space-y-1">
-              {integration.lastSync && (
-                <p className="text-sm text-gray-600">
-                  Última sincronização: {new Date(integration.lastSync).toLocaleString('pt-BR')}
-                </p>
-              )}
-              {integration.itemsSynced !== undefined && (
-                <p className="text-sm text-gray-600">
-                  Itens sincronizados: {integration.itemsSynced}
-                </p>
-              )}
-              {integration.error && (
-                <p className="text-sm text-red-600">
-                  Erro: {integration.error}
-                </p>
-              )}
+        <div className="flex items-start gap-4 flex-1">
+          <div className={`p-3 rounded-lg ${
+            integration.status === 'connected' 
+              ? 'bg-green-100 text-green-600' 
+              : 'bg-gray-100 text-gray-600'
+          }`}>
+            {getIcon(integration.type)}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-lg">{integration.name}</h3>
+              {getStatusBadge(integration.status)}
             </div>
+            <p className="text-sm text-gray-600 mb-3">
+              {integration.description}
+            </p>
+            {integration.lastSync && (
+              <p className="text-xs text-gray-500">
+                Última sincronização: {new Date(integration.lastSync).toLocaleString('pt-BR')}
+              </p>
+            )}
+            {integration.itemsSynced !== undefined && (
+              <p className="text-xs text-gray-500">
+                Itens sincronizados: {integration.itemsSynced}
+              </p>
+            )}
           </div>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          {getStatusBadge(integration.status)}
+        <div className="flex flex-col gap-2">
           {integration.status === 'disconnected' && integration.connectUrl && (
             <Button 
               size="sm" 
@@ -126,15 +204,32 @@ export default function StatusIntegracoes() {
               Conectar
             </Button>
           )}
-          {integration.status === 'connected' && (
+          {integration.status === 'disconnected' && !integration.connectUrl && (
             <Button 
               size="sm" 
               variant="outline"
-              onClick={fetchIntegrationStatus}
+              disabled
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Atualizar
+              Em breve
             </Button>
+          )}
+          {integration.status === 'connected' && (
+            <>
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={fetchIntegrationStatus}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Sincronizar
+              </Button>
+              <Button 
+                size="sm" 
+                variant="destructive"
+              >
+                Desconectar
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -153,16 +248,13 @@ export default function StatusIntegracoes() {
     );
   }
 
-  const totalIntegrations = 
-    integrations.marketplaces.length + 
-    integrations.payments.length + 
-    integrations.apis.length;
+  const connectedCount = integrations.filter(i => i.status === 'connected').length;
+  const disconnectedCount = integrations.filter(i => i.status === 'disconnected').length;
 
-  const connectedIntegrations = [
-    ...integrations.marketplaces,
-    ...integrations.payments,
-    ...integrations.apis
-  ].filter(i => i.status === 'connected').length;
+  const marketplaces = integrations.filter(i => i.type === 'marketplace');
+  const payments = integrations.filter(i => i.type === 'payment');
+  const logistics = integrations.filter(i => i.type === 'logistics');
+  const systems = integrations.filter(i => i.type === 'system');
 
   return (
     <div className="p-6 space-y-6">
@@ -189,7 +281,7 @@ export default function StatusIntegracoes() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total de Integrações</p>
-              <p className="text-2xl font-bold text-gray-900">{totalIntegrations}</p>
+              <p className="text-2xl font-bold text-gray-900">{integrations.length}</p>
             </div>
           </div>
         </Card>
@@ -201,7 +293,7 @@ export default function StatusIntegracoes() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Conectadas</p>
-              <p className="text-2xl font-bold text-gray-900">{connectedIntegrations}</p>
+              <p className="text-2xl font-bold text-gray-900">{connectedCount}</p>
             </div>
           </div>
         </Card>
@@ -213,64 +305,63 @@ export default function StatusIntegracoes() {
             </div>
             <div>
               <p className="text-sm text-gray-600">Desconectadas</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {totalIntegrations - connectedIntegrations}
-              </p>
+              <p className="text-2xl font-bold text-gray-900">{disconnectedCount}</p>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Marketplaces */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <ShoppingCart className="w-5 h-5 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">Marketplaces</h2>
+      {marketplaces.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5 text-gray-700" />
+            <h2 className="text-xl font-semibold text-gray-900">Marketplaces</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {marketplaces.map(renderIntegrationCard)}
+          </div>
         </div>
-        <div className="space-y-3">
-          {integrations.marketplaces.length === 0 ? (
-            <Card className="p-6 text-center text-gray-500">
-              Nenhuma integração de marketplace configurada
-            </Card>
-          ) : (
-            integrations.marketplaces.map(renderIntegrationCard)
-          )}
-        </div>
-      </div>
+      )}
 
-      {/* Payment Gateways */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <DollarSign className="w-5 h-5 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">Gateways de Pagamento</h2>
+      {/* Gateways de Pagamento */}
+      {payments.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <DollarSign className="w-5 h-5 text-gray-700" />
+            <h2 className="text-xl font-semibold text-gray-900">Gateways de Pagamento</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {payments.map(renderIntegrationCard)}
+          </div>
         </div>
-        <div className="space-y-3">
-          {integrations.payments.length === 0 ? (
-            <Card className="p-6 text-center text-gray-500">
-              Nenhuma integração de pagamento configurada
-            </Card>
-          ) : (
-            integrations.payments.map(renderIntegrationCard)
-          )}
-        </div>
-      </div>
+      )}
 
-      {/* System APIs */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Package className="w-5 h-5 text-gray-700" />
-          <h2 className="text-xl font-semibold text-gray-900">APIs do Sistema</h2>
+      {/* Logística */}
+      {logistics.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Truck className="w-5 h-5 text-gray-700" />
+            <h2 className="text-xl font-semibold text-gray-900">Logística</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {logistics.map(renderIntegrationCard)}
+          </div>
         </div>
-        <div className="space-y-3">
-          {integrations.apis.length === 0 ? (
-            <Card className="p-6 text-center text-gray-500">
-              Nenhuma API configurada
-            </Card>
-          ) : (
-            integrations.apis.map(renderIntegrationCard)
-          )}
+      )}
+
+      {/* APIs do Sistema */}
+      {systems.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Database className="w-5 h-5 text-gray-700" />
+            <h2 className="text-xl font-semibold text-gray-900">APIs do Sistema</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+            {systems.map(renderIntegrationCard)}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
