@@ -31,6 +31,7 @@ import dashboardRouter from "./routes/dashboard";
 import financialRouter from "./routes/financial";
 import integrationsStatusRouter from "./routes/integrations-status";
 import monitoringRouter from "./routes/monitoring";
+import logisticsRouter from "./routes/logistics";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
@@ -122,6 +123,7 @@ async function startServer() {
   app.use("/api/financial", financialRouter);
   app.use("/api/integrations", integrationsStatusRouter);
   app.use("/api/monitoring", monitoringRouter);
+  app.use("/api/logistics", logisticsRouter);
   // app.use("/api/tickets", ticketsRouter);
   
   // Middleware de tratamento de erros (deve ser o último)
