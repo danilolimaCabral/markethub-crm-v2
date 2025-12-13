@@ -65,6 +65,7 @@ const Users = lazy(() => import('./pages/Users'));
 const AdminMaster = lazy(() => import('./pages/AdminMaster'));
 const SystemStatus = lazy(() => import('./pages/SystemStatus'));
 const StatusIntegracoes = lazy(() => import('./pages/StatusIntegracoes'));
+const MonitoramentoAPIs = lazy(() => import('./pages/MonitoramentoAPIs'));
 
 // Integrações
 const MercadoLivre = lazy(() => import('./pages/MercadoLivre'));
@@ -193,6 +194,7 @@ function Router() {
           <Route path="/admin-master" component={AdminMaster} />
           <Route path="/system-status" component={SystemStatus} />
           <Route path="/status-integracoes" component={StatusIntegracoes} />
+          <Route path="/monitoramento-apis" component={MonitoramentoAPIs} />
           <Route path={"/docs"} component={Docs} />
           <Route path={"/403"} component={Forbidden} />
           <Route path={"/404"} component={NotFound} />

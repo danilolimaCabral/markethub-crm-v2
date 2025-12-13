@@ -71,6 +71,7 @@ const ROUTE_TO_MODULE: Record<string, string> = {
   '/importacao-financeira': 'importacao-financeira',
   '/admin-master': 'admin-master',
   '/status-integracoes': 'configuracoes',
+  '/monitoramento-apis': 'configuracoes',
 };
 
 export default function CRMLayout({ children }: { children: React.ReactNode }) {
@@ -169,6 +170,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
         { path: "/admin-master", icon: <Users size={20} />, label: "Painel Master", color: "text-pink-500" },
         { path: "/usuarios", icon: <Users size={20} />, label: "Usuários", color: "text-purple-500" },
         { path: "/status-integracoes", icon: <Activity size={20} />, label: "Status das Integrações", color: "text-blue-500" },
+        { path: "/monitoramento-apis", icon: <Activity size={20} />, label: "Monitoramento de APIs", color: "text-green-500" },
         { path: "/configuracoes", icon: <Settings size={20} />, label: "Configurações", color: "text-slate-500" },
       ]
     }
