@@ -520,8 +520,8 @@ export default function MonitoramentoAPIs() {
           </div>
         )}
 
-        {/* Modal de Detalhes da API */}
-        <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+      {/* Modal de Detalhes da API */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
