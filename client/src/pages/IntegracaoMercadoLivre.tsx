@@ -112,7 +112,7 @@ export default function IntegracaoMercadoLivre() {
 
   const handleConnect = async () => {
     try {
-      const response = await axios.get('/api/integrations/mercadolivre/auth', {
+      const response = await axios.get('/api/integrations/mercadolivre/auth/url', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
