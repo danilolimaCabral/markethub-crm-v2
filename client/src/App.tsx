@@ -76,6 +76,11 @@ const MLAPITests = lazy(() => import('./pages/MLAPITests'));
 const IntegracaoShopee = lazy(() => import('./pages/IntegracaoShopee'));
 const IntegracaoAmazon = lazy(() => import('./pages/IntegracaoAmazon'));
 const IntegracaoMagalu = lazy(() => import('./pages/IntegracaoMagalu'));
+const IntegracaoPagBank = lazy(() => import('./pages/IntegracaoPagBank'));
+const IntegracaoStripe = lazy(() => import('./pages/IntegracaoStripe'));
+const IntegracaoCorreios = lazy(() => import('./pages/IntegracaoCorreios'));
+const IntegracaoMelhorEnvio = lazy(() => import('./pages/IntegracaoMelhorEnvio'));
+const IntegracaoJadlog = lazy(() => import('./pages/IntegracaoJadlog'));
 
 // Super Admin
 const SuperAdminLogin = lazy(() => import('./pages/SuperAdminLogin'));
@@ -193,6 +198,11 @@ function Router() {
           <Route path="/integracoes/shopee" component={IntegracaoShopee} />
           <Route path="/integracoes/amazon" component={IntegracaoAmazon} />
           <Route path="/integracoes/magalu" component={IntegracaoMagalu} />
+          <Route path="/integracoes/pagbank" component={IntegracaoPagBank} />
+          <Route path="/integracoes/stripe" component={IntegracaoStripe} />
+          <Route path="/integracoes/correios" component={IntegracaoCorreios} />
+          <Route path="/integracoes/melhorenvio" component={IntegracaoMelhorEnvio} />
+          <Route path="/integracoes/jadlog" component={IntegracaoJadlog} />
           <Route path="/importacao-financeira" component={ImportacaoFinanceira} />
           <Route path="/calculadora-taxas-ml" component={CalculadoraTaxasML} />
           <Route path="/webhook-simulator" component={WebhookSimulator} />

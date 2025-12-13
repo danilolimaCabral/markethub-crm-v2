@@ -85,6 +85,7 @@ export default function StatusIntegracoes() {
           type: 'payment',
           status: 'disconnected',
           description: 'Gateway de pagamento PagSeguro',
+          connectUrl: '/integracoes/pagbank',
           icon: 'pagbank'
         },
         {
@@ -93,6 +94,7 @@ export default function StatusIntegracoes() {
           type: 'payment',
           status: 'disconnected',
           description: 'Gateway de pagamento internacional',
+          connectUrl: '/integracoes/stripe',
           icon: 'stripe'
         },
         // Logística
@@ -102,6 +104,7 @@ export default function StatusIntegracoes() {
           type: 'logistics',
           status: 'disconnected',
           description: 'Cálculo de frete e rastreamento',
+          connectUrl: '/integracoes/correios',
           icon: 'correios'
         },
         {
@@ -110,6 +113,7 @@ export default function StatusIntegracoes() {
           type: 'logistics',
           status: 'disconnected',
           description: 'Cotação e gestão de envios',
+          connectUrl: '/integracoes/melhorenvio',
           icon: 'melhorenvio'
         },
         {
@@ -118,6 +122,7 @@ export default function StatusIntegracoes() {
           type: 'logistics',
           status: 'disconnected',
           description: 'Transportadora Jadlog',
+          connectUrl: '/integracoes/jadlog',
           icon: 'jadlog'
         }
       ];
