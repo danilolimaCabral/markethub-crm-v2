@@ -478,48 +478,18 @@ async function checkCacheConnection() {
 
 /**
  * Verifica status de uma API externa
+ * Retorna 'unknown' para APIs em desenvolvimento sem credenciais configuradas
  */
 async function checkExternalAPI(endpoint: string) {
-  const start = Date.now();
-  
-  try {
-    // Fazer requisição para o endpoint de teste
-    const response = await axios.get(`http://localhost:${process.env.PORT || 3000}${endpoint}`, {
-      timeout: 5000,
-      validateStatus: () => true // Aceitar qualquer status
-    });
-    
-    const responseTime = Date.now() - start;
-    
-    // Verificar se a API está online baseado na resposta
-    let status: 'online' | 'offline' | 'degraded' = 'offline';
-    
-    if (response.status === 200 && response.data?.status === 'online') {
-      status = 'online';
-    } else if (response.status === 200 && response.data?.status === 'offline') {
-      status = 'offline';
-    } else if (response.status >= 500) {
-      status = 'offline';
-    } else if (response.status >= 400) {
-      status = 'degraded';
-    }
-    
-    return {
-      status,
-      responseTime: Math.round(responseTime),
-      uptime: status === 'online' ? 99.0 + Math.random() * 1.0 : 0,
-      errorRate: status === 'online' ? Math.random() * 1.0 : 100,
-      requestsToday: 0
-    };
-  } catch (error) {
-    return {
-      status: 'offline' as const,
-      responseTime: 0,
-      uptime: 0,
-      errorRate: 100,
-      requestsToday: 0
-    };
-  }
+  // Por enquanto, retornar 'unknown' para todas as APIs externas
+  // que ainda não têm credenciais configuradas
+  return {
+    status: 'unknown' as const,
+    responseTime: undefined,
+    uptime: undefined,
+    errorRate: undefined,
+    requestsToday: undefined
+  };
 }
 
 export default router;
