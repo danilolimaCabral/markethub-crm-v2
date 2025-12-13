@@ -1,10 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import CRMLayout from "@/components/CRMLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Package, Search, TrendingUp, AlertTriangle, CheckCircle, Edit, Eye, Plus, Trash2, Upload } from "lucide-react";
+import { Package, Search, TrendingUp, AlertTriangle, CheckCircle, Edit, Eye, Plus, Trash2, Upload, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { REAL_CATEGORIES } from "@/data/real-data";
 import { toast } from "sonner";
@@ -15,17 +15,24 @@ const categorias = REAL_CATEGORIES.map(cat => cat.name);
 interface Produto {
   id: number;
   sku: string;
-  nome: string;
-  categoria: string;
-  preco: number;
-  estoque: number;
-  vendidos: number;
-  imagem: string;
-  descricao?: string;
+  name: string;
+  category: string;
+  sale_price: number;
+  cost_price?: number;
+  stock_quantity: number;
+  min_stock?: number;
+  images?: string[];
+  description?: string;
+  is_active: boolean;
+  profit?: number;
+  profit_margin?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export default function Produtos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState('');
   const [filtroCategoria, setFiltroCategoria] = useState<string>('todas');
   const [filtroStatus, setFiltroStatus] = useState<string>('todos');
@@ -38,257 +45,294 @@ export default function Produtos() {
   
   // Form
   const [formData, setFormData] = useState<Partial<Produto>>({
-    nome: '',
+    name: '',
     sku: '',
-    categoria: categorias[0],
-    preco: 0,
-    estoque: 0,
-    vendidos: 0,
-    imagem: '',
-    descricao: '',
+    category: categorias[0],
+    sale_price: 0,
+    cost_price: 0,
+    stock_quantity: 0,
+    min_stock: 5,
+    description: '',
+    is_active: true,
   });
 
-  // Carregar produtos do localStorage
-  useEffect(() => {
-    const produtosSalvos = localStorage.getItem('markethub_produtos');
-    if (produtosSalvos) {
-      setProdutos(JSON.parse(produtosSalvos));
-    } else {
-      // Gerar produtos iniciais
-      const produtosIniciais = Array.from({ length: 248 }, (_, i) => {
-        const categoria = categorias[i % categorias.length];
-        return {
-          id: i + 1,
-          sku: `SKU-${String(i + 1).padStart(5, '0')}`,
-          nome: `${categoria} - Modelo ${i + 1}`,
-          categoria: categoria,
-          preco: Math.floor(Math.random() * 500) + 50,
-          estoque: Math.floor(Math.random() * 100),
-          vendidos: Math.floor(Math.random() * 50),
-          imagem: `https://via.placeholder.com/300x300?text=${encodeURIComponent(categoria.substring(0, 10))}`,
-          descricao: `Produto de alta qualidade da categoria ${categoria}`,
-        };
+  // Carregar produtos da API
+  const carregarProdutos = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('markethub_token');
+      const response = await fetch('/api/produtos?limit=1000', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
-      setProdutos(produtosIniciais);
-      localStorage.setItem('markethub_produtos', JSON.stringify(produtosIniciais));
-    }
-  }, []);
 
-  // Salvar produtos no localStorage
-  const salvarProdutos = (novosProdutos: Produto[]) => {
-    setProdutos(novosProdutos);
-    localStorage.setItem('markethub_produtos', JSON.stringify(novosProdutos));
+      if (!response.ok) {
+        throw new Error('Erro ao carregar produtos');
+      }
+
+      const data = await response.json();
+      setProdutos(data.data || []);
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
+      toast.error('Erro ao carregar produtos');
+      setProdutos([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    carregarProdutos();
+  }, []);
+
   // Adicionar produto
-  const adicionarProduto = () => {
-    if (!formData.nome || !formData.sku || !formData.preco) {
+  const adicionarProduto = async () => {
+    if (!formData.name || !formData.sku || !formData.sale_price) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
 
-    const novoProduto: Produto = {
-      id: Date.now(),
-      nome: formData.nome!,
-      sku: formData.sku!,
-      categoria: formData.categoria!,
-      preco: Number(formData.preco),
-      estoque: Number(formData.estoque || 0),
-      vendidos: Number(formData.vendidos || 0),
-      imagem: formData.imagem || 'https://via.placeholder.com/300x300?text=Produto',
-      descricao: formData.descricao || '',
-    };
+    try {
+      const token = localStorage.getItem('markethub_token');
+      const response = await fetch('/api/produtos', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome: formData.name,
+          sku: formData.sku,
+          categoria: formData.category,
+          preco_venda: formData.sale_price,
+          preco_custo: formData.cost_price || 0,
+          estoque_atual: formData.stock_quantity || 0,
+          estoque_minimo: formData.min_stock || 5,
+          descricao: formData.description,
+          status: formData.is_active ? 'ativo' : 'inativo',
+        })
+      });
 
-    salvarProdutos([...produtos, novoProduto]);
-    setModalAdicionar(false);
-    resetForm();
-    toast.success('Produto adicionado com sucesso!');
-  };
+      if (!response.ok) {
+        throw new Error('Erro ao adicionar produto');
+      }
 
-  // Editar produto
-  const editarProduto = () => {
-    if (!produtoSelecionado) return;
-
-    const produtosAtualizados = produtos.map(p =>
-      p.id === produtoSelecionado.id
-        ? { ...p, ...formData }
-        : p
-    );
-
-    salvarProdutos(produtosAtualizados);
-    setModalEditar(false);
-    setProdutoSelecionado(null);
-    resetForm();
-    toast.success('Produto atualizado com sucesso!');
-  };
-
-  // Excluir produto
-  const excluirProduto = (id: number) => {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
-      salvarProdutos(produtos.filter(p => p.id !== id));
-      setModalVer(false);
-      toast.success('Produto excluído com sucesso!');
+      toast.success('Produto adicionado com sucesso!');
+      setModalAdicionar(false);
+      carregarProdutos();
+      resetForm();
+    } catch (error) {
+      console.error('Erro ao adicionar produto:', error);
+      toast.error('Erro ao adicionar produto');
     }
   };
 
-  // Reset form
-  const resetForm = () => {
-    setFormData({
-      nome: '',
-      sku: '',
-      categoria: categorias[0],
-      preco: 0,
-      estoque: 0,
-      vendidos: 0,
-      imagem: '',
-      descricao: '',
-    });
+  // Editar produto
+  const editarProduto = async () => {
+    if (!produtoSelecionado) return;
+
+    try {
+      const token = localStorage.getItem('markethub_token');
+      const response = await fetch(`/api/produtos/${produtoSelecionado.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome: formData.name,
+          sku: formData.sku,
+          categoria: formData.category,
+          preco_venda: formData.sale_price,
+          preco_custo: formData.cost_price,
+          estoque_atual: formData.stock_quantity,
+          estoque_minimo: formData.min_stock,
+          descricao: formData.description,
+          status: formData.is_active ? 'ativo' : 'inativo',
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao editar produto');
+      }
+
+      toast.success('Produto atualizado com sucesso!');
+      setModalEditar(false);
+      carregarProdutos();
+      resetForm();
+    } catch (error) {
+      console.error('Erro ao editar produto:', error);
+      toast.error('Erro ao editar produto');
+    }
   };
 
-  // Abrir modal de ver
+  // Deletar produto
+  const deletarProduto = async (id: number) => {
+    if (!confirm('Tem certeza que deseja deletar este produto?')) return;
+
+    try {
+      const token = localStorage.getItem('markethub_token');
+      const response = await fetch(`/api/produtos/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao deletar produto');
+      }
+
+      toast.success('Produto deletado com sucesso!');
+      carregarProdutos();
+    } catch (error) {
+      console.error('Erro ao deletar produto:', error);
+      toast.error('Erro ao deletar produto');
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      sku: '',
+      category: categorias[0],
+      sale_price: 0,
+      cost_price: 0,
+      stock_quantity: 0,
+      min_stock: 5,
+      description: '',
+      is_active: true,
+    });
+    setProdutoSelecionado(null);
+  };
+
   const abrirModalVer = (produto: Produto) => {
     setProdutoSelecionado(produto);
     setModalVer(true);
   };
 
-  // Abrir modal de editar
   const abrirModalEditar = (produto: Produto) => {
     setProdutoSelecionado(produto);
-    setFormData(produto);
+    setFormData({
+      name: produto.name,
+      sku: produto.sku,
+      category: produto.category,
+      sale_price: produto.sale_price,
+      cost_price: produto.cost_price || 0,
+      stock_quantity: produto.stock_quantity,
+      min_stock: produto.min_stock || 5,
+      description: produto.description || '',
+      is_active: produto.is_active,
+    });
     setModalEditar(true);
-  };
-
-  // Abrir modal de adicionar
-  const abrirModalAdicionar = () => {
-    resetForm();
-    setModalAdicionar(true);
-  };
-
-  // Upload de imagem (simulado com URL)
-  const handleImagemUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Em produção, fazer upload real para servidor/S3
-      // Por enquanto, usar URL de placeholder
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, imagem: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   // Filtrar produtos
   const produtosFiltrados = produtos.filter(produto => {
-    const matchBusca = busca === '' || 
-      produto.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      produto.sku.toLowerCase().includes(busca.toLowerCase());
+    const matchBusca = 
+      produto.name?.toLowerCase().includes(busca.toLowerCase()) ||
+      produto.sku?.toLowerCase().includes(busca.toLowerCase());
     
-    const matchCategoria = filtroCategoria === 'todas' || produto.categoria === filtroCategoria;
+    const matchCategoria = filtroCategoria === 'todas' || produto.category === filtroCategoria;
     
-    const estoque = produto.estoque;
-    const status = estoque > 10 ? 'Disponível' : estoque > 0 ? 'Estoque Baixo' : 'Sem Estoque';
-    const matchStatus = filtroStatus === 'todos' || status === filtroStatus;
+    const matchStatus = 
+      filtroStatus === 'todos' ||
+      (filtroStatus === 'ativo' && produto.is_active) ||
+      (filtroStatus === 'inativo' && !produto.is_active) ||
+      (filtroStatus === 'estoque_baixo' && produto.stock_quantity <= (produto.min_stock || 5)) ||
+      (filtroStatus === 'sem_estoque' && produto.stock_quantity === 0);
     
     return matchBusca && matchCategoria && matchStatus;
   });
 
   // Estatísticas
-  const stats = {
-    total: produtos.length,
-    disponiveis: produtos.filter(p => p.estoque > 10).length,
-    estoqueBaixo: produtos.filter(p => p.estoque > 0 && p.estoque <= 10).length,
-    semEstoque: produtos.filter(p => p.estoque === 0).length,
-    valorTotal: produtos.reduce((acc, p) => acc + (p.preco * p.estoque), 0),
-  };
+  const totalProdutos = produtos.length;
+  const produtosAtivos = produtos.filter(p => p.is_active).length;
+  const produtosEstoqueBaixo = produtos.filter(p => p.stock_quantity <= (p.min_stock || 5)).length;
+  const valorTotalEstoque = produtos.reduce((acc, p) => acc + (p.sale_price * p.stock_quantity), 0);
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Produtos</h1>
-          <p className="text-muted-foreground">Gestão de catálogo de produtos</p>
+    <CRMLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+              <Package className="w-8 h-8 text-primary" />
+              Produtos
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Gerencie seu catálogo de produtos
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              onClick={carregarProdutos} 
+              variant="outline"
+              disabled={loading}
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+            <Button onClick={() => setModalAdicionar(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Produto
+            </Button>
+          </div>
         </div>
-        <Button onClick={abrirModalAdicionar} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Adicionar Produto
-        </Button>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
+        {/* Cards de Estatísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total de Produtos</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-2xl font-bold text-foreground">{totalProdutos}</p>
               </div>
-              <Package className="w-8 h-8 text-primary" />
+              <Package className="w-8 h-8 text-blue-500" />
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardContent className="p-4">
+          <div className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Disponíveis</p>
-                <p className="text-2xl font-bold text-green-600">{stats.disponiveis}</p>
+                <p className="text-sm text-muted-foreground">Produtos Ativos</p>
+                <p className="text-2xl font-bold text-green-600">{produtosAtivos}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardContent className="p-4">
+          <div className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Estoque Baixo</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.estoqueBaixo}</p>
+                <p className="text-2xl font-bold text-orange-600">{produtosEstoqueBaixo}</p>
               </div>
-              <AlertTriangle className="w-8 h-8 text-yellow-600" />
+              <AlertTriangle className="w-8 h-8 text-orange-500" />
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Sem Estoque</p>
-                <p className="text-2xl font-bold text-red-600">{stats.semEstoque}</p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
+          <div className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Valor em Estoque</p>
                 <p className="text-2xl font-bold text-primary">
-                  R$ {(stats.valorTotal / 1000).toFixed(0)}k
+                  {valorTotalEstoque.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 text-primary" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
 
-      {/* Filtros e Busca */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
+        {/* Filtros */}
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Buscar por nome ou SKU..."
@@ -297,490 +341,426 @@ export default function Produtos() {
                 className="pl-10"
               />
             </div>
-            <div className="flex gap-2 flex-wrap">
-              <select
-                value={filtroCategoria}
-                onChange={(e) => setFiltroCategoria(e.target.value)}
-                className="px-4 py-2 border rounded-lg bg-background"
-              >
-                <option value="todas">Todas Categorias</option>
-                {categorias.slice(0, 10).map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <Button
-                variant={filtroStatus === 'todos' ? 'default' : 'outline'}
-                onClick={() => setFiltroStatus('todos')}
-              >
-                Todos
-              </Button>
-              <Button
-                variant={filtroStatus === 'Disponível' ? 'default' : 'outline'}
-                onClick={() => setFiltroStatus('Disponível')}
-              >
-                Disponíveis
-              </Button>
-              <Button
-                variant={filtroStatus === 'Estoque Baixo' ? 'default' : 'outline'}
-                onClick={() => setFiltroStatus('Estoque Baixo')}
-              >
-                Estoque Baixo
-              </Button>
-              <Button
-                variant={filtroStatus === 'Sem Estoque' ? 'default' : 'outline'}
-                onClick={() => setFiltroStatus('Sem Estoque')}
-              >
-                Sem Estoque
-              </Button>
+
+            <select
+              value={filtroCategoria}
+              onChange={(e) => setFiltroCategoria(e.target.value)}
+              className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
+            >
+              <option value="todas">Todas as Categorias</option>
+              {categorias.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+
+            <select
+              value={filtroStatus}
+              onChange={(e) => setFiltroStatus(e.target.value)}
+              className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
+            >
+              <option value="todos">Todos os Status</option>
+              <option value="ativo">Ativos</option>
+              <option value="inativo">Inativos</option>
+              <option value="estoque_baixo">Estoque Baixo</option>
+              <option value="sem_estoque">Sem Estoque</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Tabela de Produtos */}
+        <div className="bg-card border border-border rounded-lg overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center p-12">
+              <div className="flex flex-col items-center gap-3">
+                <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+                <p className="text-muted-foreground">Carregando produtos...</p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Lista de Produtos */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Catálogo de Produtos</CardTitle>
-          <CardDescription>
-            {produtosFiltrados.length} produto(s) encontrado(s)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* Tabela Desktop */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-3 font-semibold">SKU</th>
-                  <th className="text-left p-3 font-semibold">Produto</th>
-                  <th className="text-left p-3 font-semibold">Categoria</th>
-                  <th className="text-left p-3 font-semibold">Preço</th>
-                  <th className="text-left p-3 font-semibold">Estoque</th>
-                  <th className="text-left p-3 font-semibold">Vendidos</th>
-                  <th className="text-left p-3 font-semibold">Status</th>
-                  <th className="text-left p-3 font-semibold">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtosFiltrados.slice(0, 50).map((produto) => {
-                  const estoque = produto.estoque;
-                  const status = estoque > 10 ? 'Disponível' : estoque > 0 ? 'Estoque Baixo' : 'Sem Estoque';
-                  const statusColor = estoque > 10 ? 'bg-green-100 text-green-800' : estoque > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
-                  const StatusIcon = estoque > 10 ? CheckCircle : AlertTriangle;
-                  
-                  return (
-                    <tr key={produto.id} className="border-b hover:bg-accent">
-                      <td className="p-3 font-mono text-sm">{produto.sku}</td>
-                      <td className="p-3">
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={produto.imagem} 
-                            alt={produto.nome}
-                            className="w-10 h-10 rounded object-cover"
-                          />
-                          <span className="font-medium">{produto.nome}</span>
-                        </div>
-                      </td>
-                      <td className="p-3 text-sm text-muted-foreground">{produto.categoria}</td>
-                      <td className="p-3 font-bold text-green-600">
-                        R$ {produto.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </td>
-                      <td className="p-3">
-                        <span className={`font-bold ${estoque > 10 ? 'text-green-600' : estoque > 0 ? 'text-yellow-600' : 'text-red-600'}`}>
-                          {produto.estoque} un
-                        </span>
-                      </td>
-                      <td className="p-3 text-muted-foreground">{produto.vendidos} un</td>
-                      <td className="p-3">
-                        <Badge className={statusColor}>
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {status}
-                        </Badge>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => abrirModalVer(produto)}>
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => abrirModalEditar(produto)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Cards Mobile */}
-          <div className="md:hidden space-y-3">
-            {produtosFiltrados.slice(0, 50).map((produto) => {
-              const estoque = produto.estoque;
-              const status = estoque > 10 ? 'Disponível' : estoque > 0 ? 'Estoque Baixo' : 'Sem Estoque';
-              const statusColor = estoque > 10 ? 'bg-green-100 text-green-800' : estoque > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
-              const StatusIcon = estoque > 10 ? CheckCircle : AlertTriangle;
-              
-              return (
-                <Card key={produto.id}>
-                  <CardContent className="p-4">
-                    <div className="flex gap-3 mb-3">
-                      <img 
-                        src={produto.imagem} 
-                        alt={produto.nome}
-                        className="w-16 h-16 rounded object-cover"
-                      />
-                      <div className="flex-1">
-                        <p className="font-bold">{produto.nome}</p>
-                        <p className="text-sm text-muted-foreground">{produto.sku}</p>
-                        <Badge className={`${statusColor} mt-1`}>
-                          <StatusIcon className="w-3 h-3 mr-1" />
-                          {status}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="space-y-1 text-sm">
-                      <p><span className="text-muted-foreground">Categoria:</span> {produto.categoria}</p>
-                      <p><span className="text-muted-foreground">Preço:</span> <span className="font-bold text-green-600">R$ {produto.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></p>
-                      <p><span className="text-muted-foreground">Estoque:</span> <span className={`font-bold ${estoque > 10 ? 'text-green-600' : estoque > 0 ? 'text-yellow-600' : 'text-red-600'}`}>{produto.estoque} un</span></p>
-                      <p><span className="text-muted-foreground">Vendidos:</span> {produto.vendidos} un</p>
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => abrirModalVer(produto)}>
-                        <Eye className="w-4 h-4 mr-2" />
-                        Ver
-                      </Button>
-                      <Button size="sm" variant="outline" className="flex-1" onClick={() => abrirModalEditar(produto)}>
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Modal Ver Produto */}
-      <Dialog open={modalVer} onOpenChange={setModalVer}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Detalhes do Produto</DialogTitle>
-            <DialogDescription>Informações completas do produto</DialogDescription>
-          </DialogHeader>
-          {produtoSelecionado && (
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <img 
-                  src={produtoSelecionado.imagem} 
-                  alt={produtoSelecionado.nome}
-                  className="w-32 h-32 rounded object-cover"
-                />
-                <div className="flex-1 space-y-2">
-                  <h3 className="text-xl font-bold">{produtoSelecionado.nome}</h3>
-                  <p className="text-sm text-muted-foreground">SKU: {produtoSelecionado.sku}</p>
-                  <Badge>{produtoSelecionado.categoria}</Badge>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Preço</Label>
-                  <p className="text-2xl font-bold text-green-600">
-                    R$ {produtoSelecionado.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <div>
-                  <Label>Estoque</Label>
-                  <p className="text-2xl font-bold">
-                    {produtoSelecionado.estoque} unidades
-                  </p>
-                </div>
-                <div>
-                  <Label>Vendidos</Label>
-                  <p className="text-xl">{produtoSelecionado.vendidos} unidades</p>
-                </div>
-                <div>
-                  <Label>Valor Total em Estoque</Label>
-                  <p className="text-xl font-bold text-primary">
-                    R$ {(produtoSelecionado.preco * produtoSelecionado.estoque).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-              </div>
-              {produtoSelecionado.descricao && (
-                <div>
-                  <Label>Descrição</Label>
-                  <p className="text-sm text-muted-foreground">{produtoSelecionado.descricao}</p>
-                </div>
+          ) : produtosFiltrados.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+              <Package className="w-16 h-16 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Nenhum produto encontrado
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {produtos.length === 0 
+                  ? 'Adicione seu primeiro produto para começar'
+                  : 'Tente ajustar os filtros de busca'}
+              </p>
+              {produtos.length === 0 && (
+                <Button onClick={() => setModalAdicionar(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar Produto
+                </Button>
               )}
             </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-muted/50">
+                  <tr>
+                    <th className="text-left p-4 font-semibold text-foreground">SKU</th>
+                    <th className="text-left p-4 font-semibold text-foreground">Produto</th>
+                    <th className="text-left p-4 font-semibold text-foreground">Categoria</th>
+                    <th className="text-right p-4 font-semibold text-foreground">Preço</th>
+                    <th className="text-center p-4 font-semibold text-foreground">Estoque</th>
+                    <th className="text-center p-4 font-semibold text-foreground">Status</th>
+                    <th className="text-center p-4 font-semibold text-foreground">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {produtosFiltrados.map((produto) => {
+                    const estoqueStatus = produto.stock_quantity === 0 
+                      ? 'sem-estoque' 
+                      : produto.stock_quantity <= (produto.min_stock || 5) 
+                      ? 'baixo' 
+                      : 'ok';
+
+                    return (
+                      <tr key={produto.id} className="border-t border-border hover:bg-muted/30 transition-colors">
+                        <td className="p-4">
+                          <span className="font-mono text-sm text-muted-foreground">{produto.sku}</span>
+                        </td>
+                        <td className="p-4">
+                          <span className="font-medium text-foreground">{produto.name}</span>
+                        </td>
+                        <td className="p-4">
+                          <Badge variant="outline">{produto.category}</Badge>
+                        </td>
+                        <td className="p-4 text-right">
+                          <span className="font-semibold text-foreground">
+                            {produto.sale_price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </span>
+                        </td>
+                        <td className="p-4 text-center">
+                          <Badge 
+                            variant={estoqueStatus === 'sem-estoque' ? 'destructive' : estoqueStatus === 'baixo' ? 'default' : 'secondary'}
+                          >
+                            {produto.stock_quantity} un
+                          </Badge>
+                        </td>
+                        <td className="p-4 text-center">
+                          <Badge variant={produto.is_active ? 'default' : 'secondary'}>
+                            {produto.is_active ? 'Ativo' : 'Inativo'}
+                          </Badge>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center justify-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => abrirModalVer(produto)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => abrirModalEditar(produto)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => deletarProduto(produto.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
-          <DialogFooter>
-            <Button variant="destructive" onClick={() => produtoSelecionado && excluirProduto(produtoSelecionado.id)}>
-              <Trash2 className="w-4 h-4 mr-2" />
-              Excluir
-            </Button>
-            <Button variant="outline" onClick={() => setModalVer(false)}>Fechar</Button>
-            <Button onClick={() => {
-              if (produtoSelecionado) {
-                setModalVer(false);
-                abrirModalEditar(produtoSelecionado);
-              }
-            }}>
-              <Edit className="w-4 h-4 mr-2" />
-              Editar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
 
-      {/* Modal Editar Produto */}
-      <Dialog open={modalEditar} onOpenChange={setModalEditar}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Editar Produto</DialogTitle>
-            <DialogDescription>Atualize as informações do produto</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-nome">Nome do Produto *</Label>
-                <Input
-                  id="edit-nome"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  placeholder="Ex: Notebook Dell Inspiron"
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-sku">SKU *</Label>
-                <Input
-                  id="edit-sku"
-                  value={formData.sku}
-                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                  placeholder="Ex: SKU-00001"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="edit-categoria">Categoria</Label>
-              <select
-                id="edit-categoria"
-                value={formData.categoria}
-                onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg bg-background"
-              >
-                {categorias.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="edit-preco">Preço (R$) *</Label>
-                <Input
-                  id="edit-preco"
-                  type="number"
-                  step="0.01"
-                  value={formData.preco}
-                  onChange={(e) => setFormData({ ...formData, preco: parseFloat(e.target.value) })}
-                  placeholder="0.00"
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-estoque">Estoque</Label>
-                <Input
-                  id="edit-estoque"
-                  type="number"
-                  value={formData.estoque}
-                  onChange={(e) => setFormData({ ...formData, estoque: parseInt(e.target.value) })}
-                  placeholder="0"
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-vendidos">Vendidos</Label>
-                <Input
-                  id="edit-vendidos"
-                  type="number"
-                  value={formData.vendidos}
-                  onChange={(e) => setFormData({ ...formData, vendidos: parseInt(e.target.value) })}
-                  placeholder="0"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="edit-descricao">Descrição</Label>
-              <textarea
-                id="edit-descricao"
-                value={formData.descricao}
-                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg bg-background min-h-[100px]"
-                placeholder="Descrição detalhada do produto..."
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-imagem">Imagem do Produto</Label>
-              <div className="flex gap-4 items-center">
-                {formData.imagem && (
-                  <img 
-                    src={formData.imagem} 
-                    alt="Preview"
-                    className="w-24 h-24 rounded object-cover"
-                  />
+        {/* Modal Ver Produto */}
+        <Dialog open={modalVer} onOpenChange={setModalVer}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Detalhes do Produto</DialogTitle>
+              <DialogDescription>
+                Informações completas do produto
+              </DialogDescription>
+            </DialogHeader>
+            {produtoSelecionado && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">SKU</Label>
+                    <p className="font-mono text-sm">{produtoSelecionado.sku}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Nome</Label>
+                    <p className="font-medium">{produtoSelecionado.name}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Categoria</Label>
+                    <p>{produtoSelecionado.category}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Preço de Venda</Label>
+                    <p className="font-semibold text-green-600">
+                      {produtoSelecionado.sale_price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Preço de Custo</Label>
+                    <p>
+                      {(produtoSelecionado.cost_price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Margem de Lucro</Label>
+                    <p className="font-semibold text-blue-600">
+                      {produtoSelecionado.profit_margin?.toFixed(2) || '0.00'}%
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Estoque Atual</Label>
+                    <p>{produtoSelecionado.stock_quantity} unidades</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Estoque Mínimo</Label>
+                    <p>{produtoSelecionado.min_stock || 5} unidades</p>
+                  </div>
+                </div>
+                {produtoSelecionado.description && (
+                  <div>
+                    <Label className="text-muted-foreground">Descrição</Label>
+                    <p className="text-sm mt-1">{produtoSelecionado.description}</p>
+                  </div>
                 )}
-                <div className="flex-1">
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal Adicionar Produto */}
+        <Dialog open={modalAdicionar} onOpenChange={setModalAdicionar}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Adicionar Novo Produto</DialogTitle>
+              <DialogDescription>
+                Preencha os dados do novo produto
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Nome *</Label>
                   <Input
-                    id="edit-imagem"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImagemUpload}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Ou cole uma URL de imagem:
-                  </p>
-                  <Input
-                    value={formData.imagem}
-                    onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    className="mt-1"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nome do produto"
                   />
                 </div>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setModalEditar(false)}>Cancelar</Button>
-            <Button onClick={editarProduto}>Salvar Alterações</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal Adicionar Produto */}
-      <Dialog open={modalAdicionar} onOpenChange={setModalAdicionar}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Adicionar Novo Produto</DialogTitle>
-            <DialogDescription>Cadastre um novo produto no catálogo</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="add-nome">Nome do Produto *</Label>
-                <Input
-                  id="add-nome"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  placeholder="Ex: Notebook Dell Inspiron"
-                />
-              </div>
-              <div>
-                <Label htmlFor="add-sku">SKU *</Label>
-                <Input
-                  id="add-sku"
-                  value={formData.sku}
-                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                  placeholder="Ex: SKU-00001"
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="add-categoria">Categoria</Label>
-              <select
-                id="add-categoria"
-                value={formData.categoria}
-                onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg bg-background"
-              >
-                {categorias.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="add-preco">Preço (R$) *</Label>
-                <Input
-                  id="add-preco"
-                  type="number"
-                  step="0.01"
-                  value={formData.preco}
-                  onChange={(e) => setFormData({ ...formData, preco: parseFloat(e.target.value) })}
-                  placeholder="0.00"
-                />
-              </div>
-              <div>
-                <Label htmlFor="add-estoque">Estoque</Label>
-                <Input
-                  id="add-estoque"
-                  type="number"
-                  value={formData.estoque}
-                  onChange={(e) => setFormData({ ...formData, estoque: parseInt(e.target.value) })}
-                  placeholder="0"
-                />
-              </div>
-              <div>
-                <Label htmlFor="add-vendidos">Vendidos</Label>
-                <Input
-                  id="add-vendidos"
-                  type="number"
-                  value={formData.vendidos}
-                  onChange={(e) => setFormData({ ...formData, vendidos: parseInt(e.target.value) })}
-                  placeholder="0"
-                  disabled
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="add-descricao">Descrição</Label>
-              <textarea
-                id="add-descricao"
-                value={formData.descricao}
-                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg bg-background min-h-[100px]"
-                placeholder="Descrição detalhada do produto..."
-              />
-            </div>
-            <div>
-              <Label htmlFor="add-imagem">Imagem do Produto</Label>
-              <div className="flex gap-4 items-center">
-                {formData.imagem && (
-                  <img 
-                    src={formData.imagem} 
-                    alt="Preview"
-                    className="w-24 h-24 rounded object-cover"
-                  />
-                )}
-                <div className="flex-1">
+                <div>
+                  <Label>SKU *</Label>
                   <Input
-                    id="add-imagem"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImagemUpload}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Ou cole uma URL de imagem:
-                  </p>
-                  <Input
-                    value={formData.imagem}
-                    onChange={(e) => setFormData({ ...formData, imagem: e.target.value })}
-                    placeholder="https://exemplo.com/imagem.jpg"
-                    className="mt-1"
+                    value={formData.sku}
+                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                    placeholder="SKU-00001"
                   />
                 </div>
+                <div>
+                  <Label>Categoria</Label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  >
+                    {categorias.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label>Preço de Venda *</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.sale_price}
+                    onChange={(e) => setFormData({ ...formData, sale_price: parseFloat(e.target.value) })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label>Preço de Custo</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.cost_price}
+                    onChange={(e) => setFormData({ ...formData, cost_price: parseFloat(e.target.value) })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label>Estoque Inicial</Label>
+                  <Input
+                    type="number"
+                    value={formData.stock_quantity}
+                    onChange={(e) => setFormData({ ...formData, stock_quantity: parseInt(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label>Estoque Mínimo</Label>
+                  <Input
+                    type="number"
+                    value={formData.min_stock}
+                    onChange={(e) => setFormData({ ...formData, min_stock: parseInt(e.target.value) })}
+                    placeholder="5"
+                  />
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <select
+                    value={formData.is_active ? 'ativo' : 'inativo'}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'ativo' })}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  >
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label>Descrição</Label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background min-h-[100px]"
+                  placeholder="Descrição do produto..."
+                />
               </div>
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setModalAdicionar(false)}>Cancelar</Button>
-            <Button onClick={adicionarProduto}>
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar Produto
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setModalAdicionar(false); resetForm(); }}>
+                Cancelar
+              </Button>
+              <Button onClick={adicionarProduto}>
+                Adicionar Produto
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal Editar Produto */}
+        <Dialog open={modalEditar} onOpenChange={setModalEditar}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Editar Produto</DialogTitle>
+              <DialogDescription>
+                Atualize os dados do produto
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Nome *</Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Nome do produto"
+                  />
+                </div>
+                <div>
+                  <Label>SKU *</Label>
+                  <Input
+                    value={formData.sku}
+                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                    placeholder="SKU-00001"
+                  />
+                </div>
+                <div>
+                  <Label>Categoria</Label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  >
+                    {categorias.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label>Preço de Venda *</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.sale_price}
+                    onChange={(e) => setFormData({ ...formData, sale_price: parseFloat(e.target.value) })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label>Preço de Custo</Label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={formData.cost_price}
+                    onChange={(e) => setFormData({ ...formData, cost_price: parseFloat(e.target.value) })}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label>Estoque Atual</Label>
+                  <Input
+                    type="number"
+                    value={formData.stock_quantity}
+                    onChange={(e) => setFormData({ ...formData, stock_quantity: parseInt(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label>Estoque Mínimo</Label>
+                  <Input
+                    type="number"
+                    value={formData.min_stock}
+                    onChange={(e) => setFormData({ ...formData, min_stock: parseInt(e.target.value) })}
+                    placeholder="5"
+                  />
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <select
+                    value={formData.is_active ? 'ativo' : 'inativo'}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'ativo' })}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                  >
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label>Descrição</Label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-background min-h-[100px]"
+                  placeholder="Descrição do produto..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setModalEditar(false); resetForm(); }}>
+                Cancelar
+              </Button>
+              <Button onClick={editarProduto}>
+                Salvar Alterações
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </CRMLayout>
   );
 }
