@@ -313,4 +313,4 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-// Force rebuild Wed Nov 12 17:59:54 EST 2025
+// Force rebuild Fri Dec 13 12:55:00 BRT 2025 - Fixed overlay issue

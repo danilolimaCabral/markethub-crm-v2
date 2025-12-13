@@ -660,6 +660,7 @@ export default function MonitoramentoAPIs() {
   );
 }
 
+// Force rebuild Fri Dec 13 12:55:00 BRT 2025
 // Funções auxiliares para mensagens de erro
 function getDefaultErrorMessage(api: APIStatus): string {
   if (api.status === 'offline') {
