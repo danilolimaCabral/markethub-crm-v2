@@ -2,6 +2,13 @@ import CRMLayout from "@/components/CRMLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { 
   Activity, 
   CheckCircle, 
@@ -35,6 +42,8 @@ interface APIStatus {
   icon: React.ReactNode;
   description: string;
   endpoint?: string;
+  errorMessage?: string;
+  errorDetails?: string;
 }
 
 interface APIMonitoringData {
@@ -52,6 +61,8 @@ export default function MonitoramentoAPIs() {
   const [data, setData] = useState<APIMonitoringData | null>(null);
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [selectedAPI, setSelectedAPI] = useState<APIStatus | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Carregar status das APIs
   const carregarStatus = async () => {
@@ -468,14 +479,19 @@ export default function MonitoramentoAPIs() {
                     {apis.map((api, index) => (
                       <div 
                         key={index}
-                        className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors gap-4"
+                        onClick={() => {
+                          setSelectedAPI(api);
+                          setDetailsOpen(true);
+                        }}
+                        className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors cursor-pointer space-y-3"
                       >
-                        <div className="flex items-center gap-4 flex-1">
+                        {/* Header do Card */}
+                        <div className="flex items-center gap-4">
                           <div className={getStatusColor(api.status)}>
                             {api.icon}
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <h4 className="font-semibold">{api.name}</h4>
                               {getStatusBadge(api.status)}
                             </div>
@@ -486,29 +502,30 @@ export default function MonitoramentoAPIs() {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 lg:gap-6 text-sm flex-wrap lg:flex-nowrap">
+                        {/* Métricas em Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-border">
                           {api.responseTime !== undefined && (
-                            <div className="text-center min-w-[100px]">
-                              <p className="text-muted-foreground text-xs whitespace-nowrap">Tempo de Resposta</p>
-                              <p className="font-semibold">{api.responseTime}ms</p>
+                            <div className="text-center p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-xs mb-1">Tempo de Resposta</p>
+                              <p className="font-semibold text-sm">{api.responseTime}ms</p>
                             </div>
                           )}
                           {api.uptime !== undefined && (
-                            <div className="text-center min-w-[80px]">
-                              <p className="text-muted-foreground text-xs">Uptime</p>
-                              <p className="font-semibold">{api.uptime.toFixed(1)}%</p>
+                            <div className="text-center p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-xs mb-1">Uptime</p>
+                              <p className="font-semibold text-sm">{api.uptime.toFixed(1)}%</p>
                             </div>
                           )}
                           {api.requestsToday !== undefined && (
-                            <div className="text-center min-w-[100px]">
-                              <p className="text-muted-foreground text-xs whitespace-nowrap">Requisições Hoje</p>
-                              <p className="font-semibold">{api.requestsToday.toLocaleString()}</p>
+                            <div className="text-center p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-xs mb-1">Requisições</p>
+                              <p className="font-semibold text-sm">{api.requestsToday.toLocaleString()}</p>
                             </div>
                           )}
                           {api.errorRate !== undefined && (
-                            <div className="text-center min-w-[90px]">
-                              <p className="text-muted-foreground text-xs whitespace-nowrap">Taxa de Erro</p>
-                              <p className={`font-semibold ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
+                            <div className="text-center p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-xs mb-1">Taxa de Erro</p>
+                              <p className={`font-semibold text-sm ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
                                 {api.errorRate.toFixed(1)}%
                               </p>
                             </div>
@@ -537,6 +554,199 @@ export default function MonitoramentoAPIs() {
           </div>
         )}
       </div>
+
+      {/* Modal de Detalhes da API */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {selectedAPI && (
+                <>
+                  <div className={getStatusColor(selectedAPI.status)}>
+                    {selectedAPI.icon}
+                  </div>
+                  <span>{selectedAPI.name}</span>
+                  {getStatusBadge(selectedAPI.status)}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedAPI?.description}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedAPI && (
+            <div className="space-y-6">
+              {/* Informações Básicas */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <div className="flex items-center gap-2">
+                    {selectedAPI.status === 'online' && <CheckCircle className="w-4 h-4 text-green-500" />}
+                    {selectedAPI.status === 'offline' && <XCircle className="w-4 h-4 text-red-500" />}
+                    {selectedAPI.status === 'degraded' && <AlertTriangle className="w-4 h-4 text-yellow-500" />}
+                    <span className="font-semibold capitalize">{selectedAPI.status}</span>
+                  </div>
+                </div>
+
+                {selectedAPI.endpoint && (
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Endpoint</p>
+                    <p className="font-mono text-sm font-semibold">{selectedAPI.endpoint}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Métricas */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {selectedAPI.responseTime !== undefined && (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Tempo de Resposta</p>
+                    <p className="text-2xl font-bold">{selectedAPI.responseTime}ms</p>
+                  </div>
+                )}
+                {selectedAPI.uptime !== undefined && (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Uptime</p>
+                    <p className="text-2xl font-bold">{selectedAPI.uptime.toFixed(1)}%</p>
+                  </div>
+                )}
+                {selectedAPI.requestsToday !== undefined && (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Requisições Hoje</p>
+                    <p className="text-2xl font-bold">{selectedAPI.requestsToday.toLocaleString()}</p>
+                  </div>
+                )}
+                {selectedAPI.errorRate !== undefined && (
+                  <div className="p-4 bg-muted rounded-lg">
+                    <p className="text-xs text-muted-foreground mb-1">Taxa de Erro</p>
+                    <p className={`text-2xl font-bold ${selectedAPI.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
+                      {selectedAPI.errorRate.toFixed(1)}%
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Detalhes do Erro (se offline/degraded) */}
+              {(selectedAPI.status === 'offline' || selectedAPI.status === 'degraded') && (
+                <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-red-900 dark:text-red-100 mb-2">
+                        {selectedAPI.status === 'offline' ? 'API Offline' : 'API Degradada'}
+                      </h4>
+                      <p className="text-sm text-red-800 dark:text-red-200 mb-3">
+                        {selectedAPI.errorMessage || getDefaultErrorMessage(selectedAPI)}
+                      </p>
+                      {selectedAPI.errorDetails && (
+                        <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/30 rounded text-xs font-mono text-red-900 dark:text-red-100">
+                          {selectedAPI.errorDetails}
+                        </div>
+                      )}
+                      <div className="mt-4 space-y-2">
+                        <p className="text-sm font-semibold text-red-900 dark:text-red-100">Possíveis Causas:</p>
+                        <ul className="text-sm text-red-800 dark:text-red-200 space-y-1 list-disc list-inside">
+                          {getPossibleCauses(selectedAPI).map((cause, idx) => (
+                            <li key={idx}>{cause}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="mt-4 space-y-2">
+                        <p className="text-sm font-semibold text-red-900 dark:text-red-100">Ações Recomendadas:</p>
+                        <ul className="text-sm text-red-800 dark:text-red-200 space-y-1 list-disc list-inside">
+                          {getRecommendedActions(selectedAPI).map((action, idx) => (
+                            <li key={idx}>{action}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Botão de Fechar */}
+              <div className="flex justify-end">
+                <Button onClick={() => setDetailsOpen(false)}>
+                  Fechar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </CRMLayout>
   );
+}
+
+// Funções auxiliares para mensagens de erro
+function getDefaultErrorMessage(api: APIStatus): string {
+  if (api.status === 'offline') {
+    if (api.category === 'marketplace') {
+      return 'A integração com este marketplace não está configurada ou a autorização expirou.';
+    } else if (api.category === 'payment') {
+      return 'O gateway de pagamento não está configurado ou as credenciais são inválidas.';
+    } else if (api.category === 'logistics') {
+      return 'O serviço de logística não está disponível ou não foi configurado.';
+    } else {
+      return 'A API não está respondendo. Pode haver um problema de conexão ou o serviço está indisponível.';
+    }
+  }
+  return 'A API está apresentando problemas de desempenho ou instabilidade.';
+}
+
+function getPossibleCauses(api: APIStatus): string[] {
+  const causes: string[] = [];
+  
+  if (api.category === 'marketplace') {
+    causes.push('Token de autorização expirado');
+    causes.push('Integração não configurada');
+    causes.push('Credenciais inválidas');
+    causes.push('API do marketplace fora do ar');
+  } else if (api.category === 'internal') {
+    causes.push('Erro de conexão com o banco de dados');
+    causes.push('Serviço em manutenção');
+    causes.push('Sobrecarga do servidor');
+  } else if (api.category === 'payment') {
+    causes.push('Credenciais de pagamento não configuradas');
+    causes.push('Gateway de pagamento indisponível');
+    causes.push('Conta suspensa ou inativa');
+  } else if (api.category === 'logistics') {
+    causes.push('API de logística não configurada');
+    causes.push('Serviço de entrega indisponível');
+    causes.push('Credenciais inválidas');
+  } else {
+    causes.push('Problema de conexão de rede');
+    causes.push('Serviço temporariamente indisponível');
+  }
+  
+  return causes;
+}
+
+function getRecommendedActions(api: APIStatus): string[] {
+  const actions: string[] = [];
+  
+  if (api.category === 'marketplace') {
+    actions.push('Verifique se a integração está autorizada');
+    actions.push('Reconecte a conta do marketplace');
+    actions.push('Verifique as permissões do aplicativo');
+  } else if (api.category === 'internal') {
+    actions.push('Verifique os logs do servidor');
+    actions.push('Teste a conexão com o banco de dados');
+    actions.push('Entre em contato com o suporte técnico');
+  } else if (api.category === 'payment') {
+    actions.push('Configure as credenciais de pagamento');
+    actions.push('Verifique o status da sua conta');
+    actions.push('Teste a conexão com o gateway');
+  } else if (api.category === 'logistics') {
+    actions.push('Configure a integração de logística');
+    actions.push('Verifique as credenciais de acesso');
+    actions.push('Teste a conexão com o serviço');
+  } else {
+    actions.push('Aguarde alguns minutos e tente novamente');
+    actions.push('Verifique sua conexão com a internet');
+    actions.push('Entre em contato com o suporte se o problema persistir');
+  }
+  
+  return actions;
 }
