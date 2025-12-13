@@ -68,10 +68,22 @@ export default function Produtos() {
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao carregar produtos');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Erro na resposta:', response.status, errorData);
+        
+        if (response.status === 401) {
+          toast.error('Sessão expirada. Faça login novamente.');
+        } else if (response.status === 403) {
+          toast.error('Você não tem permissão para visualizar produtos');
+        } else {
+          toast.error(errorData.error || 'Erro ao carregar produtos');
+        }
+        setProdutos([]);
+        return;
       }
 
       const data = await response.json();
+      console.log('Produtos carregados:', data);
       setProdutos(data.data || []);
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
