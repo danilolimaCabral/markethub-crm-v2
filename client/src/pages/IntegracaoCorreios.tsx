@@ -15,10 +15,9 @@ import {
   Calculator,
   Clock
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 export default function IntegracaoCorreios() {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   

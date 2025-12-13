@@ -15,10 +15,10 @@ import {
   DollarSign,
   BarChart3
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 export default function IntegracaoPagBank() {
-  const { toast } = useToast();
+
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   
@@ -30,11 +30,7 @@ export default function IntegracaoPagBank() {
 
   const handleConnect = async () => {
     if (!credentials.email || !credentials.token) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
-      });
+      toast.error('Por favor, preencha todos os campos obrigatórios.');
       return;
     }
 
@@ -45,16 +41,9 @@ export default function IntegracaoPagBank() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setConnected(true);
-      toast({
-        title: "Conectado com sucesso!",
-        description: "Sua conta PagBank foi conectada ao sistema.",
-      });
+      toast.success('Sua conta PagBank foi conectada ao sistema.');
     } catch (error) {
-      toast({
-        title: "Erro ao conectar",
-        description: "Não foi possível conectar com o PagBank. Verifique suas credenciais.",
-        variant: "destructive",
-      });
+      toast.error('Não foi possível conectar com o PagBank. Verifique suas credenciais.');
     } finally {
       setLoading(false);
     }
@@ -67,10 +56,7 @@ export default function IntegracaoPagBank() {
       token: "",
       environment: "production"
     });
-    toast({
-      title: "Desconectado",
-      description: "Sua conta PagBank foi desconectada.",
-    });
+    toast.success('Sua conta PagBank foi desconectada.');
   };
 
   return (

@@ -15,10 +15,9 @@ import {
   Package,
   Shield
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 export default function IntegracaoJadlog() {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   

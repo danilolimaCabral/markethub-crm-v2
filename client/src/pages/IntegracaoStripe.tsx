@@ -15,10 +15,9 @@ import {
   Zap,
   TrendingUp
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from 'sonner';
 
 export default function IntegracaoStripe() {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   
