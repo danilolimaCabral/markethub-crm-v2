@@ -502,34 +502,39 @@ export default function MonitoramentoAPIs() {
                           </div>
                         </div>
 
-                        {/* Métricas em Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-border">
+                        {/* Métricas em Grid - Oculto em mobile, visível em tablet+ */}
+                        <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-3 border-t border-border">
                           {api.responseTime !== undefined && (
-                            <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-xs mb-1">Tempo de Resposta</p>
-                              <p className="font-semibold text-sm">{api.responseTime}ms</p>
+                            <div className="p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Tempo</p>
+                              <p className="font-semibold text-xs">{api.responseTime}ms</p>
                             </div>
                           )}
                           {api.uptime !== undefined && (
-                            <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-xs mb-1">Uptime</p>
-                              <p className="font-semibold text-sm">{api.uptime.toFixed(1)}%</p>
+                            <div className="p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Uptime</p>
+                              <p className="font-semibold text-xs">{api.uptime.toFixed(1)}%</p>
                             </div>
                           )}
                           {api.requestsToday !== undefined && (
-                            <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-xs mb-1">Requisições</p>
-                              <p className="font-semibold text-sm">{api.requestsToday.toLocaleString()}</p>
+                            <div className="p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Req.</p>
+                              <p className="font-semibold text-xs">{api.requestsToday.toLocaleString()}</p>
                             </div>
                           )}
                           {api.errorRate !== undefined && (
-                            <div className="text-center p-2 bg-muted/50 rounded">
-                              <p className="text-muted-foreground text-xs mb-1">Taxa de Erro</p>
-                              <p className={`font-semibold text-sm ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
+                            <div className="p-2 bg-muted/50 rounded">
+                              <p className="text-muted-foreground text-[10px] mb-0.5 truncate">Erro</p>
+                              <p className={`font-semibold text-xs ${api.errorRate > 1 ? 'text-red-600' : 'text-green-600'}`}>
                                 {api.errorRate.toFixed(1)}%
                               </p>
                             </div>
                           )}
+                        </div>
+                        
+                        {/* Hint para mobile */}
+                        <div className="sm:hidden pt-2 border-t border-border">
+                          <p className="text-xs text-muted-foreground text-center">Clique para ver detalhes</p>
                         </div>
                       </div>
                     ))}
@@ -665,11 +670,26 @@ export default function MonitoramentoAPIs() {
                 </div>
               )}
 
-              {/* Botão de Fechar */}
-              <div className="flex justify-end">
-                <Button onClick={() => setDetailsOpen(false)}>
+              {/* Botões de Ação */}
+              <div className="flex justify-between items-center gap-3 pt-4 border-t border-border">
+                <Button variant="outline" onClick={() => setDetailsOpen(false)}>
                   Fechar
                 </Button>
+                
+                <div className="flex gap-2">
+                  {getActionButtons(selectedAPI).map((button, idx) => (
+                    <Button 
+                      key={idx}
+                      variant={button.variant as any}
+                      onClick={() => {
+                        button.onClick();
+                        setDetailsOpen(false);
+                      }}
+                    >
+                      {button.label}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -749,4 +769,102 @@ function getRecommendedActions(api: APIStatus): string[] {
   }
   
   return actions;
+}
+
+function getActionButtons(api: APIStatus): Array<{label: string, variant: string, onClick: () => void}> {
+  const buttons: Array<{label: string, variant: string, onClick: () => void}> = [];
+  
+  // Botões apenas para APIs offline ou degradadas
+  if (api.status === 'offline' || api.status === 'degraded') {
+    if (api.category === 'marketplace') {
+      // Mercado Livre
+      if (api.name.includes('Mercado Livre')) {
+        buttons.push({
+          label: 'Conectar Mercado Livre',
+          variant: 'default',
+          onClick: () => {
+            window.location.href = '/integracoes/mercadolivre';
+          }
+        });
+      }
+      // Shopee
+      else if (api.name.includes('Shopee')) {
+        buttons.push({
+          label: 'Configurar Shopee',
+          variant: 'default',
+          onClick: () => {
+            toast.info('Integração com Shopee em desenvolvimento');
+          }
+        });
+      }
+      // Amazon
+      else if (api.name.includes('Amazon')) {
+        buttons.push({
+          label: 'Configurar Amazon',
+          variant: 'default',
+          onClick: () => {
+            toast.info('Integração com Amazon em desenvolvimento');
+          }
+        });
+      }
+      // Magalu
+      else if (api.name.includes('Magalu')) {
+        buttons.push({
+          label: 'Configurar Magalu',
+          variant: 'default',
+          onClick: () => {
+            toast.info('Integração com Magalu planejada');
+          }
+        });
+      }
+    } else if (api.category === 'payment') {
+      buttons.push({
+        label: 'Configurar Pagamento',
+        variant: 'default',
+        onClick: () => {
+          window.location.href = '/configuracoes';
+        }
+      });
+    } else if (api.category === 'logistics') {
+      buttons.push({
+        label: 'Configurar Logística',
+        variant: 'default',
+        onClick: () => {
+          window.location.href = '/configuracoes';
+        }
+      });
+    } else if (api.category === 'internal') {
+      buttons.push({
+        label: 'Ver Logs',
+        variant: 'outline',
+        onClick: () => {
+          toast.info('Visualização de logs em desenvolvimento');
+        }
+      });
+      buttons.push({
+        label: 'Contatar Suporte',
+        variant: 'default',
+        onClick: () => {
+          window.open('https://help.manus.im', '_blank');
+        }
+      });
+    }
+  } else if (api.status === 'online') {
+    // Botões para APIs online
+    if (api.category === 'marketplace') {
+      buttons.push({
+        label: 'Ver Integração',
+        variant: 'outline',
+        onClick: () => {
+          if (api.name.includes('Mercado Livre')) {
+            window.location.href = '/integracoes/mercadolivre';
+          } else {
+            toast.info('Página de integração em desenvolvimento');
+          }
+        }
+      });
+    }
+  }
+  
+  return buttons;
 }
