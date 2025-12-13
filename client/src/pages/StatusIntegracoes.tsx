@@ -39,7 +39,7 @@ export default function StatusIntegracoes() {
     try {
       setLoading(true);
       
-      // Dados mockados das integrações disponíveis
+      // Dados das integrações disponíveis
       const availableIntegrations: Integration[] = [
         // Marketplaces
         {
@@ -56,7 +56,8 @@ export default function StatusIntegracoes() {
           name: 'Shopee',
           type: 'marketplace',
           status: 'disconnected',
-          description: 'Integração com Shopee (Em desenvolvimento)',
+          description: 'Integração com Shopee',
+          connectUrl: '/integracoes/shopee',
           icon: 'shopee'
         },
         {
@@ -64,7 +65,8 @@ export default function StatusIntegracoes() {
           name: 'Amazon',
           type: 'marketplace',
           status: 'disconnected',
-          description: 'Integração com Amazon SP-API (Em desenvolvimento)',
+          description: 'Integração com Amazon SP-API',
+          connectUrl: '/integracoes/amazon',
           icon: 'amazon'
         },
         {
@@ -72,7 +74,8 @@ export default function StatusIntegracoes() {
           name: 'Magazine Luiza',
           type: 'marketplace',
           status: 'disconnected',
-          description: 'Integração com Magalu Marketplace (Em desenvolvimento)',
+          description: 'Integração com Magalu Marketplace',
+          connectUrl: '/integracoes/magalu',
           icon: 'magalu'
         },
         // Pagamento
@@ -81,7 +84,7 @@ export default function StatusIntegracoes() {
           name: 'PagBank',
           type: 'payment',
           status: 'disconnected',
-          description: 'Gateway de pagamento PagSeguro (Em desenvolvimento)',
+          description: 'Gateway de pagamento PagSeguro',
           icon: 'pagbank'
         },
         {
@@ -89,7 +92,7 @@ export default function StatusIntegracoes() {
           name: 'Stripe',
           type: 'payment',
           status: 'disconnected',
-          description: 'Gateway de pagamento internacional (Planejado)',
+          description: 'Gateway de pagamento internacional',
           icon: 'stripe'
         },
         // Logística
@@ -98,7 +101,7 @@ export default function StatusIntegracoes() {
           name: 'Correios',
           type: 'logistics',
           status: 'disconnected',
-          description: 'Cálculo de frete e rastreamento (Em desenvolvimento)',
+          description: 'Cálculo de frete e rastreamento',
           icon: 'correios'
         },
         {
@@ -106,7 +109,7 @@ export default function StatusIntegracoes() {
           name: 'Melhor Envio',
           type: 'logistics',
           status: 'disconnected',
-          description: 'Cotação e gestão de envios (Em desenvolvimento)',
+          description: 'Cotação e gestão de envios',
           icon: 'melhorenvio'
         },
         {
@@ -114,7 +117,7 @@ export default function StatusIntegracoes() {
           name: 'Jadlog',
           type: 'logistics',
           status: 'disconnected',
-          description: 'Transportadora Jadlog (Em desenvolvimento)',
+          description: 'Transportadora Jadlog',
           icon: 'jadlog'
         }
       ];
@@ -201,7 +204,7 @@ export default function StatusIntegracoes() {
               onClick={() => window.location.href = integration.connectUrl!}
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              Conectar
+              Configurar
             </Button>
           )}
           {integration.status === 'disconnected' && !integration.connectUrl && (
