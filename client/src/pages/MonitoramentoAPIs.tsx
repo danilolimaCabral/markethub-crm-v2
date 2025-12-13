@@ -369,7 +369,7 @@ export default function MonitoramentoAPIs() {
   }, {} as Record<string, APIStatus[]>);
 
   return (
-      <div className="space-y-6">
+    <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -519,10 +519,9 @@ export default function MonitoramentoAPIs() {
             <span>Última atualização: {new Date(data.timestamp).toLocaleString('pt-BR')}</span>
           </div>
         )}
-      </div>
 
-      {/* Modal de Detalhes da API */}
-      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        {/* Modal de Detalhes da API */}
+        <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
@@ -656,7 +655,7 @@ export default function MonitoramentoAPIs() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
   );
 }
 
