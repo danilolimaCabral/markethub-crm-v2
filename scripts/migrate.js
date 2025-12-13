@@ -41,7 +41,8 @@ const migrations = [
   '06_multi_tenant.sql',
   '07_clientes_master.sql',
   '08_pedidos.sql',
-  '09_produtos.sql'
+  '09_produtos.sql',
+  '10_user_permissions.sql'
 ];
 
 async function runMigrations() {
