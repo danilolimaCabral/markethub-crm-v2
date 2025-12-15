@@ -18,7 +18,7 @@ import {
   Calendar,
   Eye,
 } from 'lucide-react';
-import axios from 'axios';
+import api from '@/lib/axios';
 import MLAPIMonitor from '@/components/MLAPIMonitor';
 import MLAdminDashboard from '@/components/MLAdminDashboard';
 
@@ -90,7 +90,7 @@ export default function IntegracaoMercadoLivre() {
   const checkIntegrationStatus = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('/api/integrations/mercadolivre/status', {
+      const response = await api.get('/api/integrations/mercadolivre/status', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -112,7 +112,7 @@ export default function IntegracaoMercadoLivre() {
 
   const handleConnect = async () => {
     try {
-      const response = await axios.get('/api/integrations/mercadolivre/auth/url', {
+      const response = await api.get('/api/integrations/mercadolivre/auth/url', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -128,7 +128,7 @@ export default function IntegracaoMercadoLivre() {
 
   const handleDisconnect = async () => {
     try {
-      await axios.post(
+      await api.post(
         '/api/integrations/mercadolivre/disconnect',
         {},
         {
@@ -152,7 +152,7 @@ export default function IntegracaoMercadoLivre() {
 
   const loadStats = async () => {
     try {
-      const response = await axios.get('/api/integrations/mercadolivre/stats', {
+      const response = await api.get('/api/integrations/mercadolivre/stats', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -166,7 +166,7 @@ export default function IntegracaoMercadoLivre() {
 
   const loadProducts = async () => {
     try {
-      const response = await axios.get('/api/integrations/mercadolivre/products', {
+      const response = await api.get('/api/integrations/mercadolivre/products', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -180,7 +180,7 @@ export default function IntegracaoMercadoLivre() {
 
   const loadOrders = async () => {
     try {
-      const response = await axios.get('/api/integrations/mercadolivre/orders', {
+      const response = await api.get('/api/integrations/mercadolivre/orders', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -195,7 +195,7 @@ export default function IntegracaoMercadoLivre() {
   const handleSyncProducts = async () => {
     try {
       setIsSyncing(true);
-      const response = await axios.post(
+      const response = await api.post(
         '/api/integrations/mercadolivre/sync/products',
         {},
         {
@@ -221,7 +221,7 @@ export default function IntegracaoMercadoLivre() {
   const handleSyncOrders = async () => {
     try {
       setIsSyncing(true);
-      const response = await axios.post(
+      const response = await api.post(
         '/api/integrations/mercadolivre/sync/orders',
         {},
         {
