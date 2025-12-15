@@ -212,14 +212,37 @@ class MercadoLivreWebhookService {
   /**
    * Valida webhook do ML (verificação de autenticidade)
    */
-  static validateWebhook(notification: MLNotification): boolean {
-    // ML não envia assinatura, então validamos estrutura
+  static validateWebhook(notification: MLNotification, sourceIp?: string): boolean {
+    // Validar estrutura básica
     if (!notification._id || !notification.resource || !notification.topic) {
+      console.error('❌ Webhook com estrutura inválida');
       return false;
     }
 
-    // Validar que o user_id corresponde a uma integração ativa
-    // TODO: Implementar validação mais robusta
+    // Validar tipos de dados
+    if (typeof notification.user_id !== 'number' || typeof notification.application_id !== 'number') {
+      console.error('❌ Tipos de dados inválidos no webhook');
+      return false;
+    }
+
+    // Validar formato do resource (deve começar com /)
+    if (!notification.resource.startsWith('/')) {
+      console.error('❌ Formato de resource inválido');
+      return false;
+    }
+
+    // Validar tópico conhecido
+    const validTopics = Object.values(NotificationTopic);
+    if (!validTopics.includes(notification.topic as NotificationTopic)) {
+      console.warn(`⚠️  Tópico desconhecido: ${notification.topic}`);
+      // Não bloquear - pode ser novo tópico do ML
+    }
+
+    // Validar IPs do Mercado Livre (opcional - adicionar IPs conhecidos)
+    // const mlIpRanges = ['209.225.49.0/24', '216.33.197.0/24'];
+    // if (sourceIp && !isIpInRanges(sourceIp, mlIpRanges)) {
+    //   console.warn(`⚠️  IP não reconhecido: ${sourceIp}`);
+    // }
 
     return true;
   }
@@ -228,23 +251,39 @@ class MercadoLivreWebhookService {
    * Responde ao webhook (sempre retornar 200 imediatamente)
    */
   static async handleWebhook(req: Request, res: Response): Promise<void> {
+    const startTime = Date.now();
+    
     // ML espera resposta 200 imediatamente (máx 3 segundos)
     // Processar notificação de forma assíncrona
     
     const notification: MLNotification = req.body;
+    const sourceIp = req.ip || req.headers['x-forwarded-for'] as string || 'unknown';
+
+    console.log(`📨 Webhook recebido de ${sourceIp}:`, {
+      id: notification._id,
+      topic: notification.topic,
+      resource: notification.resource,
+      attempts: notification.attempts,
+    });
 
     // Validar estrutura
-    if (!this.validateWebhook(notification)) {
+    if (!this.validateWebhook(notification, sourceIp)) {
       console.error('❌ Webhook inválido:', notification);
       return res.status(400).json({ error: 'Invalid webhook' });
     }
 
-    // Responder imediatamente
-    res.status(200).json({ success: true });
+    // Responder imediatamente (requisito do ML)
+    const responseTime = Date.now() - startTime;
+    res.status(200).json({ 
+      success: true, 
+      received: true,
+      response_time_ms: responseTime 
+    });
 
     // Processar assincronamente (não aguarda)
     this.processNotification(notification).catch(error => {
       console.error('❌ Erro ao processar webhook:', error);
+      // TODO: Implementar retry queue para notificações que falharam
     });
   }
 

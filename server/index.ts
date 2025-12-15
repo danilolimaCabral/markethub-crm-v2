@@ -96,8 +96,14 @@ async function startServer() {
     next();
   });
   
-  // Rate limiting global
-  app.use('/api/', apiLimiter);
+  // Rate limiting global (exceto webhook do ML que precisa ser público)
+  app.use('/api/', (req, res, next) => {
+    // Excluir webhook do Mercado Livre do rate limiting
+    if (req.path === '/integrations/mercadolivre/webhook') {
+      return next();
+    }
+    return apiLimiter(req, res, next);
+  });
 
   // Configurar Swagger Documentation
   // setupSwagger(app); // Temporariamente desabilitado
