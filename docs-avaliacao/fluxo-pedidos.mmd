@@ -1,0 +1,24 @@
+graph LR
+    A[Cliente Compra no ML] --> B{Webhook Recebido}
+    B --> C[Validação e Registro]
+    C --> D[Busca Dados Completos]
+    D --> E[Salva no Banco]
+    E --> F[Calcula Taxas]
+    F --> G[Atualiza Estoque]
+    G --> H{Estoque Zerou?}
+    H -->|Sim| I[Pausa Anúncio]
+    H -->|Não| J[Mantém Ativo]
+    I --> K[Notifica Vendedor]
+    J --> K
+    K --> L[Gera Nota Fiscal]
+    L --> M[Envia para Logística]
+    M --> N[Atualiza Status]
+    N --> O[Cliente Recebe]
+    O --> P[Pós-Venda]
+
+    style A fill:#FFE600
+    style B fill:#10B981
+    style F fill:#EF4444
+    style H fill:#F59E0B
+    style I fill:#DC2626
+    style P fill:#8B5CF6

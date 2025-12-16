@@ -1,0 +1,78 @@
+graph TB
+    subgraph "Frontend - React + TypeScript"
+        UI[Interface do Usuário]
+        DASH[Dashboard]
+        PROD[Produtos]
+        PED[Pedidos]
+        FIN[Financeiro]
+        INT[Integrações]
+        IA[Chat IA]
+    end
+
+    subgraph "Backend - Node.js + Express"
+        API[API REST]
+        AUTH[Autenticação 2FA]
+        WEBHOOK[Webhooks]
+        SYNC[Sincronização]
+        CALC[Calculadora Taxas]
+    end
+
+    subgraph "Banco de Dados"
+        PG[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+    end
+
+    subgraph "Integrações Externas"
+        ML[Mercado Livre API]
+        AMZN[Amazon API]
+        SHOP[Shopee API]
+        CORR[Correios API]
+        PAG[PagBank API]
+    end
+
+    subgraph "Infraestrutura"
+        RAIL[Railway Deploy]
+        CDN[CDN Assets]
+        BACKUP[Backup Automático]
+    end
+
+    UI --> API
+    DASH --> API
+    PROD --> API
+    PED --> API
+    FIN --> API
+    INT --> API
+    IA --> API
+
+    API --> AUTH
+    API --> WEBHOOK
+    API --> SYNC
+    API --> CALC
+
+    AUTH --> PG
+    WEBHOOK --> PG
+    SYNC --> PG
+    CALC --> PG
+
+    API --> REDIS
+
+    SYNC --> ML
+    SYNC --> AMZN
+    SYNC --> SHOP
+    SYNC --> CORR
+    SYNC --> PAG
+
+    WEBHOOK --> ML
+    WEBHOOK --> AMZN
+    WEBHOOK --> SHOP
+
+    PG --> BACKUP
+    API --> RAIL
+    UI --> CDN
+
+    style UI fill:#4F46E5
+    style API fill:#10B981
+    style PG fill:#3B82F6
+    style ML fill:#FFE600
+    style REDIS fill:#DC2626
+    style IA fill:#8B5CF6
