@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 50px;
+            width: 600px;
+        }
+        
+        .page-title {
+            font-size: 44px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .accent-line {
+            position: absolute;
+            left: 80px;
+            top: 130px;
+            width: 180px;
+            height: 4px;
+            background: #EF4444;
+        }
+        
+        .problems-grid {
+            position: absolute;
+            left: 80px;
+            top: 170px;
+            width: 1120px;
+            height: 480px;
+        }
+        
+        .problems-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 24px;
+        }
+        
+        .problem-card {
+            min-height: 140px;
+            padding-top: 20px;
+        }
+        
+        .problem-number {
+            font-size: 28px;
+            font-weight: 900;
+            color: #EF4444;
+            margin: 0 0 12px 0;
+        }
+        
+        .problem-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 8px 0;
+        }
+        
+        .problem-description {
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .impact-box {
+            position: absolute;
+            left: 80px;
+            bottom: 50px;
+            width: 1120px;
+            background: #4338CA;
+            padding-top: 20px;
+            padding-left: 32px;
+            height: 80px;
+        }
+        
+        .impact-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">O Problema: Vendedores Perdendo Dinheiro</h1>
+        </div>
+        
+        <div class="accent-line"></div>
+        
+        <div class="problems-grid">
+            <div class="problems-row">
+                <div class="problem-card">
+                    <div class="problem-number">1</div>
+                    <h3 class="problem-title">Cálculo Manual de Taxas</h3>
+                    <p class="problem-description">Vendedores não sabem calcular comissões, frete, impostos e lucro real</p>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-number">2</div>
+                    <h3 class="problem-title">Vendas com Prejuízo</h3>
+                    <p class="problem-description">Descobrem tarde demais que estão perdendo dinheiro em cada venda</p>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-number">3</div>
+                    <h3 class="problem-title">Gestão Descentralizada</h3>
+                    <p class="problem-description">Planilhas, anotações e múltiplas ferramentas sem integração</p>
+                </div>
+            </div>
+            
+            <div class="problems-row">
+                <div class="problem-card">
+                    <div class="problem-number">4</div>
+                    <h3 class="problem-title">Estoque Desatualizado</h3>
+                    <p class="problem-description">Vendem produtos sem estoque, gerando cancelamentos e reclamações</p>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-number">5</div>
+                    <h3 class="problem-title">Falta de Análise</h3>
+                    <p class="problem-description">Não sabem quais produtos dão lucro ou qual canal é mais rentável</p>
+                </div>
+                
+                <div class="problem-card">
+                    <div class="problem-number">6</div>
+                    <h3 class="problem-title">Perda de Tempo</h3>
+                    <p class="problem-description">40+ horas/semana em tarefas manuais e repetitivas</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="impact-box">
+            <p class="impact-text">Resultado: 70% dos vendedores não sabem sua margem real e muitos operam no prejuízo</p>
+        </div>
+    </div>
+</body>
+</html>

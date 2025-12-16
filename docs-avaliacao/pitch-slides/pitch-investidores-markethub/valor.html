@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 50px;
+            width: 600px;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .value-hero {
+            position: absolute;
+            left: 80px;
+            top: 130px;
+            width: 1120px;
+            background: #4338CA;
+            height: 120px;
+            padding-top: 26px;
+            padding-left: 36px;
+        }
+        
+        .hero-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hero-value {
+            font-size: 64px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0;
+        }
+        
+        .composition-section {
+            position: absolute;
+            left: 80px;
+            top: 280px;
+            width: 1120px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 20px 0;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 36px;
+        }
+        
+        .component-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            height: 36px;
+            border-top: 2px solid #E2E8F0;
+            padding-top: 10px;
+        }
+        
+        .component-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin: 0;
+        }
+        
+        .component-value {
+            font-size: 19px;
+            font-weight: 900;
+            color: #4338CA;
+            margin: 0;
+        }
+        
+        .accent-bar {
+            position: absolute;
+            right: 80px;
+            top: 50px;
+            width: 6px;
+            height: 160px;
+            background: #EF4444;
+        }
+        
+        .footer-note {
+            position: absolute;
+            left: 80px;
+            bottom: 50px;
+            width: 1120px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="accent-bar"></div>
+        
+        <div class="header-section">
+            <h1 class="page-title">Valor de Mercado</h1>
+        </div>
+        
+        <div class="value-hero">
+            <p class="hero-label">Valor Estimado</p>
+            <div class="hero-value">R$ 480.000</div>
+        </div>
+        
+        <div class="composition-section">
+            <h3 class="section-title">Composição do Valor</h3>
+            
+            <div class="components-grid">
+                <div class="component-item">
+                    <p class="component-label">76 Módulos Implementados</p>
+                    <p class="component-value">R$ 120.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Desenvolvimento Inicial</p>
+                    <p class="component-value">R$ 80.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Backend Completo</p>
+                    <p class="component-value">R$ 60.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Frontend Moderno</p>
+                    <p class="component-value">R$ 50.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">9 Integrações</p>
+                    <p class="component-value">R$ 40.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Suporte Contínuo</p>
+                    <p class="component-value">R$ 40.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Segurança Enterprise</p>
+                    <p class="component-value">R$ 30.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Testes e QA</p>
+                    <p class="component-value">R$ 25.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Infraestrutura Cloud</p>
+                    <p class="component-value">R$ 20.000</p>
+                </div>
+                
+                <div class="component-item">
+                    <p class="component-label">Documentação</p>
+                    <p class="component-value">R$ 15.000</p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="footer-note">Valor baseado em custos de desenvolvimento, complexidade técnica e potencial de mercado</p>
+    </div>
+</body>
+</html>

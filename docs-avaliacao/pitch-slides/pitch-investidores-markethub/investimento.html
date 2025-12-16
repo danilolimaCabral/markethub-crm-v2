@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 50px;
+            width: 700px;
+        }
+        
+        .page-title {
+            font-size: 40px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .investment-ask {
+            position: absolute;
+            left: 80px;
+            top: 130px;
+            width: 1120px;
+            display: flex;
+            gap: 36px;
+        }
+        
+        .ask-box {
+            min-height: 90px;
+        }
+        
+        .ask-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #334155;
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .ask-value {
+            font-size: 42px;
+            font-weight: 900;
+            color: #EF4444;
+            line-height: 1;
+            margin: 0;
+        }
+        
+        .ask-detail {
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-top: 6px;
+        }
+        
+        .allocation-section {
+            position: absolute;
+            left: 80px;
+            top: 260px;
+            width: 1120px;
+        }
+        
+        .allocation-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 24px 0;
+        }
+        
+        .allocation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .allocation-item {
+            height: 130px;
+            padding-top: 20px;
+            padding-left: 28px;
+        }
+        
+        .allocation-item.marketing {
+            background: #4338CA;
+            grid-column: 1 / 2;
+        }
+        
+        .allocation-item.tech {
+            background: #EF4444;
+            grid-column: 2 / 3;
+        }
+        
+        .allocation-item.operations {
+            background: #334155;
+            grid-column: 1 / 2;
+        }
+        
+        .allocation-item.reserve {
+            background: #64748B;
+            grid-column: 2 / 3;
+        }
+        
+        .allocation-percent {
+            font-size: 48px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 0 10px 0;
+        }
+        
+        .allocation-category {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 10px 0;
+        }
+        
+        .allocation-details {
+            font-size: 13px;
+            font-weight: 500;
+            color: #FFFFFF;
+            line-height: 1.5;
+            margin: 0 28px 20px 0;
+            opacity: 0.95;
+        }
+        
+        .accent-line {
+            position: absolute;
+            right: 80px;
+            top: 50px;
+            width: 6px;
+            height: 140px;
+            background: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="accent-line"></div>
+        
+        <div class="header-section">
+            <h1 class="page-title">Como Vamos Usar<br>o Investimento</h1>
+        </div>
+        
+        <div class="investment-ask">
+            <div class="ask-box">
+                <p class="ask-label">Solicitando</p>
+                <div class="ask-value">R$ 2M</div>
+                <p class="ask-detail">Série Seed</p>
+            </div>
+            
+            <div class="ask-box">
+                <p class="ask-label">Valuation</p>
+                <div class="ask-value">R$ 10M</div>
+                <p class="ask-detail">Pré-money</p>
+            </div>
+            
+            <div class="ask-box">
+                <p class="ask-label">Equity Oferecido</p>
+                <div class="ask-value">20%</div>
+            </div>
+        </div>
+        
+        <div class="allocation-section">
+            <h2 class="allocation-title">Alocação de Recursos</h2>
+            
+            <div class="allocation-grid">
+                <div class="allocation-item marketing">
+                    <div class="allocation-percent">40%</div>
+                    <h3 class="allocation-category">Marketing e Vendas</h3>
+                    <p class="allocation-details">R$ 800k • Equipe comercial (5 pessoas)<br>Marketing digital e conteúdo<br>Programa de afiliados</p>
+                </div>
+                
+                <div class="allocation-item tech">
+                    <div class="allocation-percent">30%</div>
+                    <h3 class="allocation-category">Produto e Tecnologia</h3>
+                    <p class="allocation-details">R$ 600k • 3 desenvolvedores full-time<br>1 designer UX/UI<br>Infraestrutura e servidores</p>
+                </div>
+                
+                <div class="allocation-item operations">
+                    <div class="allocation-percent">20%</div>
+                    <h3 class="allocation-category">Operações e Suporte</h3>
+                    <p class="allocation-details">R$ 400k • Equipe de CS (3 pessoas)<br>Ferramentas e processos</p>
+                </div>
+                
+                <div class="allocation-item reserve">
+                    <div class="allocation-percent">10%</div>
+                    <h3 class="allocation-category">Reserva de Capital</h3>
+                    <p class="allocation-details">R$ 200k • Contingência e oportunidades</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

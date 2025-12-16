@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 50px;
+            width: 500px;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .team-profiles {
+            position: absolute;
+            left: 80px;
+            top: 130px;
+            width: 540px;
+        }
+        
+        .profile-item {
+            margin: 0 0 26px 0;
+            min-height: 80px;
+        }
+        
+        .profile-role {
+            font-size: 14px;
+            font-weight: 700;
+            color: #4338CA;
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .profile-name {
+            font-size: 21px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 6px 0;
+        }
+        
+        .profile-description {
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .advisors-section {
+            position: absolute;
+            left: 80px;
+            top: 380px;
+            width: 540px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 14px 0;
+        }
+        
+        .advisor-list {
+            list-style: none;
+            margin: 0;
+        }
+        
+        .advisor-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 0 0 10px 0;
+        }
+        
+        .bullet-square {
+            width: 7px;
+            height: 7px;
+            background: #EF4444;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+        
+        .advisor-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0 0 0 10px;
+        }
+        
+        .visual-section {
+            position: absolute;
+            right: 80px;
+            top: 110px;
+            width: 500px;
+        }
+        
+        .team-image {
+            width: 500px;
+            height: 320px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .current-team-box {
+            position: absolute;
+            right: 80px;
+            bottom: 80px;
+            width: 500px;
+            background: #4338CA;
+            padding-top: 20px;
+            height: 110px;
+        }
+        
+        .team-box-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 14px 22px;
+        }
+        
+        .team-composition {
+            display: flex;
+            justify-content: space-around;
+            margin: 0 22px 20px 22px;
+        }
+        
+        .team-stat {
+            text-align: center;
+        }
+        
+        .team-number {
+            font-size: 32px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 0 3px 0;
+        }
+        
+        .team-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0;
+        }
+        
+        .accent-line {
+            position: absolute;
+            left: 0;
+            top: 120px;
+            width: 6px;
+            height: 220px;
+            background: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="accent-line"></div>
+        
+        <div class="header-section">
+            <h1 class="page-title">Time Fundador</h1>
+        </div>
+        
+        <div class="team-profiles">
+            <div class="profile-item">
+                <p class="profile-role">Fundador & CEO</p>
+                <h3 class="profile-name">Liderança Experiente</h3>
+                <p class="profile-description">10+ anos em e-commerce, ex-vendedor de marketplace, conhece profundamente as dores do mercado</p>
+            </div>
+            
+            <div class="profile-item">
+                <p class="profile-role">CTO</p>
+                <h3 class="profile-name">Expertise Técnica</h3>
+                <p class="profile-description">8+ anos em desenvolvimento, especialista em SaaS multi-tenant, ex-Tech Lead em startup unicórnio</p>
+            </div>
+        </div>
+        
+        <div class="advisors-section">
+            <h3 class="section-title">Advisors</h3>
+            <ul class="advisor-list">
+                <li class="advisor-item">
+                    <div class="bullet-square"></div>
+                    <p class="advisor-text">Especialista em marketplaces (ex-Mercado Livre)</p>
+                </li>
+                <li class="advisor-item">
+                    <div class="bullet-square"></div>
+                    <p class="advisor-text">CFO com experiência em scale-ups</p>
+                </li>
+                <li class="advisor-item">
+                    <div class="bullet-square"></div>
+                    <p class="advisor-text">Growth hacker com 3 exits bem-sucedidos</p>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="visual-section">
+            <img src="/home/ubuntu/upload/search_images/W57fTuP3NTNp.jpg" alt="Time MarketHub" class="team-image">
+        </div>
+        
+        <div class="current-team-box">
+            <p class="team-box-title">Time Atual: 8 Pessoas</p>
+            <div class="team-composition">
+                <div class="team-stat">
+                    <div class="team-number">4</div>
+                    <p class="team-label">Tech</p>
+                </div>
+                <div class="team-stat">
+                    <div class="team-number">2</div>
+                    <p class="team-label">Produto</p>
+                </div>
+                <div class="team-stat">
+                    <div class="team-number">2</div>
+                    <p class="team-label">CS</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

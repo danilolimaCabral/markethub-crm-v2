@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-left {
+            position: absolute;
+            left: 80px;
+            top: 100px;
+            width: 580px;
+        }
+        
+        .main-title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin: 0 0 24px 0;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: #334155;
+            line-height: 1.4;
+            margin: 0 0 40px 0;
+        }
+        
+        .value-props {
+            margin: 0 0 40px 0;
+        }
+        
+        .value-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 0 0 14px 0;
+        }
+        
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: #10B981;
+            flex-shrink: 0;
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 900;
+            color: #FFFFFF;
+        }
+        
+        .value-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0F172A;
+            margin: 0 0 0 12px;
+            line-height: 1.5;
+        }
+        
+        .contact-box {
+            background: #4338CA;
+            padding-top: 24px;
+            height: 140px;
+        }
+        
+        .contact-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 14px 28px;
+        }
+        
+        .contact-info {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0 28px 10px 28px;
+            line-height: 1.6;
+        }
+        
+        .visual-section {
+            position: absolute;
+            right: 80px;
+            top: 100px;
+            width: 480px;
+        }
+        
+        .meeting-image {
+            width: 480px;
+            height: 320px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .stats-box {
+            margin-top: 28px;
+            background: #EF4444;
+            padding-top: 24px;
+            height: 140px;
+        }
+        
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            margin: 0 24px 24px 24px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 0 6px 0;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0;
+        }
+        
+        .accent-bar {
+            position: absolute;
+            left: 0;
+            top: 100px;
+            width: 6px;
+            height: 240px;
+            background: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="accent-bar"></div>
+        
+        <div class="content-left">
+            <h1 class="main-title">Junte-se a Nós</h1>
+            <p class="subtitle">Transforme o mercado de e-commerce brasileiro e construa um unicórnio juntos</p>
+            
+            <div class="value-props">
+                <div class="value-item">
+                    <div class="check-icon">✓</div>
+                    <p class="value-text">Mercado de R$ 186 bi em crescimento</p>
+                </div>
+                
+                <div class="value-item">
+                    <div class="check-icon">✓</div>
+                    <p class="value-text">Produto validado e com tração real</p>
+                </div>
+                
+                <div class="value-item">
+                    <div class="check-icon">✓</div>
+                    <p class="value-text">Time experiente e comprometido</p>
+                </div>
+                
+                <div class="value-item">
+                    <div class="check-icon">✓</div>
+                    <p class="value-text">ROI projetado de 10x em 5 anos</p>
+                </div>
+            </div>
+            
+            <div class="contact-box">
+                <h3 class="contact-title">Vamos Conversar</h3>
+                <p class="contact-info">📧 contato@markethubcrm.com.br<br>
+                📱 (11) 99999-9999</p>
+            </div>
+        </div>
+        
+        <div class="visual-section">
+            <img src="/home/ubuntu/upload/search_images/FfCxkOxjZDRo.jpg" alt="Parceria de Sucesso" class="meeting-image">
+            
+            <div class="stats-box">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">R$ 2M</div>
+                        <p class="stat-label">Investimento</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">20%</div>
+                        <p class="stat-label">Equity</p>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">R$ 10M</div>
+                        <p class="stat-label">Valuation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

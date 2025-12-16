@@ -1,0 +1,140 @@
+{
+  "project_info": {
+    "title": "MarketHub CRM",
+    "created": 1765846434.52169,
+    "last_updated": 1765847300.3670237,
+    "total_slides": 16
+  },
+  "slides": {
+    "capa": "edited",
+    "problema": "edited",
+    "solucao": "edited",
+    "mercado": "edited",
+    "modelo_negocio": "edited",
+    "tracao": "edited",
+    "tecnologia": "edited",
+    "diferenciais": "edited",
+    "valor": "edited",
+    "roi": "edited",
+    "crescimento": "edited",
+    "investimento": "edited",
+    "equipe": "edited",
+    "faq": "edited",
+    "cta": "edited",
+    "apendice": "edited"
+  },
+  "outline": [
+    {
+      "id": "capa",
+      "title": "MarketHub CRM",
+      "summary": "Slide de abertura apresentando o MarketHub CRM como a única ferramenta autônoma para vendedores de marketplace, com tagline 'Transformando Vendas em Lucro Real'.",
+      "image_plan": "/home/ubuntu/upload/pasted_file_vMep4x_image.png - Image #1 is a screenshot of the MarketHub CRM interface, specifically showing the Mercado Livre integration, which is highly relevant for the cover slide of a pitch about this specific CRM.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "problema",
+      "title": "O Problema",
+      "summary": "Vendedores estão perdendo dinheiro sem saber devido à complexidade de cálculo de taxas, comissões, ICMS e impostos. 70% não sabem sua margem líquida real.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "solucao",
+      "title": "A Solução",
+      "summary": "MarketHub CRM oferece calculadora inteligente de taxas, automação de estoque e análise financeira profunda em uma plataforma SaaS multi-tenant.",
+      "image_plan": "/home/ubuntu/upload/search_images/GuQnNR6FX7vt.jpg - Image #2 is a clean, modern data dashboard that visually represents the 'Intelligent and Automated Management' solution.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "mercado",
+      "title": "Mercado e Oportunidade",
+      "summary": "E-commerce no Brasil movimenta R$ 186 bilhões com crescimento de 12-15% ao ano. TAM de R$ 2,5 bilhões e SOM de R$ 75 milhões em 3 anos.",
+      "image_plan": "/home/ubuntu/upload/search_images/dBc0X36IcRTT.png - Image #4 is a clear graph showing upward growth, suitable for illustrating the 'Market and Opportunity' and 'Exponential Growth' theme.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "modelo_negocio",
+      "title": "Modelo de Negócio",
+      "summary": "SaaS recorrente com 3 planos (R$ 197-497/mês), MRR de R$ 15k, 60 clientes ativos, LTV/CAC de 15,9x e churn de 3,5%.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "tracao",
+      "title": "Tração e Resultados",
+      "summary": "R$ 2M+ economizados pelos clientes, crescimento de MRR de 25%/mês, NPS de 72 e taxa de retenção de 96,5%. Casos de sucesso comprovados.",
+      "image_plan": "/home/ubuntu/upload/search_images/ydI98C0CaQ4y.jpg - Image #5 shows a visual representation of climbing a success ladder/bar chart, which fits the theme of 'Consistent Growth and Market Validation' and success stories.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "tecnologia",
+      "title": "Tecnologia e Produto",
+      "summary": "76 módulos implementados, 9 integrações nativas, 50.000+ linhas de código, arquitetura multi-tenant escalável com segurança enterprise.",
+      "image_plan": "/home/ubuntu/upload/search_images/K4b15FHYzZtu.png - Image #3 is a comprehensive dashboard view, suitable for representing the 'Technology and Product' complexity and the multiple modules/integrations.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "diferenciais",
+      "title": "Diferenciais Competitivos",
+      "summary": "Comparação com concorrentes mostrando superioridade em calculadora de taxas (10/10), automação de estoque (10/10) e integrações (10/10).",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "valor",
+      "title": "Análise de Valor",
+      "summary": "Valor de mercado estimado em R$ 480.000, composto por desenvolvimento, módulos, integrações, segurança e infraestrutura.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "roi",
+      "title": "ROI para Clientes",
+      "summary": "Economia de R$ 144.872 em 24 meses vs. ERP tradicional, com custo de apenas R$ 7.128. Economia de 36h/semana equivalente a R$ 3.600/mês.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "crescimento",
+      "title": "Plano de Crescimento",
+      "summary": "Roadmap de 3 anos: 500 clientes e ARR de R$ 1,5M em 2026, 2.000 clientes e ARR de R$ 6M em 2027, 5.000 clientes e ARR de R$ 15M em 2028.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "investimento",
+      "title": "Uso dos Recursos",
+      "summary": "Solicitando R$ 2M (Série Seed) com valuation de R$ 10M. Alocação: 40% Marketing/Vendas, 30% Produto/Tech, 20% Operações, 10% Reserva.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "equipe",
+      "title": "Time Fundador",
+      "summary": "Fundador com 10+ anos em e-commerce, CTO com 8+ anos em SaaS, advisors experientes. Time atual de 8 pessoas (4 tech, 2 produto, 2 CS).",
+      "image_plan": "/home/ubuntu/upload/search_images/W57fTuP3NTNp.jpg - Image #8 shows a diverse team collaborating in a modern office setting, which is suitable for the 'Team' slide.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "faq",
+      "title": "Perguntas Frequentes",
+      "summary": "Respostas sobre timing, moat, competição com ML, escalabilidade e churn. Arquitetura multi-tenant com custo marginal próximo de zero.",
+      "image_plan": "",
+      "slide_template_key": ""
+    },
+    {
+      "id": "cta",
+      "title": "Call to Action",
+      "summary": "Junte-se a nós para construir a plataforma líder de gestão para marketplaces. R$ 2M para capturar 1% do mercado. ROI projetado de 10x em 5 anos.",
+      "image_plan": "/home/ubuntu/upload/search_images/FfCxkOxjZDRo.jpg - Image #7 shows a professional, collaborative business meeting, fitting the 'Call to Action' and 'Join Us' theme.",
+      "slide_template_key": ""
+    },
+    {
+      "id": "apendice",
+      "title": "Métricas Projetadas",
+      "summary": "Tabela detalhada com projeções de 3 anos: clientes, MRR, ARR, CAC, LTV, churn e margem bruta. Crescimento consistente e sustentável.",
+      "image_plan": "",
+      "slide_template_key": ""
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { margin: 0; padding: 0; }
+        
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 50px;
+            width: 600px;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .subtitle {
+            font-size: 17px;
+            font-weight: 600;
+            color: #334155;
+            margin-top: 10px;
+        }
+        
+        .timeline-container {
+            position: absolute;
+            left: 80px;
+            top: 160px;
+            width: 1120px;
+            height: 500px;
+        }
+        
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        
+        .year-block {
+            height: 380px;
+            padding-top: 28px;
+        }
+        
+        .year-block.year-1 {
+            background: #4338CA;
+        }
+        
+        .year-block.year-2 {
+            background: #334155;
+        }
+        
+        .year-block.year-3 {
+            background: #EF4444;
+        }
+        
+        .year-number {
+            font-size: 56px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 0 20px 28px;
+        }
+        
+        .metrics-section {
+            margin: 0 28px 20px 28px;
+        }
+        
+        .metric-item {
+            margin: 0 0 14px 0;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1.1;
+            margin: 0 0 3px 0;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+        }
+        
+        .milestones-section {
+            margin: 20px 28px 28px 28px;
+            padding-top: 16px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .milestone-item {
+            font-size: 13px;
+            font-weight: 500;
+            color: #FFFFFF;
+            line-height: 1.6;
+            margin: 0 0 7px 0;
+        }
+        
+        .milestone-bullet {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background: #FFFFFF;
+            margin-right: 7px;
+        }
+        
+        .accent-bar {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 1120px;
+            height: 3px;
+            background: linear-gradient(to right, #4338CA 0%, #334155 50%, #EF4444 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">Roadmap de 3 Anos</h1>
+            <p class="subtitle">Crescimento Consistente e Sustentável</p>
+        </div>
+        
+        <div class="timeline-container">
+            <div class="timeline-grid">
+                <div class="year-block year-1">
+                    <div class="year-number">2026</div>
+                    
+                    <div class="metrics-section">
+                        <div class="metric-item">
+                            <div class="metric-value">500</div>
+                            <p class="metric-label">Clientes</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 125k</div>
+                            <p class="metric-label">MRR</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 1,5M</div>
+                            <p class="metric-label">ARR</p>
+                        </div>
+                    </div>
+                    
+                    <div class="milestones-section">
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Expandir integrações</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Magalu e Americanas</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Lançar app mobile</p>
+                    </div>
+                </div>
+                
+                <div class="year-block year-2">
+                    <div class="year-number">2027</div>
+                    
+                    <div class="metrics-section">
+                        <div class="metric-item">
+                            <div class="metric-value">2.000</div>
+                            <p class="metric-label">Clientes</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 500k</div>
+                            <p class="metric-label">MRR</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 6M</div>
+                            <p class="metric-label">ARR</p>
+                        </div>
+                    </div>
+                    
+                    <div class="milestones-section">
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Expansão internacional</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>América Latina</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>IA preditiva avançada</p>
+                    </div>
+                </div>
+                
+                <div class="year-block year-3">
+                    <div class="year-number">2028</div>
+                    
+                    <div class="metrics-section">
+                        <div class="metric-item">
+                            <div class="metric-value">5.000</div>
+                            <p class="metric-label">Clientes</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 1,25M</div>
+                            <p class="metric-label">MRR</p>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-value">R$ 15M</div>
+                            <p class="metric-label">ARR</p>
+                        </div>
+                    </div>
+                    
+                    <div class="milestones-section">
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Marketplace de integrações</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>IPO ou aquisição</p>
+                        <p class="milestone-item"><span class="milestone-bullet"></span>Líder de mercado</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accent-bar"></div>
+        </div>
+    </div>
+</body>
+</html>
