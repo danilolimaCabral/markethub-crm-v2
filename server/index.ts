@@ -33,6 +33,7 @@ import integrationsStatusRouter from "./routes/integrations-status";
 import monitoringRouter from "./routes/monitoring";
 import logisticsRouter from "./routes/logistics";
 import marketplacesRouter from "./routes/marketplaces";
+import controlTowerRouter from "./routes/control-tower";
 // import ticketsRouter from "./routes/tickets";
 
 // Importar middlewares
@@ -132,6 +133,7 @@ async function startServer() {
   app.use("/api/monitoring", monitoringRouter);
   app.use("/api/logistics", logisticsRouter);
   app.use("/api/marketplaces", marketplacesRouter);
+  app.use("/api/control-tower", controlTowerRouter);
   // app.use("/api/tickets", ticketsRouter);
   
   // Middleware de tratamento de erros (deve ser o último)

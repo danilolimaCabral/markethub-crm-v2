@@ -82,6 +82,14 @@ const IntegracaoCorreios = lazy(() => import('./pages/IntegracaoCorreios'));
 const IntegracaoMelhorEnvio = lazy(() => import('./pages/IntegracaoMelhorEnvio'));
 const IntegracaoJadlog = lazy(() => import('./pages/IntegracaoJadlog'));
 
+// Control Tower
+const ControlTowerDashboard = lazy(() => import('./pages/ControlTower/Dashboard'));
+const ControlTowerPlatforms = lazy(() => import('./pages/ControlTower/Platforms'));
+const ControlTowerClients = lazy(() => import('./pages/ControlTower/Clients'));
+const ControlTowerDemands = lazy(() => import('./pages/ControlTower/Demands'));
+const ControlTowerWorkLogs = lazy(() => import('./pages/ControlTower/WorkLogs'));
+const ControlTowerContracts = lazy(() => import('./pages/ControlTower/Contracts'));
+
 // Super Admin
 const SuperAdminLogin = lazy(() => import('./pages/SuperAdminLogin'));
 const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
@@ -211,6 +219,13 @@ function Router() {
           <Route path="/system-status" component={SystemStatus} />
           <Route path="/status-integracoes" component={StatusIntegracoes} />
           <Route path="/monitoramento-apis" component={MonitoramentoAPIs} />
+          {/* Control Tower */}
+          <Route path="/control-tower" component={ControlTowerDashboard} />
+          <Route path="/control-tower/plataformas" component={ControlTowerPlatforms} />
+          <Route path="/control-tower/clientes" component={ControlTowerClients} />
+          <Route path="/control-tower/demandas" component={ControlTowerDemands} />
+          <Route path="/control-tower/apontamentos" component={ControlTowerWorkLogs} />
+          <Route path="/control-tower/contratos" component={ControlTowerContracts} />
           <Route path={"/docs"} component={Docs} />
           <Route path={"/403"} component={Forbidden} />
           <Route path={"/404"} component={NotFound} />

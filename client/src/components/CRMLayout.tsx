@@ -25,7 +25,12 @@ import {
   Menu,
   X,
   Target,
-  Activity
+  Activity,
+  Building2,
+  Server,
+  ClipboardList,
+  Clock,
+  FileSignature
 } from 'lucide-react';
 import { logout } from '@/lib/auth';
 
@@ -162,6 +167,17 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
       items: [
         { path: "/mercado-livre", icon: <ShoppingCart size={20} />, label: "Mercado Livre", color: "text-yellow-500" },
         { path: "/importacao-financeira", icon: <FileText size={20} />, label: "Importação Financeira", color: "text-green-500" },
+      ]
+    },
+    {
+      title: "Control Tower",
+      items: [
+        { path: "/control-tower", icon: <Building2 size={20} />, label: "Dashboard", color: "text-indigo-500" },
+        { path: "/control-tower/plataformas", icon: <Server size={20} />, label: "Plataformas", color: "text-blue-500" },
+        { path: "/control-tower/clientes", icon: <Users size={20} />, label: "Clientes", color: "text-cyan-500" },
+        { path: "/control-tower/demandas", icon: <ClipboardList size={20} />, label: "Demandas", color: "text-orange-500" },
+        { path: "/control-tower/apontamentos", icon: <Clock size={20} />, label: "Apontamentos", color: "text-green-500" },
+        { path: "/control-tower/contratos", icon: <FileSignature size={20} />, label: "Contratos", color: "text-purple-500" },
       ]
     },
     {
