@@ -17,7 +17,7 @@ import {
   Plus, Edit, Eye, FileText, Calendar, DollarSign, 
   AlertTriangle, CheckCircle, Clock, RefreshCw
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { toast } from 'sonner';
 
 interface Contract {
@@ -64,7 +64,7 @@ const billingRules: Record<string, string> = {
 };
 
 export default function Contracts() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('markethub_token');
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);

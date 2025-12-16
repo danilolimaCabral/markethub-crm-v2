@@ -11,7 +11,7 @@ import {
   Building2, Users, Server, FileText, Clock, AlertTriangle, 
   TrendingUp, DollarSign, CheckCircle, XCircle, Timer
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 
 interface DashboardData {
   summary: {
@@ -84,7 +84,7 @@ const typeLabels: Record<string, string> = {
 };
 
 export default function ControlTowerDashboard() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('markethub_token');
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [mrrByPlatform, setMrrByPlatform] = useState<any[]>([]);

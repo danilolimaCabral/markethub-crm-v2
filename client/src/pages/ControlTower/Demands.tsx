@@ -18,7 +18,7 @@ import {
   Plus, Edit, Eye, Clock, AlertTriangle, Bug, Lightbulb, 
   RefreshCw, Headphones, FolderKanban, Timer, Play, Pause
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { toast } from 'sonner';
 
 interface Demand {
@@ -75,7 +75,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
 };
 
 export default function Demands() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('markethub_token');
   const [demands, setDemands] = useState<Demand[]>([]);
   const [instances, setInstances] = useState<Instance[]>([]);
   const [loading, setLoading] = useState(true);

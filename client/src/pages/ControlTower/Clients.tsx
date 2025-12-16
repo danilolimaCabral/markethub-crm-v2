@@ -13,7 +13,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow
 } from '@/components/ui/table';
 import { Plus, Edit, Trash2, Users, Server, DollarSign, Mail, Phone, Building } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { toast } from 'sonner';
 
 interface Client {
@@ -33,7 +33,7 @@ interface Client {
 }
 
 export default function Clients() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('markethub_token');
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);

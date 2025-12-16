@@ -18,7 +18,7 @@ import {
   Plus, Play, Pause, Square, Clock, Timer, Calendar, 
   CheckCircle, XCircle, DollarSign
 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+
 import { toast } from 'sonner';
 
 interface WorkLog {
@@ -66,7 +66,7 @@ const activityTypes: Record<string, string> = {
 };
 
 export default function WorkLogs() {
-  const { token } = useAuth();
+  const token = localStorage.getItem('markethub_token');
   const [worklogs, setWorklogs] = useState<WorkLog[]>([]);
   const [demands, setDemands] = useState<Demand[]>([]);
   const [activeTimer, setActiveTimer] = useState<ActiveTimer | null>(null);
