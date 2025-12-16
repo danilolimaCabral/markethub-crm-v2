@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 60px;
+            width: 1120px;
+        }
+        
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .accent-line-top {
+            position: absolute;
+            left: 80px;
+            top: 140px;
+            width: 200px;
+            height: 4px;
+            background: #EF4444;
+        }
+        
+        .content-wrapper {
+            position: absolute;
+            left: 80px;
+            top: 180px;
+            width: 1120px;
+            min-height: 480px;
+        }
+        
+        .plans-section {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 480px;
+        }
+        
+        .section-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4338CA;
+            margin: 0 0 24px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .plan-item {
+            margin: 0 0 20px 0;
+            padding-top: 16px;
+            min-height: 70px;
+        }
+        
+        .plan-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 6px 0;
+        }
+        
+        .plan-price {
+            font-size: 32px;
+            font-weight: 900;
+            color: #4338CA;
+            margin: 0 0 4px 0;
+        }
+        
+        .plan-details {
+            font-size: 15px;
+            font-weight: 500;
+            color: #334155;
+            margin: 0;
+        }
+        
+        .metrics-section {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 580px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px 40px;
+            margin-top: 24px;
+        }
+        
+        .metric-item {
+            min-height: 80px;
+        }
+        
+        .metric-value {
+            font-size: 40px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1;
+            margin: 0 0 8px 0;
+        }
+        
+        .metric-value.highlight {
+            color: #EF4444;
+        }
+        
+        .metric-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #334155;
+            line-height: 1.3;
+            margin: 0;
+        }
+        
+        .channels-section {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 1120px;
+        }
+        
+        .channels-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 16px 0;
+        }
+        
+        .channels-list {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        
+        .channel-tag {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4338CA;
+            background: #FFFFFF;
+            border: 2px solid #4338CA;
+            padding-top: 8px;
+            min-height: 36px;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+        
+        .divider-vertical {
+            position: absolute;
+            left: 520px;
+            top: 0;
+            width: 2px;
+            height: 400px;
+            background: #E2E8F0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">SaaS Recorrente com Baixo CAC</h1>
+        </div>
+        
+        <div class="accent-line-top"></div>
+        
+        <div class="content-wrapper">
+            <div class="plans-section">
+                <p class="section-label">Planos</p>
+                
+                <div class="plan-item">
+                    <h3 class="plan-name">Básico</h3>
+                    <div class="plan-price">R$ 197<span style="font-size: 20px; font-weight: 600;">/mês</span></div>
+                    <p class="plan-details">Até 500 pedidos</p>
+                </div>
+                
+                <div class="plan-item">
+                    <h3 class="plan-name">Profissional</h3>
+                    <div class="plan-price">R$ 297<span style="font-size: 20px; font-weight: 600;">/mês</span></div>
+                    <p class="plan-details">Até 2.000 pedidos</p>
+                </div>
+                
+                <div class="plan-item">
+                    <h3 class="plan-name">Enterprise</h3>
+                    <div class="plan-price">R$ 497<span style="font-size: 20px; font-weight: 600;">/mês</span></div>
+                    <p class="plan-details">Pedidos ilimitados</p>
+                </div>
+            </div>
+            
+            <div class="divider-vertical"></div>
+            
+            <div class="metrics-section">
+                <p class="section-label">Métricas</p>
+                
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value">R$ 15k</div>
+                        <p class="metric-label">MRR Atual</p>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-value">60</div>
+                        <p class="metric-label">Clientes Ativos</p>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-value">R$ 250</div>
+                        <p class="metric-label">Ticket Médio/mês</p>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-value">3,5%</div>
+                        <p class="metric-label">Churn Mensal</p>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-value">R$ 7.142</div>
+                        <p class="metric-label">LTV</p>
+                    </div>
+                    
+                    <div class="metric-item">
+                        <div class="metric-value highlight">15,9x</div>
+                        <p class="metric-label">LTV/CAC</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="channels-section">
+                <p class="channels-label">Canais de Aquisição</p>
+                <div class="channels-list">
+                    <div class="channel-tag">Marketing de Conteúdo (SEO)</div>
+                    <div class="channel-tag">Programa de Afiliados</div>
+                    <div class="channel-tag">Parcerias com Marketplaces</div>
+                    <div class="channel-tag">Anúncios Pagos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

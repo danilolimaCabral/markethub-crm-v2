@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 60px;
+            width: 550px;
+        }
+        
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0 0 8px 0;
+        }
+        
+        .page-subtitle {
+            font-size: 20px;
+            font-weight: 600;
+            color: #334155;
+            margin: 0;
+        }
+        
+        .content-grid {
+            position: absolute;
+            left: 80px;
+            top: 200px;
+            width: 520px;
+        }
+        
+        .solution-item {
+            margin: 0 0 32px 0;
+            min-height: 120px;
+        }
+        
+        .solution-number {
+            font-size: 32px;
+            font-weight: 900;
+            color: #EF4444;
+            margin: 0 0 8px 0;
+        }
+        
+        .solution-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 12px 0;
+        }
+        
+        .solution-description {
+            font-size: 16px;
+            font-weight: 400;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .visual-section {
+            position: absolute;
+            right: 80px;
+            top: 160px;
+            width: 540px;
+            height: 480px;
+        }
+        
+        .diagram-image {
+            width: 540px;
+            height: 400px;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .image-caption {
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+            margin-top: 16px;
+            text-align: center;
+        }
+        
+        .accent-bar {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 600px;
+            height: 8px;
+            background: #4338CA;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">MarketHub CRM</h1>
+            <p class="page-subtitle">Gestão Inteligente e Automatizada</p>
+        </div>
+        
+        <div class="content-grid">
+            <div class="solution-item">
+                <div class="solution-number">1.</div>
+                <h3 class="solution-title">Calculadora Inteligente</h3>
+                <p class="solution-description">Cálculo automático de todas as taxas, considera ICMS por estado e mostra lucro líquido real</p>
+            </div>
+            
+            <div class="solution-item">
+                <div class="solution-number">2.</div>
+                <h3 class="solution-title">Automação de Estoque</h3>
+                <p class="solution-description">Pausa anúncios quando zera, reativa ao repor e evita vendas sem estoque</p>
+            </div>
+            
+            <div class="solution-item">
+                <div class="solution-number">3.</div>
+                <h3 class="solution-title">Análise Financeira Profunda</h3>
+                <p class="solution-description">CMV, margem de contribuição, OPEX e custos fixos/variáveis com relatórios avançados</p>
+            </div>
+        </div>
+        
+        <div class="visual-section">
+            <img src="/home/ubuntu/pitch-investidores-markethub/fluxo-pedidos.png" alt="Fluxo Automatizado de Pedidos" class="diagram-image">
+            <p class="image-caption">Fluxo Automatizado de Pedidos</p>
+        </div>
+        
+        <div class="accent-bar"></div>
+    </div>
+</body>
+</html>

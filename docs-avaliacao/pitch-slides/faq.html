@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 60px;
+            width: 600px;
+        }
+        
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .accent-line-vertical {
+            position: absolute;
+            left: 80px;
+            top: 140px;
+            width: 4px;
+            height: 500px;
+            background: #4338CA;
+        }
+        
+        .faq-container {
+            position: absolute;
+            left: 120px;
+            top: 160px;
+            width: 1080px;
+        }
+        
+        .faq-item {
+            margin: 0 0 28px 0;
+            min-height: 80px;
+        }
+        
+        .faq-item.highlight {
+            background: #F8FAFC;
+            padding-top: 20px;
+            padding-left: 24px;
+            min-height: 100px;
+        }
+        
+        .faq-number {
+            font-size: 24px;
+            font-weight: 900;
+            color: #EF4444;
+            margin: 0 0 8px 0;
+        }
+        
+        .faq-question {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin: 0 0 8px 0;
+        }
+        
+        .faq-answer {
+            font-size: 16px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .faq-answer.no-padding {
+            margin: 0 24px 20px 0;
+        }
+        
+        .accent-bar-bottom {
+            position: absolute;
+            left: 120px;
+            bottom: 60px;
+            width: 400px;
+            height: 4px;
+            background: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">FAQ dos Investidores</h1>
+        </div>
+        
+        <div class="accent-line-vertical"></div>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-number">1.</div>
+                <h3 class="faq-question">Por que agora?</h3>
+                <p class="faq-answer">E-commerce explodindo pós-pandemia. Vendedores precisam profissionalizar urgentemente para sobreviver em um mercado cada vez mais competitivo.</p>
+            </div>
+            
+            <div class="faq-item highlight">
+                <div class="faq-number">2.</div>
+                <h3 class="faq-question">Qual o moat (fosso competitivo)?</h3>
+                <p class="faq-answer no-padding">Conhecimento profundo de negócio específico de marketplaces + integrações complexas que levam meses para replicar + efeito de rede crescente com cada novo cliente.</p>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-number">3.</div>
+                <h3 class="faq-question">E se o Mercado Livre lançar algo similar?</h3>
+                <p class="faq-answer">Somos multi-canal (ML, Amazon, Shopee). O ML quer mais vendedores ativos, não competir com ferramentas de gestão. Somos complementares, não concorrentes.</p>
+            </div>
+            
+            <div class="faq-item highlight">
+                <div class="faq-number">4.</div>
+                <h3 class="faq-question">Como é a escalabilidade?</h3>
+                <p class="faq-answer no-padding">Arquitetura multi-tenant SaaS. Custo marginal próximo de zero por novo cliente. Infraestrutura cloud escalável automaticamente. Modelo de negócio altamente escalável.</p>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-number">5.</div>
+                <h3 class="faq-question">Por que o churn é baixo (3,5%)?</h3>
+                <p class="faq-answer">Geramos ROI claro e mensurável desde o primeiro mês. Clientes economizam dinheiro real e tempo valioso. Uma vez integrados, o custo de mudança é alto e o valor percebido cresce continuamente.</p>
+            </div>
+        </div>
+        
+        <div class="accent-bar-bottom"></div>
+    </div>
+</body>
+</html>

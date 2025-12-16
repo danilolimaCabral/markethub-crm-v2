@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 80px;
+            width: 600px;
+        }
+        
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .accent-block {
+            position: absolute;
+            right: 0;
+            top: 80px;
+            width: 8px;
+            height: 200px;
+            background: #EF4444;
+        }
+        
+        .content-area {
+            position: absolute;
+            left: 80px;
+            top: 200px;
+            width: 1000px;
+        }
+        
+        .problem-list {
+            list-style: none;
+            margin: 0;
+        }
+        
+        .problem-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 0 0 20px 0;
+        }
+        
+        .bullet-square {
+            width: 12px;
+            height: 12px;
+            background: #4338CA;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+        
+        .problem-text {
+            font-size: 20px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0 0 0 20px;
+        }
+        
+        .problem-highlight {
+            font-weight: 700;
+            color: #0F172A;
+        }
+        
+        .result-section {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 4px solid #4338CA;
+            width: 800px;
+        }
+        
+        .result-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #EF4444;
+            margin: 0 0 12px 0;
+        }
+        
+        .result-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0F172A;
+            line-height: 1.4;
+            margin: 0;
+        }
+        
+        .stat-box {
+            position: absolute;
+            right: 80px;
+            bottom: 120px;
+            width: 400px;
+            background: #4338CA;
+            padding-top: 40px;
+            min-height: 180px;
+        }
+        
+        .stat-number {
+            font-size: 64px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 0 16px 40px;
+        }
+        
+        .stat-description {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            line-height: 1.3;
+            margin: 0 40px 40px 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="accent-block"></div>
+        
+        <div class="header-section">
+            <h1 class="page-title">Vendedores Estão Perdendo<br>Dinheiro Sem Saber</h1>
+        </div>
+        
+        <div class="content-area">
+            <ul class="problem-list">
+                <li class="problem-item">
+                    <div class="bullet-square"></div>
+                    <p class="problem-text"><span class="problem-highlight">Comissões variáveis</span> por marketplace (10-16%)</p>
+                </li>
+                <li class="problem-item">
+                    <div class="bullet-square"></div>
+                    <p class="problem-text"><span class="problem-highlight">ICMS diferente</span> por estado (17-21%)</p>
+                </li>
+                <li class="problem-item">
+                    <div class="bullet-square"></div>
+                    <p class="problem-text"><span class="problem-highlight">Impostos</span> conforme regime tributário (6,5% a 32%)</p>
+                </li>
+                <li class="problem-item">
+                    <div class="bullet-square"></div>
+                    <p class="problem-text"><span class="problem-highlight">Taxas de frete</span> e pagamento (1-5%)</p>
+                </li>
+                <li class="problem-item">
+                    <div class="bullet-square"></div>
+                    <p class="problem-text"><span class="problem-highlight">Gestão manual</span> em planilhas propensas a erros</p>
+                </li>
+            </ul>
+            
+            <div class="result-section">
+                <p class="result-label">RESULTADO:</p>
+                <p class="result-text">Muitos vendem com prejuízo sem perceber</p>
+            </div>
+        </div>
+        
+        <div class="stat-box">
+            <div class="stat-number">70%</div>
+            <p class="stat-description">dos vendedores não sabem sua margem líquida real</p>
+        </div>
+    </div>
+</body>
+</html>

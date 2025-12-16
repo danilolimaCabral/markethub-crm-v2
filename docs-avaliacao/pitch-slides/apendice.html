@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        .slide-container {
+            width: 1280px;
+            min-height: 720px;
+            background: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        
+        .header-section {
+            position: absolute;
+            left: 80px;
+            top: 60px;
+            width: 700px;
+        }
+        
+        .page-title {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            margin-top: 12px;
+        }
+        
+        .accent-block {
+            position: absolute;
+            right: 80px;
+            top: 60px;
+            width: 160px;
+            height: 8px;
+            background: #4338CA;
+        }
+        
+        .table-container {
+            position: absolute;
+            left: 80px;
+            top: 180px;
+            width: 1120px;
+        }
+        
+        .metrics-table {
+            width: 100%;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 280px 280px 280px 280px;
+            background: #4338CA;
+            min-height: 60px;
+        }
+        
+        .header-cell {
+            padding-top: 20px;
+            padding-left: 24px;
+        }
+        
+        .header-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 280px 280px 280px 280px;
+            min-height: 70px;
+            border-top: 2px solid #E2E8F0;
+        }
+        
+        .table-row.highlight {
+            background: #F8FAFC;
+        }
+        
+        .table-cell {
+            padding-top: 16px;
+            padding-left: 24px;
+        }
+        
+        .cell-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0F172A;
+            margin: 0;
+        }
+        
+        .cell-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #334155;
+            margin: 0;
+        }
+        
+        .cell-value.primary {
+            color: #4338CA;
+        }
+        
+        .cell-value.success {
+            color: #10B981;
+        }
+        
+        .footer-note {
+            position: absolute;
+            left: 80px;
+            bottom: 60px;
+            width: 1120px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .growth-indicator {
+            position: absolute;
+            right: 80px;
+            bottom: 140px;
+            width: 280px;
+            background: #EF4444;
+            padding-top: 20px;
+            padding-left: 24px;
+            min-height: 100px;
+        }
+        
+        .indicator-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0 0 8px 0;
+        }
+        
+        .indicator-value {
+            font-size: 40px;
+            font-weight: 900;
+            color: #FFFFFF;
+            line-height: 1;
+            margin: 0 24px 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header-section">
+            <h1 class="page-title">Métricas Financeiras Projetadas</h1>
+            <p class="subtitle">Projeções de 3 Anos</p>
+        </div>
+        
+        <div class="accent-block"></div>
+        
+        <div class="table-container">
+            <div class="metrics-table">
+                <div class="table-header">
+                    <div class="header-cell">
+                        <p class="header-text">Métrica</p>
+                    </div>
+                    <div class="header-cell">
+                        <p class="header-text">2026</p>
+                    </div>
+                    <div class="header-cell">
+                        <p class="header-text">2027</p>
+                    </div>
+                    <div class="header-cell">
+                        <p class="header-text">2028</p>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="table-cell">
+                        <p class="cell-label">Clientes</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">500</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">2.000</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">5.000</p>
+                    </div>
+                </div>
+                
+                <div class="table-row highlight">
+                    <div class="table-cell">
+                        <p class="cell-label">MRR</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 125k</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 500k</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 1,25M</p>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="table-cell">
+                        <p class="cell-label">ARR</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">R$ 1,5M</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">R$ 6M</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value primary">R$ 15M</p>
+                    </div>
+                </div>
+                
+                <div class="table-row highlight">
+                    <div class="table-cell">
+                        <p class="cell-label">CAC</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 400</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 350</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 300</p>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="table-cell">
+                        <p class="cell-label">LTV</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 7,5k</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 8k</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 9k</p>
+                    </div>
+                </div>
+                
+                <div class="table-row highlight">
+                    <div class="table-cell">
+                        <p class="cell-label">Churn</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">3%</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">2,5%</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">2%</p>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="table-cell">
+                        <p class="cell-label">Margem Bruta</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">85%</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">87%</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value success">90%</p>
+                    </div>
+                </div>
+                
+                <div class="table-row highlight">
+                    <div class="table-cell">
+                        <p class="cell-label">Burn Rate</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 150k/mês</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 300k/mês</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">R$ 500k/mês</p>
+                    </div>
+                </div>
+                
+                <div class="table-row">
+                    <div class="table-cell">
+                        <p class="cell-label">Runway</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">18 meses</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">24 meses</p>
+                    </div>
+                    <div class="table-cell">
+                        <p class="cell-value">36+ meses</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="growth-indicator">
+            <p class="indicator-label">CAGR (3 anos)</p>
+            <div class="indicator-value">10x</div>
+        </div>
+        
+        <p class="footer-note">Projeções baseadas em tração atual, benchmarks de mercado e estratégia de crescimento</p>
+    </div>
+</body>
+</html>
