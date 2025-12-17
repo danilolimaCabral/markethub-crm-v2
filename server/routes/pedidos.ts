@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { query } from '../db';
 import { authenticateToken } from '../middleware/auth';
 import { pool } from '../db';
+import { notifyNewOrder, notifyOrderUpdate } from '../services/controlTowerWebhook';
 
 const router = Router();
 
@@ -154,6 +155,17 @@ router.post('/', async (req, res) => {
       observacoes || null
     ]);
     
+    // Notificar Control Tower sobre novo pedido
+    notifyNewOrder({
+      id: result.rows[0].id,
+      numero_pedido: result.rows[0].numero_pedido,
+      cliente_nome: result.rows[0].cliente_nome,
+      marketplace: result.rows[0].marketplace,
+      valor_total: result.rows[0].valor_total,
+      status: result.rows[0].status,
+      data_pedido: result.rows[0].data_pedido,
+    }).catch(err => console.error('[ControlTower] Erro ao notificar:', err));
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Erro ao criar pedido:', error);
@@ -208,6 +220,16 @@ router.put('/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Pedido não encontrado' });
     }
+
+    // Notificar Control Tower sobre atualização de pedido
+    notifyOrderUpdate({
+      id: result.rows[0].id,
+      numero_pedido: result.rows[0].numero_pedido,
+      cliente_nome: result.rows[0].cliente_nome,
+      marketplace: result.rows[0].marketplace,
+      valor_total: result.rows[0].valor_total,
+      status: result.rows[0].status,
+    }).catch(err => console.error('[ControlTower] Erro ao notificar:', err));
     
     res.json(result.rows[0]);
   } catch (error) {

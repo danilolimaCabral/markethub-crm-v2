@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import pool, { query } from '../db';
+import { notifyNewCustomer, notifyCustomerUpdate } from '../services/controlTowerWebhook';
 
 const router = Router();
 
@@ -60,6 +61,15 @@ router.post('/', async (req, res) => {
       RETURNING *
     `, [nome, empresa, email, telefone || null, plano || 'starter', status || 'trial']);
     
+    // Notificar Control Tower sobre novo cliente
+    notifyNewCustomer({
+      id: result.rows[0].id,
+      name: result.rows[0].nome,
+      email: result.rows[0].email,
+      phone: result.rows[0].telefone,
+      customerType: 'pessoa_juridica',
+    }).catch(err => console.error('[ControlTower] Erro ao notificar:', err));
+
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error('Erro ao criar cliente:', error);
@@ -90,6 +100,15 @@ router.put('/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Cliente não encontrado' });
     }
+
+    // Notificar Control Tower sobre atualização de cliente
+    notifyCustomerUpdate({
+      id: result.rows[0].id,
+      name: result.rows[0].nome,
+      email: result.rows[0].email,
+      phone: result.rows[0].telefone,
+      customerType: 'pessoa_juridica',
+    }).catch(err => console.error('[ControlTower] Erro ao notificar:', err));
     
     res.json(result.rows[0]);
   } catch (error) {
