@@ -106,6 +106,12 @@ const Privacidade = lazy(() => import('./pages/Privacidade'));
 // Páginas "Em breve"
 const EmBreve = lazy(() => import('./pages/EmBreve'));
 
+// Smart Biz360 - Novos módulos
+const Register = lazy(() => import('./pages/Register'));
+const Subscription = lazy(() => import('./pages/Subscription'));
+const FluxoCaixaInteligente = lazy(() => import('./pages/FluxoCaixaInteligente'));
+const GestaoEquipe = lazy(() => import('./pages/GestaoEquipe'));
+
 function Router() {
   // Check if user is authenticated via localStorage with state
   const [authenticated, setAuthenticated] = useState(() => {
@@ -152,6 +158,7 @@ function Router() {
           <Route path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
           <Route path="/cadastro" component={Cadastro} />
+          <Route path="/register" component={Register} />
           <Route path="/onboarding" component={Onboarding} />
           <Route path="/verify-2fa" component={Verify2FA} />
           <Route path="/callback" component={Callback} />
@@ -219,6 +226,10 @@ function Router() {
           <Route path="/system-status" component={SystemStatus} />
           <Route path="/status-integracoes" component={StatusIntegracoes} />
           <Route path="/monitoramento-apis" component={MonitoramentoAPIs} />
+          {/* Smart Biz360 - Novos módulos */}
+          <Route path="/settings/subscription" component={Subscription} />
+          <Route path="/fluxo-caixa-inteligente" component={FluxoCaixaInteligente} />
+          <Route path="/gestao-equipe" component={GestaoEquipe} />
           {/* Control Tower */}
           <Route path="/control-tower" component={ControlTowerDashboard} />
           <Route path="/control-tower/plataformas" component={ControlTowerPlatforms} />

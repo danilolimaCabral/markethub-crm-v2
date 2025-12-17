@@ -36,6 +36,13 @@ import marketplacesRouter from "./routes/marketplaces";
 import controlTowerRouter from "./routes/control-tower";
 // import ticketsRouter from "./routes/tickets";
 
+// Smart Biz360 - Novos módulos
+import subscriptionsRouter from "./routes/subscriptions";
+import cashflowRouter from "./routes/cashflow";
+import tasksRouter from "./routes/tasks";
+import registerRouter from "./routes/register";
+import webhooksRouter from "./routes/webhooks";
+
 // Importar middlewares
 import { requestLogger, errorLogger } from "./middleware/logger";
 import { apiLimiter } from "./middleware/rateLimiter";
@@ -135,6 +142,13 @@ async function startServer() {
   app.use("/api/marketplaces", marketplacesRouter);
   app.use("/api/control-tower", controlTowerRouter);
   // app.use("/api/tickets", ticketsRouter);
+  
+  // Smart Biz360 - Novos módulos
+  app.use("/api/register", registerRouter); // Registro de novos tenants via CNPJ
+  app.use("/api/subscriptions", subscriptionsRouter); // Gestão de assinaturas
+  app.use("/api/cashflow", cashflowRouter); // Fluxo de caixa
+  app.use("/api/tasks", tasksRouter); // Gestão de tarefas e equipe
+  app.use("/api/webhooks", webhooksRouter); // Webhooks de pagamento
   
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorLogger);
