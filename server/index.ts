@@ -82,11 +82,9 @@ async function runMigrations() {
 }
 
 async function startServer() {
-  // Executar migrations de forma não-bloqueante
-  // Não aguardar conclusão para permitir que servidor inicie rapidamente
-  runMigrations().catch(err => {
-    console.error("❌ Erro nas migrações (não-bloqueante):", err.message);
-  });
+  // Migrações devem ser executadas separadamente via Railway
+  // Não executar migrações automaticamente para evitar travamento na inicialização
+  console.log("ℹ️  Migrações devem ser executadas manualmente via: railway run node scripts/migrate.js");
   
   const app = express();
   const server = createServer(app);
