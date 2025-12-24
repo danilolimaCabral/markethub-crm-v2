@@ -410,6 +410,98 @@ Equipe Smart Biz360
   }
 
   /**
+   * Template: Recuperação de senha
+   */
+  getPasswordResetTemplate(data: {
+    userName: string;
+    resetUrl: string;
+  }): EmailTemplate {
+    return {
+      subject: '🔐 Recuperação de Senha - MarketHub CRM',
+      html: `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+            .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+            .header { padding: 40px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); text-align: center; }
+            .header h1 { margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; }
+            .content { padding: 40px 30px; }
+            .content h2 { margin: 0 0 20px 0; color: #333333; font-size: 24px; }
+            .content p { margin: 0 0 20px 0; color: #666666; font-size: 16px; }
+            .button-container { text-align: center; margin: 30px 0; }
+            .button { display: inline-block; padding: 16px 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 4px; }
+            .link-box { margin: 30px 0; padding: 15px; background-color: #f8f8f8; border-left: 4px solid #667eea; word-break: break-all; }
+            .warning { padding: 20px; background-color: #fff3cd; border-left: 4px solid #ffc107; margin: 20px 0; }
+            .warning p { margin: 0; color: #856404; font-size: 14px; }
+            .footer { padding: 30px; background-color: #f8f8f8; text-align: center; border-top: 1px solid #e0e0e0; }
+            .footer p { margin: 0 0 10px 0; color: #999999; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🔐 MarketHub CRM</h1>
+            </div>
+            <div class="content">
+              <h2>Olá, ${data.userName}!</h2>
+              <p>Recebemos uma solicitação para redefinir a senha da sua conta no <strong>MarketHub CRM</strong>.</p>
+              <p>Clique no botão abaixo para criar uma nova senha:</p>
+              <div class="button-container">
+                <a href="${data.resetUrl}" class="button">Redefinir Senha</a>
+              </div>
+              <p style="font-size: 14px;">Ou copie e cole o link abaixo no seu navegador:</p>
+              <div class="link-box">
+                <p style="margin: 0; color: #666666; font-size: 14px;">${data.resetUrl}</p>
+              </div>
+              <div class="warning">
+                <p>⚠️ <strong>Importante:</strong> Este link expira em <strong>1 hora</strong>.</p>
+              </div>
+              <p style="font-size: 14px;">Se você não solicitou a redefinição de senha, ignore este email. Sua senha permanecerá inalterada.</p>
+            </div>
+            <div class="footer">
+              <p>© 2025 MarketHub CRM. Todos os direitos reservados.</p>
+              <p>Este é um email automático, por favor não responda.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `
+Olá, ${data.userName}!
+
+Recebemos uma solicitação para redefinir a senha da sua conta no MarketHub CRM.
+
+Clique no link abaixo para criar uma nova senha:
+${data.resetUrl}
+
+⚠️ IMPORTANTE: Este link expira em 1 hora.
+
+Se você não solicitou a redefinição de senha, ignore este email. Sua senha permanecerá inalterada.
+
+---
+© 2025 MarketHub CRM. Todos os direitos reservados.
+Este é um email automático, por favor não responda.
+      `
+    };
+  }
+
+  /**
+   * Enviar email de recuperação de senha
+   */
+  async sendPasswordReset(email: string, data: Parameters<typeof this.getPasswordResetTemplate>[0]): Promise<boolean> {
+    const template = this.getPasswordResetTemplate(data);
+    return this.send({
+      to: email,
+      subject: template.subject,
+      html: template.html,
+      text: template.text
+    });
+  }
+
+  /**
    * Enviar email de boas-vindas
    */
   async sendWelcome(email: string, data: Parameters<typeof this.getWelcomeTemplate>[0]): Promise<boolean> {

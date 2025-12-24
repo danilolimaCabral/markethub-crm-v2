@@ -13,6 +13,8 @@ import {
 } from '../middleware/auth';
 import { validate, loginSchema, registerUserSchema } from '../middleware/validation';
 import { authLimiter, bruteForcePrevention } from '../middleware/rateLimiter';
+import emailService from '../services/email.service';
+import crypto from 'crypto';
 
 const router = express.Router();
 
@@ -423,9 +425,34 @@ router.post('/forgot-password', authLimiter, async (req: Request, res: Response)
       });
     }
 
-    // TODO: Implementar envio de email com token de recuperação
-    // const resetToken = generatePasswordResetToken(user.id);
-    // await sendPasswordResetEmail(user.email, resetToken);
+    const user = result.rows[0];
+
+    // Gerar token de recuperação (válido por 1 hora)
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+
+    // Salvar token no banco
+    await query(
+      `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (user_id) 
+       DO UPDATE SET token_hash = $2, expires_at = $3, created_at = NOW()`,
+      [user.id, resetTokenHash, expiresAt]
+    );
+
+    // Enviar email
+    try {
+      const resetUrl = `${process.env.APP_URL || 'https://www.markthubcrm.com.br'}/reset-password/${resetToken}`;
+      await emailService.sendPasswordReset(user.email, {
+        userName: user.full_name || 'Usuário',
+        resetUrl
+      });
+      console.log(`✅ Email de recuperação enviado para: ${user.email}`);
+    } catch (emailError: any) {
+      console.error('❌ Erro ao enviar email:', emailError.message);
+      // Não revelar erro de email ao usuário por segurança
+    }
 
     res.json({
       message: 'Se o email existir, você receberá instruções para recuperar sua senha'
@@ -435,6 +462,91 @@ router.post('/forgot-password', authLimiter, async (req: Request, res: Response)
     res.status(500).json({
       error: 'Erro ao processar solicitação',
       code: 'FORGOT_PASSWORD_ERROR'
+    });
+  }
+});
+
+/**
+ * POST /api/auth/reset-password
+ * Resetar senha usando token recebido por email
+ */
+router.post('/reset-password', authLimiter, async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        error: 'Token e nova senha são obrigatórios',
+        code: 'MISSING_FIELDS'
+      });
+    }
+
+    // Validar senha
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        error: 'A senha deve ter no mínimo 8 caracteres',
+        code: 'INVALID_PASSWORD'
+      });
+    }
+
+    // Hash do token para buscar no banco
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    // Buscar token no banco
+    const tokenResult = await query(
+      `SELECT user_id, expires_at 
+       FROM password_reset_tokens 
+       WHERE token_hash = $1`,
+      [tokenHash]
+    );
+
+    if (tokenResult.rows.length === 0) {
+      return res.status(400).json({
+        error: 'Token inválido ou expirado',
+        code: 'INVALID_TOKEN'
+      });
+    }
+
+    const resetData = tokenResult.rows[0];
+
+    // Verificar se token expirou
+    if (new Date(resetData.expires_at) < new Date()) {
+      // Deletar token expirado
+      await query(
+        'DELETE FROM password_reset_tokens WHERE token_hash = $1',
+        [tokenHash]
+      );
+      return res.status(400).json({
+        error: 'Token expirado. Solicite um novo link de recuperação',
+        code: 'TOKEN_EXPIRED'
+      });
+    }
+
+    // Criptografar nova senha
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    // Atualizar senha do usuário
+    await query(
+      'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
+      [passwordHash, resetData.user_id]
+    );
+
+    // Deletar token usado
+    await query(
+      'DELETE FROM password_reset_tokens WHERE token_hash = $1',
+      [tokenHash]
+    );
+
+    console.log(`✅ Senha resetada com sucesso para user_id: ${resetData.user_id}`);
+
+    res.json({
+      message: 'Senha alterada com sucesso! Você já pode fazer login com a nova senha'
+    });
+  } catch (error: any) {
+    console.error('Erro ao resetar senha:', error);
+    res.status(500).json({
+      error: 'Erro ao processar solicitação',
+      code: 'RESET_PASSWORD_ERROR'
     });
   }
 });
