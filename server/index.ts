@@ -42,6 +42,7 @@ import cashflowRouter from "./routes/cashflow";
 import tasksRouter from "./routes/tasks";
 import registerRouter from "./routes/register";
 import webhooksRouter from "./routes/webhooks";
+import adminMasterRouter from "./routes/admin-master";
 
 // Importar middlewares
 import { requestLogger, errorLogger } from "./middleware/logger";
@@ -169,6 +170,7 @@ async function startServer() {
   app.use("/api/cashflow", cashflowRouter); // Fluxo de caixa
   app.use("/api/tasks", tasksRouter); // Gestão de tarefas e equipe
   app.use("/api/webhooks", webhooksRouter); // Webhooks de pagamento
+  app.use("/api/admin-master", adminMasterRouter); // Painel Admin Master
   
   console.log("✅ Passo 8: Rotas registradas com sucesso");
   console.log("✅ Passo 9: Configurando middleware de erros...");

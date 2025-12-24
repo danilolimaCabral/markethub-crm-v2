@@ -165,7 +165,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
     {
       title: "Integrações",
       items: [
-        { path: "/mercado-livre", icon: <ShoppingCart size={20} />, label: "Mercado Livre", color: "text-yellow-500" },
+        { path: "/integracoes/mercadolivre", icon: <ShoppingCart size={20} />, label: "Mercado Livre", color: "text-yellow-500" },
         { path: "/importacao-financeira", icon: <FileText size={20} />, label: "Importação Financeira", color: "text-green-500" },
       ]
     },
