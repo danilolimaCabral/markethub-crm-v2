@@ -10,11 +10,9 @@ Este documento descreve o sistema de proteção implementado para bloquear o ace
 
 ### Usuários Protegidos
 
-Os seguintes emails de admin master estão **completamente protegidos** e isolados:
+O seguinte email de admin master está **completamente protegido** e isolado:
 
-- `trueimportadorbr@icloud.com` (Admin Master Principal)
-- `admin@markethubcrm.com.br` (Admin Secundário)
-- `superadmin@markethubcrm.com.br` (Super Admin)
+- `admin@markethubcrm.com.br` (Admin Master)
 
 ### Proteções Implementadas
 
@@ -222,9 +220,7 @@ SELECT * FROM users WHERE tenant_id = $1
 SELECT * FROM users 
 WHERE tenant_id = $1 
   AND email NOT IN (
-    'trueimportadorbr@icloud.com',
-    'admin@markethubcrm.com.br',
-    'superadmin@markethubcrm.com.br'
+    'admin@markethubcrm.com.br'
   )
 ```
 
@@ -295,9 +291,7 @@ Para adicionar um novo email de admin master protegido, edite:
 ```typescript
 // /server/middleware/auth.ts
 const PROTECTED_ADMIN_EMAILS = [
-  'trueimportadorbr@icloud.com',
   'admin@markethubcrm.com.br',
-  'superadmin@markethubcrm.com.br',
   'novo-admin@exemplo.com' // ← Adicionar aqui
 ];
 ```

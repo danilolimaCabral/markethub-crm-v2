@@ -404,9 +404,7 @@ export const enforceTenantIsolation = (
  * Estes usuários não podem ser acessados, modificados ou visualizados por outros usuários
  */
 const PROTECTED_ADMIN_EMAILS = [
-  'trueimportadorbr@icloud.com',
-  'admin@markethubcrm.com.br',
-  'superadmin@markethubcrm.com.br'
+  'admin@markethubcrm.com.br'
 ];
 
 /**

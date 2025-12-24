@@ -13,7 +13,7 @@
 const https = require('https');
 
 const BASE_URL = 'https://www.markthubcrm.com.br';
-const ADMIN_MASTER_EMAIL = 'trueimportadorbr@icloud.com';
+const ADMIN_MASTER_EMAIL = 'admin@markethubcrm.com.br';
 
 // Cores para output
 const colors = {
