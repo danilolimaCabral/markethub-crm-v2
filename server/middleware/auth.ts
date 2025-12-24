@@ -400,6 +400,144 @@ export const enforceTenantIsolation = (
 };
 
 /**
+ * Lista de emails de admin master protegidos
+ * Estes usuários não podem ser acessados, modificados ou visualizados por outros usuários
+ */
+const PROTECTED_ADMIN_EMAILS = [
+  'trueimportadorbr@icloud.com',
+  'admin@markethubcrm.com.br',
+  'superadmin@markethubcrm.com.br'
+];
+
+/**
+ * Verifica se um email pertence a um admin master protegido
+ */
+export function isProtectedAdmin(email: string): boolean {
+  return PROTECTED_ADMIN_EMAILS.includes(email.toLowerCase());
+}
+
+/**
+ * Verifica se um user_id pertence a um admin master protegido
+ */
+export async function isProtectedAdminById(userId: string): Promise<boolean> {
+  try {
+    const result = await query(
+      'SELECT email FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (result.rows.length === 0) {
+      return false;
+    }
+    
+    return isProtectedAdmin(result.rows[0].email);
+  } catch (error) {
+    console.error('Erro ao verificar admin protegido:', error);
+    return false;
+  }
+}
+
+/**
+ * Middleware para bloquear acesso a dados do admin master
+ * Impede que usuários comuns visualizem, editem ou excluam dados do admin master
+ */
+export const protectMasterAdmin = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  // Superadmin pode acessar tudo
+  if (req.user?.role === 'superadmin') {
+    return next();
+  }
+
+  // Se o próprio usuário é um admin master, pode acessar seus próprios dados
+  if (req.user?.email && isProtectedAdmin(req.user.email)) {
+    return next();
+  }
+
+  // Verificar se está tentando acessar dados de um admin master
+  const targetUserId = req.params.id || req.params.userId || req.body.user_id || req.query.user_id;
+  const targetEmail = req.body.email || req.query.email;
+
+  // Bloquear acesso por email
+  if (targetEmail && isProtectedAdmin(targetEmail as string)) {
+    return res.status(403).json({
+      error: 'Acesso negado. Você não tem permissão para acessar dados do administrador master.',
+      code: 'MASTER_ADMIN_PROTECTED'
+    });
+  }
+
+  // Bloquear acesso por ID
+  if (targetUserId) {
+    const isProtected = await isProtectedAdminById(targetUserId as string);
+    if (isProtected) {
+      return res.status(403).json({
+        error: 'Acesso negado. Você não tem permissão para acessar dados do administrador master.',
+        code: 'MASTER_ADMIN_PROTECTED'
+      });
+    }
+  }
+
+  next();
+};
+
+/**
+ * Middleware para filtrar admin master de listagens
+ * Remove automaticamente admin master de resultados de queries
+ */
+export const filterMasterAdminFromResults = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  // Superadmin pode ver tudo
+  if (req.user?.role === 'superadmin') {
+    return next();
+  }
+
+  // Se o próprio usuário é um admin master, pode ver seus próprios dados
+  if (req.user?.email && isProtectedAdmin(req.user.email)) {
+    return next();
+  }
+
+  // Interceptar o res.json para filtrar resultados
+  const originalJson = res.json.bind(res);
+  
+  res.json = function(data: any) {
+    if (Array.isArray(data)) {
+      // Filtrar array de usuários
+      const filtered = data.filter(item => {
+        if (item.email && isProtectedAdmin(item.email)) {
+          return false;
+        }
+        return true;
+      });
+      return originalJson(filtered);
+    } else if (data && typeof data === 'object') {
+      // Filtrar objeto único
+      if (data.email && isProtectedAdmin(data.email)) {
+        return originalJson(null);
+      }
+      
+      // Filtrar arrays dentro do objeto
+      if (data.users && Array.isArray(data.users)) {
+        data.users = data.users.filter((user: any) => {
+          if (user.email && isProtectedAdmin(user.email)) {
+            return false;
+          }
+          return true;
+        });
+      }
+    }
+    
+    return originalJson(data);
+  };
+
+  next();
+};
+
+/**
  * Middleware opcional - permite acesso sem autenticação
  */
 export const optionalAuth = async (

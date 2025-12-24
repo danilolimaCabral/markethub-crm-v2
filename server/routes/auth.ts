@@ -6,7 +6,10 @@ import {
   verifyRefreshToken,
   generateAccessToken,
   AuthRequest,
-  authenticateToken
+  authenticateToken,
+  isProtectedAdmin,
+  protectMasterAdmin,
+  filterMasterAdminFromResults
 } from '../middleware/auth';
 import { validate, loginSchema, registerUserSchema } from '../middleware/validation';
 import { authLimiter, bruteForcePrevention } from '../middleware/rateLimiter';
@@ -107,7 +110,7 @@ router.post('/login', authLimiter, validate(loginSchema), async (req: Request, r
       `SELECT id, email, password_hash, 
               full_name, username, role, tenant_id, is_active, two_factor_enabled
        FROM users 
-       WHERE email = $1 OR username = $1`,
+       WHERE (email = $1 OR username = $1) AND is_active = true`,
       [email]
     );
     console.log('[LOGIN] Usuários encontrados:', result.rows.length);
