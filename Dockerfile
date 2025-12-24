@@ -48,6 +48,10 @@ COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/database ./database
 COPY --from=builder --chown=nodejs:nodejs /app/scripts ./scripts
 
+# Copiar script de entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Mudar para usuário não-root
 USER nodejs
 
@@ -62,5 +66,5 @@ ENV PORT=3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-# Comando de start
-CMD ["node", "dist/index.js"]
+# Usar entrypoint script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
