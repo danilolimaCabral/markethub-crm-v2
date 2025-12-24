@@ -82,12 +82,17 @@ async function runMigrations() {
 }
 
 async function startServer() {
-  // Migrações devem ser executadas separadamente via Railway
-  // Não executar migrações automaticamente para evitar travamento na inicialização
-  console.log("ℹ️  Migrações devem ser executadas manualmente via: railway run node scripts/migrate.js");
+  console.log("\n============================================================");
+  console.log("🚀 INICIANDO SERVIDOR MARKETHUB CRM");
+  console.log("============================================================\n");
+  console.log("✅ Passo 1: Carregando Express...");
   
   const app = express();
   const server = createServer(app);
+  
+  console.log("✅ Passo 2: Express carregado com sucesso");
+  console.log("ℹ️  Migrações devem ser executadas manualmente via: railway run node scripts/migrate.js");
+  console.log("✅ Passo 3: Configurando middlewares...");
 
   // Middlewares
   app.use(cors({
@@ -113,6 +118,9 @@ async function startServer() {
     next();
   });
   
+  console.log("✅ Passo 4: Middlewares configurados");
+  console.log("✅ Passo 5: Configurando rate limiting...");
+  
   // Rate limiting global (exceto webhook do ML que precisa ser público)
   app.use('/api/', (req, res, next) => {
     // Excluir webhook do Mercado Livre do rate limiting
@@ -122,6 +130,9 @@ async function startServer() {
     return apiLimiter(req, res, next);
   });
 
+  console.log("✅ Passo 6: Rate limiting configurado");
+  console.log("✅ Passo 7: Registrando rotas da API...");
+  
   // Configurar Swagger Documentation
   // setupSwagger(app); // Temporariamente desabilitado
 
@@ -159,8 +170,13 @@ async function startServer() {
   app.use("/api/tasks", tasksRouter); // Gestão de tarefas e equipe
   app.use("/api/webhooks", webhooksRouter); // Webhooks de pagamento
   
+  console.log("✅ Passo 8: Rotas registradas com sucesso");
+  console.log("✅ Passo 9: Configurando middleware de erros...");
+  
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorLogger);
+  
+  console.log("✅ Passo 10: Middleware de erros configurado");
 
   /**
    * @swagger
@@ -239,13 +255,40 @@ async function startServer() {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
+  console.log("✅ Passo 11: Configurando arquivos estáticos...");
+  console.log("✅ Passo 12: Rotas de fallback configuradas");
+  
   const port = process.env.PORT || 3000;
+  
+  console.log("✅ Passo 13: Iniciando servidor na porta", port);
+  console.log("\n⏳ Aguardando servidor iniciar...\n");
 
   server.listen(port, () => {
+    console.log("\n============================================================");
+    console.log("✅ SERVIDOR INICIADO COM SUCESSO!");
+    console.log("============================================================\n");
     console.log(`🚀 Server running on http://localhost:${port}/`);
     console.log(`📊 API available at http://localhost:${port}/api`);
+    console.log(`💚 Healthcheck: http://localhost:${port}/api/health`);
     console.log(`💾 Database: ${process.env.DB_NAME || 'not configured'}`);
+    console.log(`🔥 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log("\n✅ Servidor pronto para receber requisições!\n");
+  });
+  
+  // Adicionar handler de erro para o servidor
+  server.on('error', (error: any) => {
+    console.error("\n❌ ERRO AO INICIAR SERVIDOR:");
+    console.error("Mensagem:", error.message);
+    console.error("Código:", error.code);
+    console.error("Stack:", error.stack);
+    process.exit(1);
   });
 }
 
-startServer().catch(console.error);
+console.log("ℹ️  Iniciando aplicação MarketHub CRM...");
+startServer().catch((error) => {
+  console.error("\n❌ ERRO FATAL NA INICIALIZAÇÃO:");
+  console.error("Mensagem:", error.message);
+  console.error("Stack:", error.stack);
+  process.exit(1);
+});
