@@ -2,10 +2,15 @@ import Stripe from 'stripe';
 import { pool } from '../db';
 import format from 'pg-format';
 
-// Inicializar Stripe (usar variável de ambiente)
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia',
-});
+// Inicializar Stripe (apenas se configurado)
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey 
+  ? new Stripe(stripeKey, {
+      apiVersion: '2024-11-20.acacia',
+    })
+  : null;
+
+const isStripeConfigured = !!stripeKey;
 
 // Tipos
 interface Plan {
@@ -134,6 +139,10 @@ export async function createStripeCustomer(
   companyName: string,
   cnpj: string
 ): Promise<string> {
+  if (!isStripeConfigured || !stripe) {
+    throw new Error('Stripe não configurado');
+  }
+  
   const customer = await stripe.customers.create({
     email,
     name: companyName,
@@ -161,6 +170,10 @@ export async function createCheckoutSession(
   successUrl: string,
   cancelUrl: string
 ): Promise<string> {
+  if (!isStripeConfigured || !stripe) {
+    throw new Error('Stripe não configurado');
+  }
+  
   const subscription = await getTenantSubscription(tenantId);
   if (!subscription) {
     throw new Error('Assinatura não encontrada');
@@ -375,6 +388,10 @@ export async function cancelSubscription(
   reason?: string,
   immediate: boolean = false
 ): Promise<void> {
+  if (!isStripeConfigured || !stripe) {
+    throw new Error('Stripe não configurado');
+  }
+  
   const subscription = await getTenantSubscription(tenantId);
   if (!subscription || !subscription.stripe_subscription_id) {
     throw new Error('Assinatura não encontrada');

@@ -6,10 +6,15 @@ import { pool } from '../db';
 
 const router = express.Router();
 
-// Inicializar Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia',
-});
+// Inicializar Stripe (apenas se configurado)
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeKey 
+  ? new Stripe(stripeKey, {
+      apiVersion: '2024-11-20.acacia',
+    })
+  : null;
+
+const isStripeConfigured = !!stripeKey;
 
 // =====================================================
 // ROTAS PÚBLICAS
@@ -241,6 +246,10 @@ router.get('/portal', authenticateToken, async (req: AuthRequest, res: Response)
     if (!tenantId) {
       return res.status(400).json({ error: 'Tenant não identificado' });
     }
+    
+    if (!isStripeConfigured || !stripe) {
+      return res.status(503).json({ error: 'Stripe não configurado' });
+    }
 
     const subscription = await subscriptionService.getTenantSubscription(tenantId);
     
@@ -299,6 +308,11 @@ router.post('/check-access', authenticateToken, async (req: AuthRequest, res: Re
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
   const sig = req.headers['stripe-signature'] as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!isStripeConfigured || !stripe) {
+    console.error('Stripe não configurado');
+    return res.status(503).json({ error: 'Stripe não configurado' });
+  }
 
   if (!webhookSecret) {
     console.error('STRIPE_WEBHOOK_SECRET não configurado');
