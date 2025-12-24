@@ -63,19 +63,30 @@ async function runMigrations() {
   console.log("============================================================\n");
   
   try {
-    const { stdout, stderr } = await execAsync("node scripts/migrate.js");
+    // Timeout de 30 segundos para migrações
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout: Migrações demoraram mais de 30s')), 30000)
+    );
+    
+    const migrationPromise = execAsync("node scripts/migrate.js");
+    
+    const { stdout, stderr } = await Promise.race([migrationPromise, timeoutPromise]) as any;
+    
     if (stdout) console.log(stdout);
     if (stderr) console.error(stderr);
     console.log("\n✅ Migrações concluídas com sucesso!\n");
   } catch (error: any) {
     console.error("\n❌ Erro ao executar migrações:", error.message);
-    console.error("\n⚠️  Servidor continuará sem as migrações...\n");
+    console.error("⚠️  Servidor continuará sem as migrações...\n");
   }
 }
 
 async function startServer() {
-  // Executar migrations antes de iniciar o servidor
-  await runMigrations();
+  // Executar migrations de forma não-bloqueante
+  // Não aguardar conclusão para permitir que servidor inicie rapidamente
+  runMigrations().catch(err => {
+    console.error("❌ Erro nas migrações (não-bloqueante):", err.message);
+  });
   
   const app = express();
   const server = createServer(app);
