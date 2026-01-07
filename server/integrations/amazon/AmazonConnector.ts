@@ -1,5 +1,4 @@
 import { BaseConnector } from '../core/BaseConnector';
-import { BaseConnector } from '../core/BaseConnector';
 import {
   IConnectorConfig,
   IProduct,
