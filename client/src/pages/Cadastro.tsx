@@ -179,9 +179,9 @@ export default function Cadastro() {
         description: '14 dias de trial grátis ativados',
       });
       
-      // Redirecionar para onboarding
+      // Redirecionar para Dashboard
       setTimeout(() => {
-        setLocation('/onboarding');
+        setLocation('/');
       }, 1500);
 
     } catch (error) {
