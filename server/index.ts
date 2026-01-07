@@ -45,6 +45,7 @@ import webhooksRouter from "./routes/webhooks";
 import adminMasterRouter from "./routes/admin-master";
 import spreadsheetValidationRouter from "./routes/spreadsheet-validation";
 import spreadsheetImportRouter from "./routes/spreadsheet-import";
+import integrationHealthRouter from "./routes/integration-health";
 
 // Importar middlewares
 import { requestLogger, errorLogger } from "./middleware/logger";
@@ -175,6 +176,7 @@ async function startServer() {
   app.use("/api/admin-master", adminMasterRouter); // Painel Admin Master
   app.use("/api/spreadsheet-validation", spreadsheetValidationRouter); // Validação de planilhas
   app.use("/api/spreadsheet-import", spreadsheetImportRouter); // Importação de planilhas
+  app.use("/api/integrations/health", integrationHealthRouter); // Health check de integrações
   
   console.log("✅ Passo 8: Rotas registradas com sucesso");
   console.log("✅ Passo 9: Configurando middleware de erros...");
