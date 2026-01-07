@@ -51,7 +51,7 @@ export function generateAccessToken(user: {
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'markethub-crm',
     audience: 'markethub-api'
-  });
+  }) as string;
 }
 
 /**
@@ -75,7 +75,7 @@ export function generateRefreshToken(user: {
     expiresIn: JWT_REFRESH_EXPIRES_IN,
     issuer: 'markethub-crm',
     audience: 'markethub-api'
-  });
+  }) as string;
 }
 
 /**

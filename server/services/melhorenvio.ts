@@ -353,6 +353,13 @@ export class MelhorEnvioService {
   }
 
   /**
+   * Alias para testConnection (compatibilidade)
+   */
+  async testarConexao(): Promise<boolean> {
+    return this.testConnection();
+  }
+
+  /**
    * Testa conexão com a API
    */
   async testConnection(): Promise<boolean> {

@@ -1,4 +1,5 @@
 import { BaseConnector } from '../core/BaseConnector';
+import { BaseConnector } from '../core/BaseConnector';
 import {
   IConnectorConfig,
   IProduct,
@@ -19,6 +20,45 @@ export class AmazonConnector extends BaseConnector {
   private accessToken: string | null = null;
   private refreshToken: string | null = null;
   private config: IConnectorConfig | null = null;
+
+  /**
+   * Validar credenciais da Amazon
+   */
+  protected validateCredentials(credentials: Record<string, string>): boolean {
+    const required = [
+      'clientId',
+      'clientSecret',
+      'refreshToken',
+      'awsAccessKey',
+      'awsSecretKey',
+      'region',
+      'marketplaceId',
+      'sellerId'
+    ];
+
+    return required.every(field => !!credentials[field]);
+  }
+
+  /**
+   * Fazer requisição HTTP à Amazon SP-API
+   */
+  protected async makeRequest(
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE',
+    endpoint: string,
+    data?: any
+  ): Promise<any> {
+    if (!this.apiClient) {
+      throw new Error('Cliente API não inicializado. Execute connect() primeiro.');
+    }
+
+    const response = await this.apiClient.request({
+      method,
+      url: endpoint,
+      data,
+    });
+
+    return response.data;
+  }
 
   /**
    * Conectar à Amazon SP-API

@@ -50,7 +50,9 @@ router.get('/status', authenticateToken, async (req, res) => {
           type: 'marketplace',
           status: 'disconnected',
           connectUrl: `/api/integrations/${marketplace}/auth`,
-          itemsSynced: 0
+          itemsSynced: 0,
+          lastSync: null,
+          error: null
         });
       }
     });

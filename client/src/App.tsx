@@ -104,7 +104,8 @@ const Termos = lazy(() => import('./pages/Termos'));
 const Privacidade = lazy(() => import('./pages/Privacidade'));
 
 // Páginas "Em breve"
-const EmBreve = lazy(() => import('./pages/EmBreve'));
+const EmBreveBase = lazy(() => import('./pages/EmBreve'));
+const EmBreve = () => <EmBreveBase titulo="Em Breve" descricao="Estamos trabalhando nesta funcionalidade" />;
 
 // Smart Biz360 - Novos módulos
 const Register = lazy(() => import('./pages/Register'));
