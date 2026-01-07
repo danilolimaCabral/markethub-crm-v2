@@ -7,7 +7,7 @@ const router = Router();
 // GET /api/integrations/status - Buscar status de todas as integrações
 router.get('/status', authenticateToken, async (req, res) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
 
     if (!tenantId) {
       return res.status(400).json({ error: 'Tenant ID não encontrado' });

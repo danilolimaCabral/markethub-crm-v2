@@ -7,7 +7,7 @@ const router = Router();
 // Listar documentos
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { owner_type, owner_id, search, parent_id } = req.query;
     
     let whereConditions = ['d.tenant_id = $1'];
@@ -56,7 +56,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -115,7 +115,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Criar documento
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { owner_type, owner_id, title, slug, content, content_type, tags, is_public, parent_id } = req.body;
     
@@ -157,7 +157,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { title, slug, content, tags, is_public, changes_description } = req.body;
     
@@ -206,7 +206,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Verificar se há documentos filhos
     const childrenCheck = await pool.query(
@@ -240,7 +240,7 @@ router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response)
 router.get('/:id/versions/:version', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id, version } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Verificar se documento pertence ao tenant
     const docCheck = await pool.query(
@@ -275,7 +275,7 @@ router.get('/:id/versions/:version', authenticateToken, async (req: AuthRequest,
 // Busca full-text em documentos
 router.get('/search/fulltext', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { q, owner_type } = req.query;
     
     if (!q) {

@@ -7,7 +7,7 @@ const router = Router();
 // Dashboard principal do Control Tower
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const summary = await pool.query(`
       SELECT 
@@ -74,7 +74,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 // MRR por plataforma
 router.get('/mrr-by-platform', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const result = await pool.query(`
       SELECT p.id, p.name, COUNT(DISTINCT c.id) as contracts_count, COALESCE(SUM(c.mrr_value), 0) as total_mrr
       FROM platforms p
@@ -92,7 +92,7 @@ router.get('/mrr-by-platform', authenticateToken, async (req: AuthRequest, res: 
 // SLA compliance
 router.get('/sla-compliance', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const result = await pool.query(`
       SELECT DATE_TRUNC('month', closed_at) as month, COUNT(*) as total,
         COUNT(*) FILTER (WHERE closed_at <= sla_deadline) as met,
@@ -110,7 +110,7 @@ router.get('/sla-compliance', authenticateToken, async (req: AuthRequest, res: R
 // Horas por usuário
 router.get('/hours-by-user', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const result = await pool.query(`
       SELECT u.id, u.full_name,
         COALESCE(SUM(w.duration_minutes) / 60.0, 0) as total_hours,
@@ -129,7 +129,7 @@ router.get('/hours-by-user', authenticateToken, async (req: AuthRequest, res: Re
 // Rentabilidade por cliente
 router.get('/profitability-by-client', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const result = await pool.query(`
       SELECT cl.id, cl.name,
         COALESCE(SUM(inv.total) FILTER (WHERE inv.status = 'paid'), 0) as total_revenue,
@@ -152,7 +152,7 @@ router.get('/profitability-by-client', authenticateToken, async (req: AuthReques
 // Backlog por plataforma
 router.get('/backlog-by-platform', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const result = await pool.query(`
       SELECT p.id, p.name,
         COUNT(*) FILTER (WHERE d.status NOT IN ('closed', 'cancelled')) as open_demands,

@@ -7,7 +7,7 @@ const router = Router();
 // Listar faturas
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { instance_id, status, start_date, end_date, page = 1, limit = 20 } = req.query;
     
     let whereConditions = ['inv.tenant_id = $1'];
@@ -84,7 +84,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -155,7 +155,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Gerar fatura
 router.post('/generate', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       instance_id,
@@ -307,7 +307,7 @@ router.post('/generate', authenticateToken, async (req: AuthRequest, res: Respon
 // Criar fatura manual
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       instance_id,
@@ -361,7 +361,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id/status', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { status } = req.body;
     
     if (!['draft', 'sent', 'paid', 'overdue', 'cancelled'].includes(status)) {
@@ -392,7 +392,7 @@ router.put('/:id/status', authenticateToken, async (req: AuthRequest, res: Respo
 router.post('/:id/payments', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { amount, payment_date, payment_method, reference, notes } = req.body;
     
@@ -441,7 +441,7 @@ router.post('/:id/payments', authenticateToken, async (req: AuthRequest, res: Re
 // Dashboard financeiro
 router.get('/stats/overview', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Resumo geral
     const summary = await pool.query(`

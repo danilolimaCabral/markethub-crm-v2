@@ -7,7 +7,7 @@ const router = Router();
 // Listar clientes
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { search, is_active } = req.query;
     
     let whereConditions = ['c.tenant_id = $1'];
@@ -49,7 +49,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT c.*
@@ -99,7 +99,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Criar cliente
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { name, contact_name, contact_email, contact_phone, document, address, notes } = req.body;
     
     if (!name) {
@@ -123,7 +123,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { name, contact_name, contact_email, contact_phone, document, address, notes, is_active } = req.body;
     
     const result = await pool.query(`
@@ -156,7 +156,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Verificar se há instâncias vinculadas
     const instancesCheck = await pool.query(

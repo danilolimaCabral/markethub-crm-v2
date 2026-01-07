@@ -7,7 +7,7 @@ const router = Router();
 // Listar worklogs com filtros
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       demand_id, 
@@ -135,7 +135,7 @@ router.get('/timer/active', authenticateToken, async (req: AuthRequest, res: Res
 // Iniciar timer
 router.post('/timer/start', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { demand_id, activity_type, description } = req.body;
     
@@ -165,7 +165,7 @@ router.post('/timer/start', authenticateToken, async (req: AuthRequest, res: Res
 // Parar timer e criar worklog
 router.post('/timer/stop', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { notes } = req.body;
     
@@ -228,7 +228,7 @@ router.delete('/timer/cancel', authenticateToken, async (req: AuthRequest, res: 
 // Criar worklog manual
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       demand_id, 
@@ -279,7 +279,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { 
       start_time, 
       end_time, 
@@ -328,7 +328,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Aprovar worklogs (em lote)
 router.post('/approve', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { worklog_ids } = req.body;
     
@@ -360,7 +360,7 @@ router.post('/approve', authenticateToken, async (req: AuthRequest, res: Respons
 router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Verificar se worklog não está aprovado
     const worklogCheck = await pool.query(
@@ -388,7 +388,7 @@ router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response)
 // Relatório de horas por usuário
 router.get('/report/by-user', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { start_date, end_date } = req.query;
     
     const result = await pool.query(`

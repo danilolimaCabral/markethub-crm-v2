@@ -43,6 +43,7 @@ import tasksRouter from "./routes/tasks";
 import registerRouter from "./routes/register";
 import webhooksRouter from "./routes/webhooks";
 import adminMasterRouter from "./routes/admin-master";
+import spreadsheetValidationRouter from "./routes/spreadsheet-validation";
 
 // Importar middlewares
 import { requestLogger, errorLogger } from "./middleware/logger";
@@ -171,6 +172,7 @@ async function startServer() {
   app.use("/api/tasks", tasksRouter); // Gestão de tarefas e equipe
   app.use("/api/webhooks", webhooksRouter); // Webhooks de pagamento
   app.use("/api/admin-master", adminMasterRouter); // Painel Admin Master
+  app.use("/api/spreadsheet-validation", spreadsheetValidationRouter); // Validação de planilhas
   
   console.log("✅ Passo 8: Rotas registradas com sucesso");
   console.log("✅ Passo 9: Configurando middleware de erros...");

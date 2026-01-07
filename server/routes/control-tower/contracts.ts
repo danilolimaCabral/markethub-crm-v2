@@ -9,7 +9,7 @@ const router = Router();
 // Listar templates de contratos
 router.get('/templates', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -34,7 +34,7 @@ router.get('/templates', authenticateToken, async (req: AuthRequest, res: Respon
 // Criar template
 router.post('/templates', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { name, description, content, variables } = req.body;
     
@@ -59,7 +59,7 @@ router.post('/templates', authenticateToken, async (req: AuthRequest, res: Respo
 router.put('/templates/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { name, description, content, variables, is_active } = req.body;
     
     const result = await pool.query(`
@@ -90,7 +90,7 @@ router.put('/templates/:id', authenticateToken, async (req: AuthRequest, res: Re
 // Listar contratos
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { instance_id, status, expiring_soon } = req.query;
     
     let whereConditions = ['c.tenant_id = $1'];
@@ -136,7 +136,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -196,7 +196,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Criar contrato
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       instance_id,
@@ -268,7 +268,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       title,
@@ -340,7 +340,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 router.post('/:id/sign', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { signed_by_client, signed_by_company } = req.body;
     
     const result = await pool.query(`
@@ -369,7 +369,7 @@ router.post('/:id/sign', authenticateToken, async (req: AuthRequest, res: Respon
 router.post('/:id/renew', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { new_end_date, new_mrr_value, notes } = req.body;
     
@@ -422,7 +422,7 @@ router.post('/:id/renew', authenticateToken, async (req: AuthRequest, res: Respo
 // Dashboard de contratos
 router.get('/stats/overview', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Total MRR
     const mrrResult = await pool.query(`

@@ -7,7 +7,7 @@ const router = Router();
 // Listar todas as plataformas
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -34,7 +34,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -67,7 +67,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Criar nova plataforma
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { name, description, stack, version, roadmap, sla_hours } = req.body;
     
@@ -92,7 +92,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { name, description, stack, version, roadmap, sla_hours, is_active } = req.body;
     
     const result = await pool.query(`
@@ -124,7 +124,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Verificar se há instâncias vinculadas
     const instancesCheck = await pool.query(
@@ -158,7 +158,7 @@ router.delete('/:id', authenticateToken, async (req: AuthRequest, res: Response)
 router.get('/:id/metrics', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // MRR e contratos ativos
     const contractsResult = await pool.query(`

@@ -7,7 +7,7 @@ const router = Router();
 // Listar demandas com filtros
 router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const { 
       instance_id, 
       status, 
@@ -101,7 +101,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     const result = await pool.query(`
       SELECT 
@@ -174,7 +174,7 @@ router.get('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 // Criar nova demanda
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       instance_id, 
@@ -243,7 +243,7 @@ router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { 
       title, 
@@ -305,7 +305,7 @@ router.put('/:id', authenticateToken, async (req: AuthRequest, res: Response) =>
 router.post('/:id/comments', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     const userId = req.user?.id;
     const { content, is_internal, attachments } = req.body;
     
@@ -348,7 +348,7 @@ router.post('/:id/comments', authenticateToken, async (req: AuthRequest, res: Re
 // Estatísticas de demandas
 router.get('/stats/overview', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const tenantId = req.user?.tenantId;
+    const tenantId = req.user?.tenant_id;
     
     // Por status
     const byStatus = await pool.query(`
