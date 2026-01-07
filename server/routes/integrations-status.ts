@@ -34,7 +34,8 @@ router.get('/status', authenticateToken, async (req, res) => {
       status: row.is_active && row.access_token ? 'connected' : 'disconnected',
       lastSync: row.last_sync_at,
       error: row.sync_error,
-      connectUrl: `/api/integrations/${row.id}/auth`
+      connectUrl: `/api/integrations/${row.id}/auth`,
+      itemsSynced: 0
     }));
 
     // Adicionar marketplaces não configurados
@@ -48,7 +49,8 @@ router.get('/status', authenticateToken, async (req, res) => {
           name: getMarketplaceName(marketplace),
           type: 'marketplace',
           status: 'disconnected',
-          connectUrl: `/api/integrations/${marketplace}/auth`
+          connectUrl: `/api/integrations/${marketplace}/auth`,
+          itemsSynced: 0
         });
       }
     });

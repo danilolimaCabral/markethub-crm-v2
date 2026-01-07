@@ -30,10 +30,8 @@ export default function IntegracaoCorreios() {
 
   const handleConnect = async () => {
     if (!credentials.codigoAdministrativo || !credentials.senha) {
-      toast({
-        title: "Campos obrigatórios",
+      toast.error("Campos obrigatórios", {
         description: "Por favor, preencha o código administrativo e senha.",
-        variant: "destructive",
       });
       return;
     }
@@ -45,15 +43,12 @@ export default function IntegracaoCorreios() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setConnected(true);
-      toast({
-        title: "Conectado com sucesso!",
+      toast.success("Conectado com sucesso!", {
         description: "Sua integração com Correios foi configurada.",
       });
     } catch (error) {
-      toast({
-        title: "Erro ao conectar",
+      toast.error("Erro ao conectar", {
         description: "Não foi possível conectar com os Correios. Verifique suas credenciais.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -68,8 +63,7 @@ export default function IntegracaoCorreios() {
       cartaoPostagem: "",
       cnpj: ""
     });
-    toast({
-      title: "Desconectado",
+    toast.success("Desconectado", {
       description: "Sua integração com Correios foi desconectada.",
     });
   };

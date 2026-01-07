@@ -142,12 +142,12 @@ export class AmazonConnector extends BaseConnector {
       }
 
       result.success = result.errors.length === 0;
-      this.updateLastSync(result.success ? 'success' : 'error');
+      this.updateSyncStatus(result.success ? 'success' : 'error');
       
       return result;
     } catch (error: any) {
       result.errors.push(`Erro na API: ${error.message}`);
-      this.updateLastSync('error', error.message);
+      this.updateSyncStatus('error', error.message);
       return result;
     }
   }
@@ -200,12 +200,12 @@ export class AmazonConnector extends BaseConnector {
       }
 
       result.success = result.errors.length === 0;
-      this.updateLastSync(result.success ? 'success' : 'error');
+      this.updateSyncStatus(result.success ? 'success' : 'error');
       
       return result;
     } catch (error: any) {
       result.errors.push(`Erro geral: ${error.message}`);
-      this.updateLastSync('error', error.message);
+      this.updateSyncStatus('error', error.message);
       return result;
     }
   }
@@ -277,12 +277,12 @@ export class AmazonConnector extends BaseConnector {
       }
 
       result.success = result.errors.length === 0;
-      this.updateLastSync(result.success ? 'success' : 'error');
+      this.updateSyncStatus(result.success ? 'success' : 'error');
       
       return result;
     } catch (error: any) {
       result.errors.push(`Erro na API: ${error.message}`);
-      this.updateLastSync('error', error.message);
+      this.updateSyncStatus('error', error.message);
       return result;
     }
   }

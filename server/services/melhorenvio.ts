@@ -339,6 +339,20 @@ export class MelhorEnvioService {
   }
 
   /**
+   * Alias para calculateShipping (compatibilidade)
+   */
+  async calcularFrete(params: { from: Address; to: Address; package: Package }): Promise<ShippingQuote[]> {
+    return this.calculateShipping(params.from, params.to, [params.package]);
+  }
+
+  /**
+   * Alias para trackShipment (compatibilidade)
+   */
+  async rastrearEnvio(orderId: string): Promise<any> {
+    return this.trackShipment(orderId);
+  }
+
+  /**
    * Testa conexão com a API
    */
   async testConnection(): Promise<boolean> {

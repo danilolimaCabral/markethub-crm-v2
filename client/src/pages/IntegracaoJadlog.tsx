@@ -30,10 +30,8 @@ export default function IntegracaoJadlog() {
 
   const handleConnect = async () => {
     if (!credentials.cnpj || !credentials.contrato || !credentials.usuario || !credentials.senha) {
-      toast({
-        title: "Campos obrigatórios",
+      toast.error("Campos obrigatórios", {
         description: "Por favor, preencha todos os campos obrigatórios.",
-        variant: "destructive",
       });
       return;
     }
@@ -45,15 +43,12 @@ export default function IntegracaoJadlog() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setConnected(true);
-      toast({
-        title: "Conectado com sucesso!",
+      toast.success("Conectado com sucesso!", {
         description: "Sua integração com Jadlog foi configurada.",
       });
     } catch (error) {
-      toast({
-        title: "Erro ao conectar",
+      toast.error("Erro ao conectar", {
         description: "Não foi possível conectar com a Jadlog. Verifique suas credenciais.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -68,10 +63,9 @@ export default function IntegracaoJadlog() {
       usuario: "",
       senha: ""
     });
-    toast({
-      title: "Desconectado",
-      description: "Sua integração com Jadlog foi desconectada.",
-    });
+    toast.success("Desconectado", {
+        description: "Sua integração com Jadlog foi desconectada.",
+      });
   };
 
   return (

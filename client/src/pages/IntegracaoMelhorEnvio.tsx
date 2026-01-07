@@ -30,10 +30,8 @@ export default function IntegracaoMelhorEnvio() {
 
   const handleConnect = async () => {
     if (!credentials.clientId || !credentials.clientSecret) {
-      toast({
-        title: "Campos obrigatórios",
+      toast.error("Campos obrigatórios", {
         description: "Por favor, preencha Client ID e Client Secret.",
-        variant: "destructive",
       });
       return;
     }
@@ -45,15 +43,12 @@ export default function IntegracaoMelhorEnvio() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setConnected(true);
-      toast({
-        title: "Conectado com sucesso!",
+      toast.success("Conectado com sucesso!", {
         description: "Sua integração com Melhor Envio foi configurada.",
       });
     } catch (error) {
-      toast({
-        title: "Erro ao conectar",
+      toast.error("Erro ao conectar", {
         description: "Não foi possível conectar com o Melhor Envio. Verifique suas credenciais.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -68,10 +63,9 @@ export default function IntegracaoMelhorEnvio() {
       accessToken: "",
       environment: "production"
     });
-    toast({
-      title: "Desconectado",
-      description: "Sua integração com Melhor Envio foi desconectada.",
-    });
+    toast.success("Desconectado", {
+        description: "Sua integração com Melhor Envio foi desconectada.",
+      });
   };
 
   return (

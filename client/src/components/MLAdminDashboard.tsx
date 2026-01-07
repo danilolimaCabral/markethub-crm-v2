@@ -98,9 +98,9 @@ export default function MLAdminDashboard() {
       return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Desconectado</Badge>;
     }
     if (!integration.status.token_valid) {
-      return <Badge variant="warning"><AlertTriangle className="w-3 h-3 mr-1" />Token Expirado</Badge>;
+      return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />Token Expirado</Badge>;
     }
-    return <Badge variant="success"><CheckCircle2 className="w-3 h-3 mr-1" />Conectado</Badge>;
+    return <Badge variant="default"><CheckCircle2 className="w-3 h-3 mr-1" />Conectado</Badge>;
   };
 
   if (loading) {

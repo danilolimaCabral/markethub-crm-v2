@@ -29,10 +29,8 @@ export default function IntegracaoStripe() {
 
   const handleConnect = async () => {
     if (!credentials.publishableKey || !credentials.secretKey) {
-      toast({
-        title: "Campos obrigatórios",
+      toast.error("Campos obrigatórios", {
         description: "Por favor, preencha as chaves Publishable e Secret.",
-        variant: "destructive",
       });
       return;
     }
@@ -44,15 +42,12 @@ export default function IntegracaoStripe() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setConnected(true);
-      toast({
-        title: "Conectado com sucesso!",
+      toast.success("Conectado com sucesso!", {
         description: "Sua conta Stripe foi conectada ao sistema.",
       });
     } catch (error) {
-      toast({
-        title: "Erro ao conectar",
+      toast.error("Erro ao conectar", {
         description: "Não foi possível conectar com o Stripe. Verifique suas credenciais.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -66,10 +61,9 @@ export default function IntegracaoStripe() {
       secretKey: "",
       webhookSecret: ""
     });
-    toast({
-      title: "Desconectado",
-      description: "Sua conta Stripe foi desconectada.",
-    });
+    toast.success("Desconectado", {
+        description: "Sua conta Stripe foi desconectada.",
+      });
   };
 
   return (
