@@ -47,9 +47,22 @@ router.get('/recent', authenticateToken, async (req, res) => {
 });
 
 // GET /api/pedidos - Listar todos os pedidos
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const { status, marketplace, limit = 50, offset = 0 } = req.query;
+    const userId = (req as any).user.userId;
+    
+    // Buscar tenant_id do usuário
+    const userResult = await pool.query(
+      'SELECT tenant_id FROM users WHERE id = $1',
+      [userId]
+    );
+    
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+    
+    const tenantId = userResult.rows[0].tenant_id;
     
     let sql = `
       SELECT 
@@ -57,11 +70,13 @@ router.get('/', async (req, res) => {
         p.valor_total, p.status, p.data_pedido, p.data_entrega,
         p.rastreio, p.observacoes, p.created_at
       FROM pedidos p
-      WHERE 1=1
+      WHERE p.tenant_id = $1
     `;
     
-    const params: any[] = [];
-    let paramIndex = 1;
+    const params: any[] = [tenantId];
+    let paramIndex = 2;
+    
+
     
     if (status) {
       sql += ` AND p.status = $${paramIndex}`;
