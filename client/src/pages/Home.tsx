@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useTheme } from "@/contexts/ThemeContext";
 import { ArrowRight, CheckCircle2, Moon, Settings, Sun, TestTube, BookOpen, Zap, Shield, Gauge, MessageSquare, Send, Github, Twitter, Linkedin } from "lucide-react";
 import { useLocation } from "wouter";
+import HeroCalculator from "@/components/HeroCalculator";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -59,99 +60,75 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-40">
-        {/* Background Effects */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/hero-bg-premium.png"
-            alt="Background"
-            className="w-full h-full object-cover opacity-40 mix-blend-overlay"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/60 to-background/90" />
+      <section className="relative pt-24 pb-32 lg:pt-40 lg:pb-48 bg-background overflow-hidden">
+        {/* Abstract Speed Lines Background */}
+        <div className="absolute inset-0 z-0 opacity-20">
+          <div className="absolute top-0 left-1/4 w-[1px] h-full bg-gradient-to-b from-transparent via-foreground/20 to-transparent transform -skew-x-12" />
+          <div className="absolute top-0 left-3/4 w-[1px] h-full bg-gradient-to-b from-transparent via-foreground/20 to-transparent transform -skew-x-12" />
+          <div className="absolute top-0 right-[-10%] w-[400px] h-[400px] bg-primary/10 blur-[120px]" />
         </div>
 
         <div className="container relative z-10 mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
             <div className="text-center lg:text-left space-y-8 animate-in slide-in-from-left-10 duration-700 fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 backdrop-blur-md rounded-full text-primary text-sm font-medium">
-                <span className="relative flex h-3 w-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-none border-l-4 border-primary bg-background/5 backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
-                Nova Geração de Integração
+                <span className="text-sm font-mono text-primary uppercase tracking-widest">System Operational</span>
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-bold tracking-tight leading-tight">
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-foreground italic uppercase transform -skew-x-3 leading-[0.9]">
                 Domine o <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-cyan-400">
-                  E-commerce
-                </span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">Mercado Livre</span>
               </h1>
 
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                A única plataforma que une a inteligência do
-                <span className="font-semibold text-foreground mx-1">Manus</span>
-                com a robustez do
-                <span className="font-semibold text-foreground mx-1">Markthub CRM</span>.
-                Automatize, gerencie e escale.
+              <p className="text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+                Autointegração de alta performance para vendedores profissionais.
+                <span className="text-foreground font-medium"> Sincronize. Venda. Escale.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                 <Button
                   size="lg"
-                  className="h-14 px-8 text-lg gap-2 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90 transition-opacity shadow-lg shadow-primary/25"
                   onClick={() => setLocation("/setup")}
+                  className="h-14 px-8 text-lg font-bold uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 rounded-none skew-x-[-6deg] hover:skew-x-[-12deg] transition-all"
                 >
-                  Começar Grátis
-                  <ArrowRight className="w-5 h-5" />
+                  <span className="skew-x-[6deg] hover:skew-x-[12deg] inline-flex items-center gap-2">
+                    Start Engine <ArrowRight className="w-5 h-5" />
+                  </span>
                 </Button>
+
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-14 px-8 text-lg border-2 hover:bg-accent/50 backdrop-blur-sm"
-                  onClick={() => setLocation("/docs")}
+                  onClick={() => window.open('https://api.whatsapp.com/send?phone=5511999999999', '_blank')}
+                  className="h-14 px-8 text-lg font-mono border-foreground/20 text-foreground hover:bg-foreground/5 hover:border-primary hover:text-primary rounded-none skew-x-[-6deg] transition-all"
                 >
-                  <BookOpen className="w-5 h-5 mr-2" />
-                  Ver Demo
+                  <span className="skew-x-[6deg]">
+                    Fale com Consultor
+                  </span>
                 </Button>
               </div>
 
-              <div className="pt-8 flex items-center justify-center lg:justify-start gap-8 text-muted-foreground/60">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span>Setup Instantâneo</span>
+              <div className="pt-8 flex items-center justify-center lg:justify-start gap-4 text-sm text-muted-foreground font-mono">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-muted border border-background flex items-center justify-center text-[10px] text-muted-foreground">
+                      U{i}
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span>Sem Cartão de Crédito</span>
-                </div>
+                <span>+2.000 users online</span>
               </div>
             </div>
 
-            {/* Right Visual */}
-            <div className="relative mt-8 lg:mt-0 lg:h-[600px] flex items-center justify-center perspective-1000">
-              <div className="relative w-full max-w-[600px] animate-in slide-in-from-right-10 duration-1000 delay-200 fade-in">
-                {/* Glow Effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur-3xl opacity-30 animate-pulse" />
-
-                {/* Main Image */}
-                <img
-                  src="/dashboard-mockup-3d.png"
-                  alt="Markthub Dashboard"
-                  className="relative w-full drop-shadow-2xl rounded-xl border border-white/10 transform hover:scale-105 transition-transform duration-500 will-change-transform"
-                  style={{
-                    animation: 'float 6s ease-in-out infinite'
-                  }}
-                />
-
-                {/* Floating Elements (Decorative) */}
-                <div className="absolute -right-8 -top-8 p-4 bg-background/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl animate-in fade-in zoom-in duration-700 delay-500">
-                  <Zap className="w-8 h-8 text-yellow-400" />
-                </div>
-                <div className="absolute -left-8 -bottom-8 p-4 bg-background/50 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl animate-in fade-in zoom-in duration-700 delay-700">
-                  <Shield className="w-8 h-8 text-cyan-400" />
-                </div>
+            {/* Right Visual - Calculator */}
+            <div className="relative mt-8 lg:mt-0 flex items-center justify-center perspective-1000">
+              <div className="relative w-full max-w-[500px] animate-in slide-in-from-right-10 duration-1000 delay-200 fade-in">
+                <HeroCalculator />
               </div>
             </div>
           </div>
@@ -297,46 +274,34 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-primary/5 -skew-y-3 transform origin-left" />
+      <section className="relative py-24 bg-background border-t border-border/50">
         <div className="container relative mx-auto px-4">
-          <Card className="relative overflow-hidden bg-[#0A0A0B] border-white/10 shadow-2xl">
-            <div className="absolute inset-0 bg-[linear-gradient(110deg,#0A0A0B,45%,#1e2631,55%,#0A0A0B)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/10 to-transparent opacity-50" />
+          <div className="relative overflow-hidden bg-card border border-border p-12 lg:p-20 shadow-2xl">
+            {/* Background elements */}
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+            <div className="absolute right-0 top-0 w-64 h-64 bg-primary/10 blur-[100px]" />
 
-            <CardContent className="relative py-20 px-4 text-center z-10">
-              <h3 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight text-white">
-                Pronto para transformar sua operação?
-              </h3>
-              <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Junte-se a centenas de vendedores que já automatizaram suas vendas com a nossa plataforma.
-              </p>
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
+              <div className="text-center md:text-left space-y-6">
+                <h3 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-foreground leading-none transform -skew-x-3">
+                  READY TO <span className="text-primary">RACE?</span>
+                </h3>
+                <p className="text-xl text-muted-foreground max-w-md font-light">
+                  Join the elite performance tier of marketplace sellers today.
+                </p>
+              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
                   onClick={() => setLocation("/setup")}
-                  className="h-14 px-8 text-lg gap-2 bg-white text-black hover:bg-zinc-200 transition-colors"
+                  className="h-16 px-10 text-xl font-bold uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 rounded-none skew-x-[-6deg] transition-all"
                 >
-                  <Settings className="w-5 h-5" />
-                  Começar Gratuitamente
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  onClick={() => setLocation("/api")}
-                  className="h-14 px-8 text-lg border-white/20 text-white hover:bg-white/10 hover:text-white"
-                >
-                  <TestTube className="w-5 h-5 mr-2" />
-                  Testar API
+                  <span className="skew-x-[6deg]">Start Now</span>
                 </Button>
               </div>
-
-              <p className="mt-8 text-sm text-zinc-500">
-                Sem cartão de crédito • Cancelamento gratuito • Suporte 24/7
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </section>
 
