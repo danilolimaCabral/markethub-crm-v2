@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { pool } from '../db';
 import axios from 'axios';
 
 interface HealthCheckResult {
@@ -17,22 +17,22 @@ export class IntegrationHealthCheckService {
   static async checkMercadoLivreHealth(tenantId: string): Promise<HealthCheckResult> {
     try {
       // 1. Verificar se há credenciais válidas
-      const [credentials] = await pool.query(
+      const credentialsResult = await pool.query(
         `SELECT access_token, refresh_token, expires_at, user_id
          FROM marketplace_credentials
-         WHERE tenant_id = ? AND marketplace = 'mercadolivre' AND status = 'active'
+         WHERE tenant_id = $1 AND marketplace = 'mercadolivre' AND status = 'active'
          LIMIT 1`,
         [tenantId]
       );
 
-      if (!credentials || credentials.length === 0) {
+      if (credentialsResult.rows.length === 0) {
         return {
           connected: false,
           error: 'Nenhuma credencial ativa encontrada'
         };
       }
 
-      const cred = credentials[0];
+      const cred = credentialsResult.rows[0];
 
       // 2. Verificar se o token está expirado
       const now = new Date();
@@ -70,17 +70,18 @@ export class IntegrationHealthCheckService {
       }
 
       // 4. Obter estatísticas de sincronização
-      const [stats] = await pool.query(
+      const statsResult = await pool.query(
         `SELECT 
-          (SELECT COUNT(*) FROM produtos WHERE tenant_id = ? AND origem = 'mercadolivre') as products_count,
-          (SELECT COUNT(*) FROM pedidos WHERE tenant_id = ? AND marketplace = 'mercadolivre') as orders_count,
-          (SELECT MAX(updated_at) FROM produtos WHERE tenant_id = ? AND origem = 'mercadolivre') as last_product_sync,
-          (SELECT MAX(updated_at) FROM pedidos WHERE tenant_id = ? AND marketplace = 'mercadolivre') as last_order_sync
+          (SELECT COUNT(*) FROM produtos WHERE tenant_id = $1 AND origem = 'mercadolivre') as products_count,
+          (SELECT COUNT(*) FROM pedidos WHERE tenant_id = $1 AND marketplace = 'mercadolivre') as orders_count,
+          (SELECT MAX(updated_at) FROM produtos WHERE tenant_id = $1 AND origem = 'mercadolivre') as last_product_sync,
+          (SELECT MAX(updated_at) FROM pedidos WHERE tenant_id = $1 AND marketplace = 'mercadolivre') as last_order_sync
         `,
-        [tenantId, tenantId, tenantId, tenantId]
+        [tenantId]
       );
 
-      const lastSync = stats[0].last_product_sync || stats[0].last_order_sync;
+      const stats = statsResult.rows[0];
+      const lastSync = stats.last_product_sync || stats.last_order_sync;
       const warnings: string[] = [];
 
       // 5. Verificar se há sincronização recente
@@ -96,8 +97,8 @@ export class IntegrationHealthCheckService {
       return {
         connected: true,
         lastSync: lastSync ? new Date(lastSync) : undefined,
-        productsCount: stats[0].products_count || 0,
-        ordersCount: stats[0].orders_count || 0,
+        productsCount: parseInt(stats.products_count) || 0,
+        ordersCount: parseInt(stats.orders_count) || 0,
         warnings: warnings.length > 0 ? warnings : undefined
       };
 
@@ -134,7 +135,7 @@ export class IntegrationHealthCheckService {
 
     } catch (error: any) {
       console.error('Erro ao testar conexão:', error);
-      
+
       if (error.response?.status === 401) {
         return {
           valid: false,
