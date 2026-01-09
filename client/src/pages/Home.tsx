@@ -135,141 +135,163 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features */}
-      <section className="container mx-auto px-4 py-24 relative overflow-hidden">
-        {/* Subtle Background Elements */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none" />
+      {/* Diagnosis Section: Reality vs Markthub */}
+      <section className="container mx-auto px-4 py-32">
+        <div className="text-center mb-16 space-y-4">
+          <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-foreground">
+            Diagnóstico de <span className="text-primary">Performance</span>
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            A diferença entre sobreviver e dominar o mercado.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <Card
-              key={index}
-              className="group relative overflow-hidden border-border/50 bg-background/40 backdrop-blur-sm hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1"
-            >
-              {/* Card Gradient Hover Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="grid md:grid-cols-2 gap-8 md:gap-0 max-w-5xl mx-auto rounded-3xl overflow-hidden border border-border bg-card shadow-2xl">
+          {/* The Chaos (Reality) */}
+          <div className="p-12 space-y-8 bg-zinc-900/50 backdrop-blur-sm relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-32 bg-red-500/5 blur-[100px]" />
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-muted-foreground mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500/50" />
+                Sua Realidade Atual
+              </h3>
 
-              <CardHeader className="relative z-10 px-8 py-10">
-                <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-background to-muted border border-white/10 shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                  <div className="text-primary group-hover:text-purple-400 transition-colors duration-500">
-                    {feature.icon}
-                  </div>
-                </div>
-                <CardTitle className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
-                  {feature.title}
-                </CardTitle>
-                <CardDescription className="text-base leading-relaxed text-muted-foreground/80">
-                  {feature.description}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+              <ul className="space-y-6">
+                {[
+                  "Planilhas desatualizadas e erros manuais",
+                  "Prejuízo com taxas de marketplace ocultas",
+                  "Estoque furado e cancelamentos",
+                  "Horas perdidas calculando margem",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-muted-foreground/60 transition-colors group-hover:text-muted-foreground/80">
+                    <div className="w-6 h-6 rounded-full border border-red-500/20 flex items-center justify-center text-red-500/50 shrink-0">✕</div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* The Order (Markthub) */}
+          <div className="p-12 space-y-8 bg-primary/5 relative overflow-hidden">
+            <div className="absolute bottom-0 left-0 p-32 bg-primary/20 blur-[100px]" />
+            <div className="relative z-10">
+              <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                Com Markthub CRM
+              </h3>
+
+              <ul className="space-y-6">
+                {[
+                  "Dashboard unificado em tempo real",
+                  "Cálculo automático de lucro líquido",
+                  "Sincronização instantânea de estoque",
+                  "Automação que roda 24/7 por você",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-foreground font-medium">
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground shrink-0 shadow-lg shadow-primary/25">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    </div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="pt-8">
+                <Button
+                  variant="ghost"
+                  className="group text-primary hover:text-primary hover:bg-primary/10 -ml-4"
+                  onClick={() => setLocation("/setup")}
+                >
+                  Ver todas as vantagens
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section className="container mx-auto px-4 py-24 bg-accent/5 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl font-bold tracking-tight mb-4">Como Funciona</h3>
-            <p className="text-muted-foreground text-lg">
-              Integração simplificada em 4 passos
-            </p>
-          </div>
+      {/* Ecosystem Section */}
+      <section className="container mx-auto px-4 py-24 relative">
+        <div className="text-center mb-16 space-y-4">
+          <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-foreground">
+            Ecossistema de <span className="text-primary">Potência</span>
+          </h2>
+        </div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Steps Timeline */}
-            <div className="space-y-12 relative">
-              {/* Vertical Line */}
-              <div className="absolute left-[27px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-primary/50 to-transparent md:block hidden" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
 
-              {steps.map((step, index) => (
-                <div key={index} className="relative flex gap-6 group">
-                  <div className="flex-shrink-0 w-14 h-14 bg-background border-2 border-primary/20 rounded-2xl flex items-center justify-center font-bold text-xl text-primary shadow-lg shadow-primary/10 z-10 group-hover:scale-110 group-hover:border-primary transition-all duration-300">
-                    {index + 1}
-                  </div>
-                  <div className="pt-2">
-                    <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{step}</h4>
-                    <p className="text-muted-foreground">
-                      {index === 0 && "Conecte suas contas de marketplace com segurança."}
-                      {index === 1 && "Sistema gera tokens automaticamente sem complicação."}
-                      {index === 2 && "Valide a conexão em tempo real com um clique."}
-                      {index === 3 && "Comece a usar o chat para gerenciar suas vendas."}
-                    </p>
-                  </div>
+          {/* Main Feature - Large Card */}
+          <Card className="md:col-span-2 md:row-span-2 relative overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 group shadow-2xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="w-5 h-5 text-primary" />
+                <span className="font-bold">Central de Controle</span>
+              </CardTitle>
+              <CardDescription>Gerencie múltiplas contas em um único lugar.</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px] flex items-end justify-center p-0 bg-gradient-to-t from-background/50 to-transparent">
+              <div className="w-[90%] h-[80%] bg-background border-t border-x border-border rounded-t-xl shadow-2xl translate-y-4 group-hover:translate-y-0 transition-transform duration-500 p-4">
+                <div className="flex gap-2 mb-4">
+                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                  <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                  <div className="w-2 h-2 rounded-full bg-green-500" />
                 </div>
-              ))}
-            </div>
+                <div className="space-y-2">
+                  <div className="h-2 w-3/4 bg-muted rounded animate-pulse" />
+                  <div className="h-2 w-1/2 bg-muted rounded animate-pulse delay-75" />
+                  <div className="h-2 w-full bg-muted rounded animate-pulse delay-150" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Live Demo Chat UI */}
-            <div className="relative">
-              <div className="absolute -inset-1 bg-gradient-to-br from-primary to-purple-600 rounded-2xl blur-2xl opacity-20" />
-              <Card className="relative bg-background/95 backdrop-blur-xl border-white/10 shadow-2xl overflow-hidden">
-                <CardHeader className="border-b bg-muted/30 px-6 py-4 flex flex-row items-center gap-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
-                  <div className="ml-auto text-xs text-muted-foreground font-mono">Manus Mobile v2.0</div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="h-[400px] flex flex-col p-6 space-y-6 bg-gradient-to-b from-background to-accent/5">
-                    {/* User Message */}
-                    <div className="flex gap-4 justify-end">
-                      <div className="bg-primary text-primary-foreground px-6 py-3 rounded-2xl rounded-tr-none shadow-lg max-w-[80%]">
-                        <p className="leading-relaxed">Manus, liste os pedidos pendentes do Markthub CRM</p>
-                      </div>
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/10">
-                        <MessageSquare className="w-5 h-5 text-primary" />
-                      </div>
-                    </div>
+          {/* Side Feature 1 */}
+          <Card className="relative overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 group">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                <span className="font-bold">Respostas Rápidas</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">IA treinada para responder perguntas de pré-venda em segundos.</p>
+            </CardContent>
+          </Card>
 
-                    {/* Bot Message */}
-                    <div className="flex gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg">
-                        <Zap className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="bg-muted/50 border px-6 py-4 rounded-2xl rounded-tl-none shadow-sm max-w-[90%] space-y-3">
-                        <p className="font-medium text-primary">Encontrei 12 pedidos pendentes:</p>
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          <div className="bg-background/80 p-3 rounded-lg border">
-                            <span className="block text-muted-foreground text-xs uppercase tracking-wider">Mercado Livre</span>
-                            <span className="font-bold text-lg">8</span>
-                          </div>
-                          <div className="bg-background/80 p-3 rounded-lg border">
-                            <span className="block text-muted-foreground text-xs uppercase tracking-wider">Shopee</span>
-                            <span className="font-bold text-lg">1</span>
-                          </div>
-                          <div className="bg-background/80 p-3 rounded-lg border">
-                            <span className="block text-muted-foreground text-xs uppercase tracking-wider">Amazon</span>
-                            <span className="font-bold text-lg">3</span>
-                          </div>
-                          <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
-                            <span className="block text-primary text-xs uppercase tracking-wider">Total</span>
-                            <span className="font-bold text-lg text-primary">R$ 3.450,00</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          {/* Side Feature 2 */}
+          <Card className="relative overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 group">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-primary" />
+                <span className="font-bold">Anti-Bloqueio</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Proteção de conta e monitoramento de reputação 24/7.</p>
+            </CardContent>
+          </Card>
 
-                  {/* Input Area */}
-                  <div className="p-4 border-t bg-background/50 backdrop-blur-sm">
-                    <div className="relative">
-                      <input
-                        disabled
-                        type="text"
-                        placeholder="Digite sua mensagem..."
-                        className="w-full pl-6 pr-12 py-4 rounded-xl bg-muted/50 border-transparent focus:ring-0 text-sm"
-                      />
-                      <div className="absolute right-2 top-2 p-2 bg-primary text-primary-foreground rounded-lg">
-                        <Send className="w-4 h-4" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          {/* Bottom Wide Feature */}
+          <Card className="md:col-span-3 relative overflow-hidden bg-primary/5 border-primary/20 hover:bg-primary/10 transition-colors">
+            <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/10 to-transparent" />
+            <CardContent className="flex flex-col md:flex-row items-center justify-between p-8 gap-6">
+              <div className="space-y-2">
+                <h3 className="text-2xl font-bold flex items-center gap-2">
+                  <Gauge className="w-6 h-6 text-primary" />
+                  Acelere suas Vendas
+                </h3>
+                <p className="text-muted-foreground max-w-xl">
+                  Nossos usuários relatam um aumento médio de 32% no faturamento nos primeiros 3 meses.
+                </p>
+              </div>
+              <Button onClick={() => setLocation("/setup")} className="shrink-0 bg-primary text-primary-foreground font-bold">
+                Ver Plano de Aceleração <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </CardContent>
+          </Card>
+
         </div>
       </section>
 
