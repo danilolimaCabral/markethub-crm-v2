@@ -103,6 +103,12 @@ const Contato = lazy(() => import('./pages/Contato'));
 const Termos = lazy(() => import('./pages/Termos'));
 const Privacidade = lazy(() => import('./pages/Privacidade'));
 
+// SEO Pages
+const CalculatorPage = lazy(() => import('./pages/services/CalculatorPage'));
+const ConciliacaoPage = lazy(() => import('./pages/services/ConciliacaoPage'));
+const GestaoPedidosPage = lazy(() => import('./pages/services/GestaoPedidosPage'));
+const DashboardSalesPage = lazy(() => import('./pages/services/DashboardSalesPage'));
+
 // Páginas "Em breve"
 const EmBreveBase = lazy(() => import('./pages/EmBreve'));
 const EmBreve = () => <EmBreveBase titulo="Em Breve" descricao="Estamos trabalhando nesta funcionalidade" />;
@@ -126,11 +132,11 @@ function Router() {
       const userStr = localStorage.getItem('markethub_user');
       setAuthenticated(!!userStr);
     };
-    
+
     window.addEventListener('storage', checkAuth);
     // Also check periodically
     const interval = setInterval(checkAuth, 500);
-    
+
     return () => {
       window.removeEventListener('storage', checkAuth);
       clearInterval(interval);
@@ -139,7 +145,7 @@ function Router() {
 
   // Super Admin routes (separate from CRM)
   const isSuperAdminRoute = window.location.pathname.startsWith('/super-admin');
-  
+
   if (isSuperAdminRoute) {
     return (
       <Switch>
@@ -157,6 +163,13 @@ function Router() {
       <Suspense fallback={<PageLoader />}>
         <Switch>
           <Route path="/" component={LandingPage} />
+
+          {/* SEO Pages */}
+          <Route path="/funcionalidades/calculadora-mercado-livre" component={CalculatorPage} />
+          <Route path="/funcionalidades/conciliacao-financeira" component={ConciliacaoPage} />
+          <Route path="/funcionalidades/gestao-pedidos" component={GestaoPedidosPage} />
+          <Route path="/funcionalidades/dashboard-vendas" component={DashboardSalesPage} />
+
           <Route path="/login" component={Login} />
           <Route path="/cadastro" component={Cadastro} />
           <Route path="/register" component={Register} />
@@ -267,5 +280,6 @@ function App() {
     </ErrorBoundary>
   );
 }
+
 
 export default App;
