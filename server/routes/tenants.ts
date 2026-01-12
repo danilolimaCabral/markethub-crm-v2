@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import format from 'pg-format';
 import { authenticateToken } from '../middleware/auth';
 import { validarCNPJ } from '../services/cnpjService';
+import { validarEmail, validarTelefone } from '../services/validationService';
 
 const router = express.Router();
 
@@ -27,10 +28,9 @@ function generateSlug(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// Função para validar email
+// Função para validar email (importada do serviço)
 function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  return validarEmail(email);
 }
 
 // Função para validar CNPJ (importada do serviço)
