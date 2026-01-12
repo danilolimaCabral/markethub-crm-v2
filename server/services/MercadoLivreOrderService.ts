@@ -1,16 +1,27 @@
 import axios from 'axios';
-import MercadoLivreIntegration from '../models/MercadoLivreIntegration';
-import MLOrder from '../models/MLOrder';
+import { query } from '../db';
 import MercadoLivreOAuthService from './MercadoLivreOAuthService';
 
 const ML_API_BASE = 'https://api.mercadolibre.com';
+
+interface Integration {
+  id: number;
+  tenant_id: number;
+  access_token: string;
+  refresh_token: string;
+  token_expires_at: Date;
+  config: {
+    ml_user_id?: string;
+    ml_nickname?: string;
+  };
+}
 
 class MercadoLivreOrderService {
   /**
    * Sincroniza pedidos do Mercado Livre para o CRM
    */
   static async syncOrders(
-    integration: MercadoLivreIntegration,
+    integration: Integration,
     options?: {
       dateFrom?: Date;
       dateTo?: Date;
@@ -27,10 +38,15 @@ class MercadoLivreOrderService {
 
     try {
       // Garante que o token está válido
-      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration);
+      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration.tenant_id);
+      const mlUserId = integration.config?.ml_user_id;
+
+      if (!mlUserId) {
+        throw new Error('ML User ID não encontrado na configuração');
+      }
 
       // Busca pedidos do vendedor
-      const orders = await this.fetchSellerOrders(accessToken, integration.mlUserId, options);
+      const orders = await this.fetchSellerOrders(accessToken, mlUserId, options);
 
       for (const orderSummary of orders) {
         try {
@@ -38,43 +54,56 @@ class MercadoLivreOrderService {
           const orderDetails = await this.fetchOrderDetails(accessToken, orderSummary.id.toString());
 
           // Verifica se o pedido já existe
-          const existingOrder = await MLOrder.findOne({
-            where: { mlOrderId: orderDetails.id.toString() },
-          });
+          const existingResult = await query(
+            'SELECT id FROM ml_orders WHERE ml_order_id = $1',
+            [orderDetails.id.toString()]
+          );
 
-          if (existingOrder) {
+          if (existingResult.rows.length > 0) {
             // Atualiza pedido existente
-            await existingOrder.update({
-              status: orderDetails.status,
-              dateClosed: orderDetails.date_closed ? new Date(orderDetails.date_closed) : null,
-              totalAmount: orderDetails.total_amount,
-              paidAmount: orderDetails.paid_amount,
-              items: orderDetails.order_items,
-              payments: orderDetails.payments,
-              shipping: orderDetails.shipping,
-              lastSyncAt: new Date(),
-            });
+            await query(
+              `UPDATE ml_orders SET
+                status = $1, date_closed = $2, total_amount = $3, paid_amount = $4,
+                items = $5, payments = $6, shipping = $7, last_sync_at = NOW(), updated_at = NOW()
+               WHERE id = $8`,
+              [
+                orderDetails.status,
+                orderDetails.date_closed ? new Date(orderDetails.date_closed) : null,
+                orderDetails.total_amount,
+                orderDetails.paid_amount,
+                JSON.stringify(orderDetails.order_items),
+                JSON.stringify(orderDetails.payments),
+                JSON.stringify(orderDetails.shipping),
+                existingResult.rows[0].id,
+              ]
+            );
             updated++;
           } else {
             // Cria novo pedido
-            await MLOrder.create({
-              tenantId: integration.tenantId,
-              integrationId: integration.id,
-              orderId: null,
-              mlOrderId: orderDetails.id.toString(),
-              status: orderDetails.status,
-              dateCreated: new Date(orderDetails.date_created),
-              dateClosed: orderDetails.date_closed ? new Date(orderDetails.date_closed) : null,
-              totalAmount: orderDetails.total_amount,
-              paidAmount: orderDetails.paid_amount,
-              currencyId: orderDetails.currency_id,
-              buyerId: orderDetails.buyer.id.toString(),
-              buyerNickname: orderDetails.buyer.nickname || null,
-              items: orderDetails.order_items,
-              payments: orderDetails.payments,
-              shipping: orderDetails.shipping,
-              lastSyncAt: new Date(),
-            });
+            await query(
+              `INSERT INTO ml_orders (
+                tenant_id, integration_id, order_id, ml_order_id, status, date_created,
+                date_closed, total_amount, paid_amount, currency_id, buyer_id, buyer_nickname,
+                items, payments, shipping, last_sync_at
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW())`,
+              [
+                integration.tenant_id,
+                integration.id,
+                null,
+                orderDetails.id.toString(),
+                orderDetails.status,
+                new Date(orderDetails.date_created),
+                orderDetails.date_closed ? new Date(orderDetails.date_closed) : null,
+                orderDetails.total_amount,
+                orderDetails.paid_amount,
+                orderDetails.currency_id,
+                orderDetails.buyer.id.toString(),
+                orderDetails.buyer.nickname || null,
+                JSON.stringify(orderDetails.order_items),
+                JSON.stringify(orderDetails.payments),
+                JSON.stringify(orderDetails.shipping),
+              ]
+            );
             imported++;
           }
         } catch (error: any) {
@@ -126,6 +155,7 @@ class MercadoLivreOrderService {
           Authorization: `Bearer ${accessToken}`,
         },
         params,
+        timeout: 15000,
       });
 
       return response.data.results || [];
@@ -144,6 +174,7 @@ class MercadoLivreOrderService {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        timeout: 15000,
       });
 
       return response.data;
@@ -164,27 +195,33 @@ class MercadoLivreOrderService {
       dateFrom?: Date;
       dateTo?: Date;
     }
-  ): Promise<MLOrder[]> {
-    const where: any = { tenantId, integrationId };
+  ): Promise<any[]> {
+    let sql = `SELECT * FROM ml_orders WHERE tenant_id = $1 AND integration_id = $2`;
+    const params: any[] = [tenantId, integrationId];
+    let paramIndex = 3;
 
     if (filters?.status) {
-      where.status = filters.status;
+      sql += ` AND status = $${paramIndex}`;
+      params.push(filters.status);
+      paramIndex++;
     }
 
-    if (filters?.dateFrom || filters?.dateTo) {
-      where.dateCreated = {};
-      if (filters.dateFrom) {
-        where.dateCreated.gte = filters.dateFrom;
-      }
-      if (filters.dateTo) {
-        where.dateCreated.lte = filters.dateTo;
-      }
+    if (filters?.dateFrom) {
+      sql += ` AND date_created >= $${paramIndex}`;
+      params.push(filters.dateFrom);
+      paramIndex++;
     }
 
-    return await MLOrder.findAll({
-      where,
-      order: [['dateCreated', 'DESC']],
-    });
+    if (filters?.dateTo) {
+      sql += ` AND date_created <= $${paramIndex}`;
+      params.push(filters.dateTo);
+      paramIndex++;
+    }
+
+    sql += ` ORDER BY date_created DESC`;
+
+    const result = await query(sql, params);
+    return result.rows;
   }
 
   /**
@@ -197,21 +234,26 @@ class MercadoLivreOrderService {
     cancelled: number;
     totalRevenue: number;
   }> {
-    const orders = await MLOrder.findAll({
-      where: { tenantId, integrationId },
-    });
+    const result = await query(
+      `SELECT
+        COUNT(*) as total,
+        COUNT(*) FILTER (WHERE status = 'paid') as paid,
+        COUNT(*) FILTER (WHERE status IN ('payment_required', 'payment_in_process')) as pending,
+        COUNT(*) FILTER (WHERE status = 'cancelled') as cancelled,
+        COALESCE(SUM(total_amount) FILTER (WHERE status = 'paid'), 0) as total_revenue
+       FROM ml_orders
+       WHERE tenant_id = $1 AND integration_id = $2`,
+      [tenantId, integrationId]
+    );
 
-    const stats = {
-      total: orders.length,
-      paid: orders.filter((o) => o.status === 'paid').length,
-      pending: orders.filter((o) => ['payment_required', 'payment_in_process'].includes(o.status)).length,
-      cancelled: orders.filter((o) => o.status === 'cancelled').length,
-      totalRevenue: orders
-        .filter((o) => o.status === 'paid')
-        .reduce((sum, o) => sum + parseFloat(o.totalAmount.toString()), 0),
+    const row = result.rows[0];
+    return {
+      total: parseInt(row.total) || 0,
+      paid: parseInt(row.paid) || 0,
+      pending: parseInt(row.pending) || 0,
+      cancelled: parseInt(row.cancelled) || 0,
+      totalRevenue: parseFloat(row.total_revenue) || 0,
     };
-
-    return stats;
   }
 }
 

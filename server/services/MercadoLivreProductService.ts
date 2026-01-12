@@ -1,15 +1,26 @@
 import axios from 'axios';
-import MercadoLivreIntegration from '../models/MercadoLivreIntegration';
-import MLProduct from '../models/MLProduct';
+import { query } from '../db';
 import MercadoLivreOAuthService from './MercadoLivreOAuthService';
 
 const ML_API_BASE = 'https://api.mercadolibre.com';
+
+interface Integration {
+  id: number;
+  tenant_id: number;
+  access_token: string;
+  refresh_token: string;
+  token_expires_at: Date;
+  config: {
+    ml_user_id?: string;
+    ml_nickname?: string;
+  };
+}
 
 class MercadoLivreProductService {
   /**
    * Sincroniza produtos do Mercado Livre para o CRM
    */
-  static async syncProducts(integration: MercadoLivreIntegration): Promise<{
+  static async syncProducts(integration: Integration): Promise<{
     imported: number;
     updated: number;
     errors: number;
@@ -20,10 +31,15 @@ class MercadoLivreProductService {
 
     try {
       // Garante que o token está válido
-      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration);
+      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration.tenant_id);
+      const mlUserId = integration.config?.ml_user_id;
+
+      if (!mlUserId) {
+        throw new Error('ML User ID não encontrado na configuração');
+      }
 
       // Busca todos os itens ativos do usuário
-      const items = await this.fetchUserItems(accessToken, integration.mlUserId);
+      const items = await this.fetchUserItems(accessToken, mlUserId);
 
       for (const item of items) {
         try {
@@ -31,42 +47,55 @@ class MercadoLivreProductService {
           const itemDetails = await this.fetchItemDetails(accessToken, item.id);
 
           // Verifica se o produto já existe
-          const existingProduct = await MLProduct.findOne({
-            where: { mlItemId: itemDetails.id },
-          });
+          const existingResult = await query(
+            'SELECT id FROM ml_products WHERE ml_item_id = $1',
+            [itemDetails.id]
+          );
 
-          if (existingProduct) {
+          if (existingResult.rows.length > 0) {
             // Atualiza produto existente
-            await existingProduct.update({
-              title: itemDetails.title,
-              price: itemDetails.price,
-              availableQuantity: itemDetails.available_quantity,
-              soldQuantity: itemDetails.sold_quantity || 0,
-              status: itemDetails.status,
-              permalink: itemDetails.permalink,
-              thumbnail: itemDetails.thumbnail,
-              lastSyncAt: new Date(),
-            });
+            await query(
+              `UPDATE ml_products SET
+                title = $1, price = $2, available_quantity = $3, sold_quantity = $4,
+                status = $5, permalink = $6, thumbnail = $7, last_sync_at = NOW(), updated_at = NOW()
+               WHERE id = $8`,
+              [
+                itemDetails.title,
+                itemDetails.price,
+                itemDetails.available_quantity,
+                itemDetails.sold_quantity || 0,
+                itemDetails.status,
+                itemDetails.permalink,
+                itemDetails.thumbnail,
+                existingResult.rows[0].id,
+              ]
+            );
             updated++;
           } else {
             // Cria novo produto
-            await MLProduct.create({
-              tenantId: integration.tenantId,
-              integrationId: integration.id,
-              productId: null,
-              mlItemId: itemDetails.id,
-              title: itemDetails.title,
-              price: itemDetails.price,
-              availableQuantity: itemDetails.available_quantity,
-              soldQuantity: itemDetails.sold_quantity || 0,
-              status: itemDetails.status,
-              permalink: itemDetails.permalink,
-              thumbnail: itemDetails.thumbnail,
-              categoryId: itemDetails.category_id,
-              listingTypeId: itemDetails.listing_type_id,
-              condition: itemDetails.condition,
-              lastSyncAt: new Date(),
-            });
+            await query(
+              `INSERT INTO ml_products (
+                tenant_id, integration_id, product_id, ml_item_id, title, price,
+                available_quantity, sold_quantity, status, permalink, thumbnail,
+                category_id, listing_type_id, condition, last_sync_at
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())`,
+              [
+                integration.tenant_id,
+                integration.id,
+                null,
+                itemDetails.id,
+                itemDetails.title,
+                itemDetails.price,
+                itemDetails.available_quantity,
+                itemDetails.sold_quantity || 0,
+                itemDetails.status,
+                itemDetails.permalink,
+                itemDetails.thumbnail,
+                itemDetails.category_id,
+                itemDetails.listing_type_id,
+                itemDetails.condition,
+              ]
+            );
             imported++;
           }
         } catch (error: any) {
@@ -76,7 +105,10 @@ class MercadoLivreProductService {
       }
 
       // Atualiza data da última sincronização
-      await integration.update({ lastSync: new Date() });
+      await query(
+        `UPDATE marketplace_integrations SET last_sync_at = NOW() WHERE id = $1`,
+        [integration.id]
+      );
 
       return { imported, updated, errors };
     } catch (error: any) {
@@ -98,6 +130,7 @@ class MercadoLivreProductService {
           status: 'active',
           limit: 50,
         },
+        timeout: 15000,
       });
 
       return response.data.results || [];
@@ -116,6 +149,7 @@ class MercadoLivreProductService {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        timeout: 15000,
       });
 
       return response.data;
@@ -129,7 +163,7 @@ class MercadoLivreProductService {
    * Cria um novo produto no Mercado Livre
    */
   static async createProduct(
-    integration: MercadoLivreIntegration,
+    integration: Integration,
     productData: {
       title: string;
       category_id: string;
@@ -144,33 +178,40 @@ class MercadoLivreProductService {
     }
   ): Promise<any> {
     try {
-      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration);
+      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration.tenant_id);
 
       const response = await axios.post(`${ML_API_BASE}/items`, productData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
+        timeout: 15000,
       });
 
       // Salva o produto no banco
-      await MLProduct.create({
-        tenantId: integration.tenantId,
-        integrationId: integration.id,
-        productId: null,
-        mlItemId: response.data.id,
-        title: response.data.title,
-        price: response.data.price,
-        availableQuantity: response.data.available_quantity,
-        soldQuantity: 0,
-        status: response.data.status,
-        permalink: response.data.permalink,
-        thumbnail: response.data.thumbnail,
-        categoryId: response.data.category_id,
-        listingTypeId: response.data.listing_type_id,
-        condition: response.data.condition,
-        lastSyncAt: new Date(),
-      });
+      await query(
+        `INSERT INTO ml_products (
+          tenant_id, integration_id, product_id, ml_item_id, title, price,
+          available_quantity, sold_quantity, status, permalink, thumbnail,
+          category_id, listing_type_id, condition, last_sync_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())`,
+        [
+          integration.tenant_id,
+          integration.id,
+          null,
+          response.data.id,
+          response.data.title,
+          response.data.price,
+          response.data.available_quantity,
+          0,
+          response.data.status,
+          response.data.permalink,
+          response.data.thumbnail,
+          response.data.category_id,
+          response.data.listing_type_id,
+          response.data.condition,
+        ]
+      );
 
       return response.data;
     } catch (error: any) {
@@ -183,7 +224,7 @@ class MercadoLivreProductService {
    * Atualiza um produto no Mercado Livre
    */
   static async updateProduct(
-    integration: MercadoLivreIntegration,
+    integration: Integration,
     itemId: string,
     updateData: {
       price?: number;
@@ -192,25 +233,23 @@ class MercadoLivreProductService {
     }
   ): Promise<any> {
     try {
-      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration);
+      const accessToken = await MercadoLivreOAuthService.ensureValidToken(integration.tenant_id);
 
       const response = await axios.put(`${ML_API_BASE}/items/${itemId}`, updateData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
+        timeout: 15000,
       });
 
       // Atualiza no banco
-      const mlProduct = await MLProduct.findOne({ where: { mlItemId: itemId } });
-      if (mlProduct) {
-        await mlProduct.update({
-          price: response.data.price,
-          availableQuantity: response.data.available_quantity,
-          status: response.data.status,
-          lastSyncAt: new Date(),
-        });
-      }
+      await query(
+        `UPDATE ml_products SET
+          price = $1, available_quantity = $2, status = $3, last_sync_at = NOW(), updated_at = NOW()
+         WHERE ml_item_id = $4`,
+        [response.data.price, response.data.available_quantity, response.data.status, itemId]
+      );
 
       return response.data;
     } catch (error: any) {
@@ -222,11 +261,14 @@ class MercadoLivreProductService {
   /**
    * Lista produtos sincronizados
    */
-  static async listProducts(tenantId: number, integrationId: number): Promise<MLProduct[]> {
-    return await MLProduct.findAll({
-      where: { tenantId, integrationId },
-      order: [['lastSyncAt', 'DESC']],
-    });
+  static async listProducts(tenantId: number, integrationId: number): Promise<any[]> {
+    const result = await query(
+      `SELECT * FROM ml_products
+       WHERE tenant_id = $1 AND integration_id = $2
+       ORDER BY last_sync_at DESC`,
+      [tenantId, integrationId]
+    );
+    return result.rows;
   }
 }
 
