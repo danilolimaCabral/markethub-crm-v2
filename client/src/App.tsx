@@ -111,6 +111,11 @@ const ConciliacaoPage = lazy(() => import('./pages/services/ConciliacaoPage'));
 const GestaoPedidosPage = lazy(() => import('./pages/services/GestaoPedidosPage'));
 const DashboardSalesPage = lazy(() => import('./pages/services/DashboardSalesPage'));
 
+// Solutions Pages
+const IniciantesPage = lazy(() => import('./pages/solutions/IniciantesPage'));
+const MercadoLiderPage = lazy(() => import('./pages/solutions/MercadoLiderPage'));
+const AgenciasPage = lazy(() => import('./pages/solutions/AgenciasPage'));
+
 // Páginas "Em breve"
 const EmBreveBase = lazy(() => import('./pages/EmBreve'));
 const EmBreve = () => <EmBreveBase titulo="Em Breve" descricao="Estamos trabalhando nesta funcionalidade" />;
@@ -171,6 +176,11 @@ function Router() {
           <Route path="/funcionalidades/conciliacao-financeira" component={ConciliacaoPage} />
           <Route path="/funcionalidades/gestao-pedidos" component={GestaoPedidosPage} />
           <Route path="/funcionalidades/dashboard-vendas" component={DashboardSalesPage} />
+
+          {/* Solutions Pages */}
+          <Route path="/solucoes/iniciantes" component={IniciantesPage} />
+          <Route path="/solucoes/mercado-lider" component={MercadoLiderPage} />
+          <Route path="/solucoes/agencias" component={AgenciasPage} />
 
           <Route path="/login" component={Login} />
           <Route path="/cadastro" component={Cadastro} />
