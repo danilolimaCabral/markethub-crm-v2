@@ -43,6 +43,7 @@ import tasksRouter from "./routes/tasks";
 import registerRouter from "./routes/register";
 import webhooksRouter from "./routes/webhooks";
 import adminMasterRouter from "./routes/admin-master";
+import cnpjRouter from "./routes/cnpj";
 import spreadsheetValidationRouter from "./routes/spreadsheet-validation";
 import spreadsheetImportRouter from "./routes/spreadsheet-import";
 import integrationHealthRouter from "./routes/integration-health";
@@ -174,6 +175,7 @@ async function startServer() {
   app.use("/api/tasks", tasksRouter); // Gestão de tarefas e equipe
   app.use("/api/webhooks", webhooksRouter); // Webhooks de pagamento
   app.use("/api/admin-master", adminMasterRouter); // Painel Admin Master
+  app.use("/api/cnpj", cnpjRouter); // Consulta de CNPJ
   app.use("/api/spreadsheet-validation", spreadsheetValidationRouter); // Validação de planilhas
   app.use("/api/spreadsheet-import", spreadsheetImportRouter); // Importação de planilhas
   app.use("/api/integrations/health", integrationHealthRouter); // Health check de integrações

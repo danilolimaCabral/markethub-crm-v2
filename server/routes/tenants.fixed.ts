@@ -3,7 +3,6 @@ import { pool } from '../db';
 import bcrypt from 'bcryptjs';
 import format from 'pg-format';
 import { authenticateToken } from '../middleware/auth';
-import { validarCNPJ } from '../services/cnpjService';
 
 const router = express.Router();
 
@@ -33,9 +32,22 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-// Função para validar CNPJ (importada do serviço)
+// Função para validar CNPJ (formato básico)
 function isValidCNPJ(cnpj: string): boolean {
-  return validarCNPJ(cnpj);
+  // Remove caracteres não numéricos
+  const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
+  
+  // Verifica se tem 14 dígitos
+  if (cleanCNPJ.length !== 14) {
+    return false;
+  }
+  
+  // Verifica se não é uma sequência de números iguais
+  if (/^(\d)\1+$/.test(cleanCNPJ)) {
+    return false;
+  }
+  
+  return true;
 }
 
 // Listar todos os tenants
