@@ -1,773 +1,679 @@
-# 🚀 Guia de Deploy Permanente - Markthub CRM
-
-**Domínio:** markethubcrm.manus.space  
-**Versão:** 2.1.0  
-**Data:** 10 de novembro de 2025
+# Guia de Deploy para Produção
+## Markthub CRM - Sistema Pronto para Venda
+### Data: 12 de Janeiro de 2026
 
 ---
 
-## 📋 Pré-requisitos
+## 📋 Índice
+
+1. [Pré-requisitos](#pré-requisitos)
+2. [Configuração do Ambiente](#configuração-do-ambiente)
+3. [Instalação](#instalação)
+4. [Configuração do Banco de Dados](#configuração-do-banco-de-dados)
+5. [Variáveis de Ambiente](#variáveis-de-ambiente)
+6. [Deploy](#deploy)
+7. [Testes Pós-Deploy](#testes-pós-deploy)
+8. [Monitoramento](#monitoramento)
+9. [Troubleshooting](#troubleshooting)
+10. [Checklist Final](#checklist-final)
+
+---
+
+## 🔧 Pré-requisitos
 
 ### Servidor
-
-- **Sistema Operacional:** Ubuntu 22.04 LTS ou superior
-- **RAM:** Mínimo 2GB (recomendado 4GB)
+- **Sistema Operacional:** Ubuntu 20.04+ ou similar
 - **CPU:** Mínimo 2 cores
-- **Disco:** Mínimo 20GB livres
-- **Acesso:** SSH com sudo
+- **RAM:** Mínimo 4GB
+- **Disco:** Mínimo 20GB SSD
+- **Rede:** Conexão estável com internet
 
-### Software Necessário
+### Software
+- **Node.js:** v18.0.0 ou superior
+- **PostgreSQL:** v14.0 ou superior
+- **Git:** v2.0 ou superior
+- **PNPM:** v8.0 ou superior (ou npm/yarn)
+- **Nginx:** v1.18 ou superior (opcional, para proxy reverso)
 
-```bash
-# Docker
-Docker Engine 24.0+
-Docker Compose 2.20+
-
-# Nginx (para proxy reverso)
-Nginx 1.18+
-
-# Certbot (para SSL)
-Certbot (Let's Encrypt)
-
-# Git
-Git 2.34+
-```
+### Domínio e SSL
+- Domínio configurado apontando para o servidor
+- Certificado SSL (recomendado: Let's Encrypt)
 
 ---
 
-## 🔧 Passo 1: Preparar o Servidor
+## 🌍 Configuração do Ambiente
 
-### 1.1 Conectar via SSH
-
-```bash
-ssh usuario@seu-servidor-ip
-```
-
-### 1.2 Atualizar Sistema
+### 1. Atualizar Sistema
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
-### 1.3 Instalar Docker
+### 2. Instalar Node.js
 
 ```bash
-# Remover versões antigas
-sudo apt remove docker docker-engine docker.io containerd runc
-
-# Instalar dependências
-sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
-
-# Adicionar chave GPG do Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-
-# Adicionar repositório
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Instalar Docker
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# Instalar Node.js 18.x
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
 
 # Verificar instalação
-docker --version
-docker compose version
-
-# Adicionar usuário ao grupo docker
-sudo usermod -aG docker $USER
-newgrp docker
-
-# Testar
-docker run hello-world
+node --version
+npm --version
 ```
 
-### 1.4 Instalar Nginx
+### 3. Instalar PostgreSQL
+
+```bash
+# Instalar PostgreSQL
+sudo apt install -y postgresql postgresql-contrib
+
+# Iniciar serviço
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+# Verificar status
+sudo systemctl status postgresql
+```
+
+### 4. Instalar PNPM
+
+```bash
+npm install -g pnpm
+pnpm --version
+```
+
+### 5. Instalar Nginx (Opcional)
 
 ```bash
 sudo apt install -y nginx
-
-# Verificar instalação
-nginx -v
-
-# Iniciar e habilitar
 sudo systemctl start nginx
 sudo systemctl enable nginx
 ```
 
-### 1.5 Instalar Certbot
-
-```bash
-sudo apt install -y certbot python3-certbot-nginx
-
-# Verificar instalação
-certbot --version
-```
-
 ---
 
-## 🌐 Passo 2: Configurar DNS
+## 📦 Instalação
 
-### 2.1 Acessar Painel de DNS
-
-Acesse o painel de gerenciamento do domínio **manus.space**.
-
-### 2.2 Adicionar Registro A
-
-Crie um novo registro DNS:
-
-```
-Tipo: A
-Nome: markethubcrm
-Valor: [IP_DO_SEU_SERVIDOR]
-TTL: 3600 (1 hora)
-```
-
-**Exemplo:**
-```
-markethubcrm.manus.space → 203.0.113.10
-```
-
-### 2.3 Verificar Propagação
+### 1. Clonar Repositório
 
 ```bash
-# Aguardar propagação (pode levar até 48h, geralmente 5-15 minutos)
-nslookup markethubcrm.manus.space
-
-# Ou usar
-dig markethubcrm.manus.space
-
-# Ou testar online
-# https://dnschecker.org
-```
-
----
-
-## 📦 Passo 3: Clonar Repositório
-
-### 3.1 Criar Diretório de Projetos
-
-```bash
-mkdir -p ~/projetos
-cd ~/projetos
-```
-
-### 3.2 Clonar do GitHub
-
-```bash
-git clone https://github.com/danilolimaCabral/markethub-crm-v2.git
+cd /var/www
+sudo git clone https://github.com/danilolimaCabral/markethub-crm-v2.git
 cd markethub-crm-v2
 ```
 
-### 3.3 Verificar Arquivos
+### 2. Instalar Dependências
 
 ```bash
-ls -la
+# Backend
+pnpm install
 
-# Deve mostrar:
-# - Dockerfile
-# - docker-compose.yml
-# - docker-compose.prod.yml
-# - nginx.conf
-# - deploy.sh
-# - client/
-# - server/
-# - database/
+# Frontend (se necessário)
+cd client
+pnpm install
+cd ..
+```
+
+### 3. Build do Projeto
+
+```bash
+# Build do frontend
+cd client
+pnpm run build
+cd ..
+
+# Build do backend (se necessário)
+pnpm run build
 ```
 
 ---
 
-## 🔐 Passo 4: Configurar Variáveis de Ambiente
+## 🗄️ Configuração do Banco de Dados
 
-### 4.1 Criar Arquivo .env
+### 1. Criar Usuário e Banco de Dados
 
 ```bash
-nano .env.production
+# Acessar PostgreSQL
+sudo -u postgres psql
+
+# Criar usuário
+CREATE USER markethub_user WITH PASSWORD 'senha_segura_aqui';
+
+# Criar banco de dados
+CREATE DATABASE markethub_crm;
+
+# Conceder privilégios
+GRANT ALL PRIVILEGES ON DATABASE markethub_crm TO markethub_user;
+
+# Sair
+\q
 ```
 
-### 4.2 Adicionar Configurações
+### 2. Executar Migrações
+
+```bash
+# Configurar variável de ambiente temporária
+export DATABASE_URL="postgresql://markethub_user:senha_segura_aqui@localhost:5432/markethub_crm"
+
+# Executar migrações
+node scripts/migrate.js
+
+# Ou usar o comando do package.json
+pnpm run migrate
+```
+
+### 3. Verificar Tabelas
+
+```bash
+sudo -u postgres psql -d markethub_crm
+
+# Listar tabelas
+\dt
+
+# Verificar estrutura de uma tabela
+\d tenants
+
+# Sair
+\q
+```
+
+---
+
+## 🔐 Variáveis de Ambiente
+
+### 1. Criar Arquivo .env
+
+```bash
+cd /var/www/markethub-crm-v2
+sudo nano .env
+```
+
+### 2. Configurar Variáveis
 
 ```env
-# Aplicação
+# Ambiente
 NODE_ENV=production
 PORT=3000
 
-# Domínio
-DOMAIN=markethubcrm.manus.space
-PROTOCOL=https
+# Banco de Dados
+DATABASE_URL=postgresql://markethub_user:senha_segura_aqui@localhost:5432/markethub_crm
 
-# Google Gemini AI (Mia de Suporte)
-GEMINI_API_KEY=sua_chave_gemini_aqui
+# JWT
+JWT_SECRET=seu_jwt_secret_super_seguro_aqui_com_pelo_menos_32_caracteres
 
-# Personalização
-VITE_APP_TITLE=Markthub CRM
-VITE_APP_LOGO=/logo-markethub.png
+# CORS
+CORS_ORIGIN=https://seudominio.com
 
-# Integrações (Opcional)
-VITE_ASAAS_API_URL=https://api.asaas.com/v3
-VITE_ASAAS_API_KEY=sua_chave_asaas
+# APIs Externas
+MERCADOLIVRE_CLIENT_ID=seu_client_id
+MERCADOLIVRE_CLIENT_SECRET=seu_client_secret
 
-VITE_ML_CLIENT_ID=seu_client_id_ml
-VITE_ML_CLIENT_SECRET=seu_client_secret_ml
-VITE_ML_REDIRECT_URI=https://markethubcrm.manus.space/callback
+# Email (opcional)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=seu_email@gmail.com
+SMTP_PASS=sua_senha_app
 
-# PostgreSQL (Futuro)
-# DATABASE_URL=postgresql://usuario:senha@localhost:5432/markethub
-# DB_HOST=localhost
-# DB_PORT=5432
-# DB_NAME=markethub
-# DB_USER=postgres
-# DB_PASSWORD=senha_segura
-
-# Segurança
-# JWT_SECRET=chave_secreta_muito_segura_aqui
-# SESSION_SECRET=outra_chave_secreta_aqui
-
-# Email (Futuro)
-# SMTP_HOST=smtp.gmail.com
-# SMTP_PORT=587
-# SMTP_USER=seu_email@gmail.com
-# SMTP_PASS=sua_senha_app
+# Logs
+LOG_LEVEL=info
 ```
 
-**Salvar:** `Ctrl + O`, `Enter`, `Ctrl + X`
-
-### 4.3 Proteger Arquivo
+### 3. Proteger Arquivo .env
 
 ```bash
-chmod 600 .env.production
+sudo chmod 600 .env
+sudo chown www-data:www-data .env
 ```
 
 ---
 
-## 🐳 Passo 5: Build e Deploy com Docker
+## 🚀 Deploy
 
-### 5.1 Build da Imagem
+### Opção 1: PM2 (Recomendado)
 
-```bash
-docker build -t markethub-crm:latest .
-```
-
-**Tempo estimado:** 3-5 minutos
-
-### 5.2 Verificar Imagem
+#### 1. Instalar PM2
 
 ```bash
-docker images | grep markethub
+sudo npm install -g pm2
 ```
 
-Deve mostrar:
-```
-markethub-crm   latest   abc123def456   2 minutes ago   150MB
-```
-
-### 5.3 Iniciar com Docker Compose
+#### 2. Criar Arquivo de Configuração
 
 ```bash
-# Usando arquivo de produção
-docker compose -f docker-compose.prod.yml up -d
+sudo nano ecosystem.config.js
 ```
 
-### 5.4 Verificar Containers
+```javascript
+module.exports = {
+  apps: [{
+    name: 'markethub-crm',
+    script: './server/index.js',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+    merge_logs: true,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G'
+  }]
+};
+```
+
+#### 3. Iniciar Aplicação
 
 ```bash
-docker compose -f docker-compose.prod.yml ps
+# Criar diretório de logs
+mkdir -p logs
+
+# Iniciar com PM2
+pm2 start ecosystem.config.js
+
+# Configurar para iniciar no boot
+pm2 startup
+pm2 save
+
+# Verificar status
+pm2 status
+pm2 logs markethub-crm
 ```
 
-Deve mostrar:
-```
-NAME                    STATUS              PORTS
-markethub-crm-app       Up 10 seconds       0.0.0.0:3000->3000/tcp
-markethub-crm-nginx     Up 10 seconds       0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp
-```
+### Opção 2: Systemd Service
 
-### 5.5 Ver Logs
+#### 1. Criar Service File
 
 ```bash
-# Logs da aplicação
-docker compose -f docker-compose.prod.yml logs -f markethub-app
+sudo nano /etc/systemd/system/markethub-crm.service
+```
 
-# Logs do Nginx
-docker compose -f docker-compose.prod.yml logs -f nginx
+```ini
+[Unit]
+Description=Markethub CRM
+After=network.target postgresql.service
 
-# Todos os logs
-docker compose -f docker-compose.prod.yml logs -f
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/markethub-crm-v2
+ExecStart=/usr/bin/node server/index.js
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=markethub-crm
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+
+#### 2. Iniciar Service
+
+```bash
+# Recarregar systemd
+sudo systemctl daemon-reload
+
+# Iniciar serviço
+sudo systemctl start markethub-crm
+
+# Habilitar no boot
+sudo systemctl enable markethub-crm
+
+# Verificar status
+sudo systemctl status markethub-crm
+
+# Ver logs
+sudo journalctl -u markethub-crm -f
 ```
 
 ---
 
-## 🔒 Passo 6: Configurar SSL (HTTPS)
+## 🌐 Configuração do Nginx
 
-### 6.1 Obter Certificado SSL
+### 1. Criar Configuração do Site
 
 ```bash
-sudo certbot --nginx -d markethubcrm.manus.space
+sudo nano /etc/nginx/sites-available/markethub-crm
 ```
 
-**Perguntas do Certbot:**
+```nginx
+server {
+    listen 80;
+    server_name seudominio.com www.seudominio.com;
 
-1. **Email:** Digite seu email para notificações
-2. **Termos:** Aceite os termos (Y)
-3. **Compartilhar email:** Opcional (N)
-4. **Redirect HTTP → HTTPS:** Sim (2)
+    # Redirecionar HTTP para HTTPS
+    return 301 https://$server_name$request_uri;
+}
 
-### 6.2 Verificar Certificado
+server {
+    listen 443 ssl http2;
+    server_name seudominio.com www.seudominio.com;
 
-```bash
-sudo certbot certificates
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/seudominio.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/seudominio.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    # Logs
+    access_log /var/log/nginx/markethub-crm-access.log;
+    error_log /var/log/nginx/markethub-crm-error.log;
+
+    # Proxy para aplicação Node.js
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 75s;
+    }
+
+    # Arquivos estáticos
+    location /assets {
+        alias /var/www/markethub-crm-v2/client/dist/assets;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Gzip
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/json;
+}
 ```
 
-### 6.3 Testar Renovação Automática
+### 2. Ativar Site
 
 ```bash
+# Criar link simbólico
+sudo ln -s /etc/nginx/sites-available/markethub-crm /etc/nginx/sites-enabled/
+
+# Testar configuração
+sudo nginx -t
+
+# Recarregar Nginx
+sudo systemctl reload nginx
+```
+
+### 3. Configurar SSL com Let's Encrypt
+
+```bash
+# Instalar Certbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Obter certificado
+sudo certbot --nginx -d seudominio.com -d www.seudominio.com
+
+# Renovação automática já está configurada
 sudo certbot renew --dry-run
 ```
 
-### 6.4 Configurar Renovação Automática
+---
 
-O Certbot já configura um cron job automaticamente. Verificar:
+## 🧪 Testes Pós-Deploy
+
+### 1. Verificar Aplicação
 
 ```bash
-sudo systemctl status certbot.timer
+# Testar endpoint de health check
+curl http://localhost:3000/api/system/health
+
+# Testar via domínio
+curl https://seudominio.com/api/system/health
+```
+
+### 2. Testar Criação de Tenant
+
+```bash
+# Teste com dados inválidos (deve rejeitar)
+curl -X POST https://seudominio.com/api/tenants \
+  -H "Content-Type: application/json" \
+  -d '{"nome_empresa": "Teste"}'
+
+# Teste com dados válidos (deve aceitar)
+curl -X POST https://seudominio.com/api/tenants \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome_empresa": "Empresa Teste",
+    "cnpj": "00000000000191",
+    "email_contato": "teste@empresa.com",
+    "integrations": ["MercadoLivre"]
+  }'
+```
+
+### 3. Testar Busca de CNPJ
+
+```bash
+curl https://seudominio.com/api/cnpj/00000000000191
+```
+
+### 4. Testar Frontend
+
+```bash
+# Acessar no navegador
+https://seudominio.com
+
+# Verificar páginas
+https://seudominio.com/clientes
+https://seudominio.com/relatorios
+https://seudominio.com/admin-master
 ```
 
 ---
 
-## ✅ Passo 7: Verificar Deploy
+## 📊 Monitoramento
 
-### 7.1 Testar Localmente
+### 1. PM2 Monitoring
 
 ```bash
-curl http://localhost:3000
+# Instalar PM2 Plus (opcional)
+pm2 install pm2-server-monit
+
+# Ver métricas
+pm2 monit
+
+# Ver logs em tempo real
+pm2 logs markethub-crm --lines 100
 ```
 
-### 7.2 Testar via Domínio
+### 2. Logs do Sistema
 
 ```bash
-curl https://markethubcrm.manus.space
-```
-
-### 7.3 Acessar no Navegador
-
-Abra o navegador e acesse:
-
-**https://markethubcrm.manus.space**
-
-Deve carregar a landing page do Markthub CRM com:
-- ✅ Logo
-- ✅ Calculadora de taxas ML
-- ✅ Planos de preços
-- ✅ Botão "Área do Cliente"
-- ✅ Chatbot Mia (botão flutuante)
-
-### 7.4 Testar Login
-
-1. Clicar em **Área do Cliente**
-2. Fazer login com: `admin` / `admin123`
-3. Verificar se carrega o dashboard
-4. Testar menu lateral
-5. Acessar **Painel Master**
-6. Testar **Mia de Suporte**
-
----
-
-## 🔄 Passo 8: Configurar Atualizações Automáticas
-
-### 8.1 Criar Script de Atualização
-
-```bash
-nano ~/update-markethub.sh
-```
-
-Adicionar:
-
-```bash
-#!/bin/bash
-
-# Script de atualização do Markthub CRM
-# Autor: Markthub Team
-# Data: 2025-11-10
-
-set -e
-
-echo "🚀 Iniciando atualização do Markthub CRM..."
-
-# Ir para diretório do projeto
-cd ~/projetos/markethub-crm-v2
-
-# Fazer backup do .env
-echo "📦 Fazendo backup das configurações..."
-cp .env.production .env.production.backup
-
-# Puxar atualizações do GitHub
-echo "⬇️ Baixando atualizações..."
-git pull origin main
-
-# Rebuild da imagem
-echo "🔨 Reconstruindo imagem Docker..."
-docker build -t markethub-crm:latest .
-
-# Parar containers
-echo "⏸️ Parando containers..."
-docker compose -f docker-compose.prod.yml down
-
-# Iniciar novamente
-echo "▶️ Iniciando containers atualizados..."
-docker compose -f docker-compose.prod.yml up -d
-
-# Limpar imagens antigas
-echo "🧹 Limpando imagens antigas..."
-docker image prune -f
-
-# Verificar status
-echo "✅ Verificando status..."
-docker compose -f docker-compose.prod.yml ps
-
-echo "🎉 Atualização concluída com sucesso!"
-echo "🌐 Acesse: https://markethubcrm.manus.space"
-```
-
-**Salvar:** `Ctrl + O`, `Enter`, `Ctrl + X`
-
-### 8.2 Tornar Executável
-
-```bash
-chmod +x ~/update-markethub.sh
-```
-
-### 8.3 Testar Script
-
-```bash
-~/update-markethub.sh
-```
-
----
-
-## 📊 Passo 9: Configurar Monitoramento
-
-### 9.1 Verificar Logs em Tempo Real
-
-```bash
-# Logs da aplicação
-docker logs -f markethub-app
-
 # Logs do Nginx
-docker logs -f markethub-nginx
+sudo tail -f /var/log/nginx/markethub-crm-access.log
+sudo tail -f /var/log/nginx/markethub-crm-error.log
+
+# Logs da aplicação (PM2)
+pm2 logs markethub-crm
+
+# Logs da aplicação (Systemd)
+sudo journalctl -u markethub-crm -f
 ```
 
-### 9.2 Verificar Uso de Recursos
+### 3. Monitoramento de Recursos
 
 ```bash
-# CPU e Memória dos containers
-docker stats
+# CPU e memória
+htop
 
 # Espaço em disco
 df -h
 
-# Uso de disco do Docker
-docker system df
-```
-
-### 9.3 Configurar Alertas (Opcional)
-
-Instalar ferramentas de monitoramento:
-
-```bash
-# Instalar htop
-sudo apt install -y htop
-
-# Usar
-htop
+# Conexões PostgreSQL
+sudo -u postgres psql -c "SELECT count(*) FROM pg_stat_activity;"
 ```
 
 ---
 
-## 🛡️ Passo 10: Segurança
+## 🔧 Troubleshooting
 
-### 10.1 Configurar Firewall
-
-```bash
-# Instalar UFW
-sudo apt install -y ufw
-
-# Permitir SSH
-sudo ufw allow 22/tcp
-
-# Permitir HTTP e HTTPS
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-
-# Habilitar firewall
-sudo ufw enable
-
-# Verificar status
-sudo ufw status
-```
-
-### 10.2 Configurar Fail2Ban (Proteção contra Brute Force)
-
-```bash
-# Instalar
-sudo apt install -y fail2ban
-
-# Copiar configuração
-sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-
-# Editar
-sudo nano /etc/fail2ban/jail.local
-
-# Habilitar proteção SSH
-# [sshd]
-# enabled = true
-# maxretry = 3
-# bantime = 3600
-
-# Reiniciar
-sudo systemctl restart fail2ban
-
-# Verificar
-sudo fail2ban-client status
-```
-
-### 10.3 Atualizar Sistema Regularmente
-
-```bash
-# Criar script de atualização
-echo '#!/bin/bash
-sudo apt update
-sudo apt upgrade -y
-sudo apt autoremove -y
-docker system prune -f
-' | sudo tee /usr/local/bin/update-system.sh
-
-# Tornar executável
-sudo chmod +x /usr/local/bin/update-system.sh
-
-# Executar semanalmente (cron)
-(crontab -l 2>/dev/null; echo "0 3 * * 0 /usr/local/bin/update-system.sh") | crontab -
-```
-
----
-
-## 🔧 Comandos Úteis
-
-### Gerenciar Containers
-
-```bash
-# Ver status
-docker compose -f docker-compose.prod.yml ps
-
-# Parar
-docker compose -f docker-compose.prod.yml stop
-
-# Iniciar
-docker compose -f docker-compose.prod.yml start
-
-# Reiniciar
-docker compose -f docker-compose.prod.yml restart
-
-# Parar e remover
-docker compose -f docker-compose.prod.yml down
-
-# Ver logs
-docker compose -f docker-compose.prod.yml logs -f
-
-# Executar comando no container
-docker compose -f docker-compose.prod.yml exec markethub-app sh
-```
-
-### Backup
-
-```bash
-# Backup completo
-tar -czf markethub-backup-$(date +%Y%m%d).tar.gz ~/projetos/markethub-crm-v2
-
-# Backup apenas dados (quando tiver PostgreSQL)
-# docker compose -f docker-compose.prod.yml exec postgres pg_dump -U postgres markethub > backup.sql
-```
-
-### Restaurar
-
-```bash
-# Restaurar de backup
-tar -xzf markethub-backup-20251110.tar.gz -C ~/projetos/
-```
-
----
-
-## 🚨 Troubleshooting
-
-### Problema: Site não carrega
-
-**Verificar:**
-
-```bash
-# Status dos containers
-docker compose -f docker-compose.prod.yml ps
-
-# Logs de erro
-docker compose -f docker-compose.prod.yml logs
-
-# Nginx rodando?
-sudo systemctl status nginx
-
-# DNS propagado?
-nslookup markethubcrm.manus.space
-```
-
-### Problema: Erro 502 Bad Gateway
+### Problema: Aplicação não inicia
 
 **Solução:**
-
 ```bash
-# Reiniciar containers
-docker compose -f docker-compose.prod.yml restart
-
-# Verificar se porta 3000 está aberta
-netstat -tulpn | grep 3000
-
-# Verificar logs do Nginx
-sudo tail -f /var/log/nginx/error.log
-```
-
-### Problema: SSL não funciona
-
-**Solução:**
-
-```bash
-# Renovar certificado
-sudo certbot renew --force-renewal
-
-# Reiniciar Nginx
-sudo systemctl restart nginx
-
-# Verificar configuração
-sudo nginx -t
-```
-
-### Problema: Container não inicia
-
-**Solução:**
-
-```bash
-# Ver logs detalhados
-docker logs markethub-app
+# Verificar logs
+pm2 logs markethub-crm --err
 
 # Verificar variáveis de ambiente
-docker compose -f docker-compose.prod.yml config
+cat .env
 
-# Rebuild forçado
-docker compose -f docker-compose.prod.yml build --no-cache
-docker compose -f docker-compose.prod.yml up -d
+# Verificar permissões
+ls -la /var/www/markethub-crm-v2
+
+# Testar manualmente
+cd /var/www/markethub-crm-v2
+node server/index.js
+```
+
+### Problema: Erro de conexão com banco de dados
+
+**Solução:**
+```bash
+# Verificar se PostgreSQL está rodando
+sudo systemctl status postgresql
+
+# Testar conexão
+psql -U markethub_user -d markethub_crm -h localhost
+
+# Verificar DATABASE_URL no .env
+grep DATABASE_URL .env
+```
+
+### Problema: CNPJ não retorna dados
+
+**Solução:**
+```bash
+# Testar API diretamente
+curl https://brasilapi.com.br/api/cnpj/v1/00000000000191
+
+# Verificar logs da aplicação
+pm2 logs markethub-crm | grep cnpj
+
+# Verificar se a rota está registrada
+curl http://localhost:3000/api/cnpj/00000000000191
+```
+
+### Problema: Links quebrados no frontend
+
+**Solução:**
+```bash
+# Verificar se o build foi feito
+ls -la client/dist
+
+# Rebuild do frontend
+cd client
+pnpm run build
+cd ..
+
+# Reiniciar aplicação
+pm2 restart markethub-crm
 ```
 
 ---
 
-## 📈 Otimizações de Performance
+## ✅ Checklist Final
 
-### 1. Habilitar Compressão Gzip
+### Antes do Deploy
+- [ ] Código commitado no GitHub
+- [ ] Todas as variáveis de ambiente configuradas
+- [ ] Banco de dados criado e migrações executadas
+- [ ] Testes locais passando (100%)
+- [ ] Build do frontend concluído
+- [ ] Certificado SSL configurado
 
-Já está configurado no `nginx.conf`:
+### Durante o Deploy
+- [ ] Aplicação iniciada com PM2/Systemd
+- [ ] Nginx configurado e rodando
+- [ ] SSL funcionando (HTTPS)
+- [ ] Logs sendo gerados corretamente
+- [ ] Aplicação acessível via domínio
 
-```nginx
-gzip on;
-gzip_vary on;
-gzip_min_length 1024;
-gzip_types text/plain text/css text/xml text/javascript application/javascript application/json;
-```
+### Após o Deploy
+- [ ] Endpoint de health check respondendo
+- [ ] Criação de tenant funcionando
+- [ ] Busca de CNPJ funcionando
+- [ ] Links do frontend funcionando
+- [ ] Validações obrigatórias ativas
+- [ ] Monitoramento configurado
 
-### 2. Cache de Assets
-
-Já está configurado no `nginx.conf`:
-
-```nginx
-location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-}
-```
-
-### 3. Limitar Recursos do Container
-
-Editar `docker-compose.prod.yml`:
-
-```yaml
-services:
-  markethub-app:
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-        reservations:
-          cpus: '0.5'
-          memory: 512M
-```
-
----
-
-## 🎯 Checklist de Deploy
-
-- [ ] Servidor preparado (Ubuntu, Docker, Nginx)
-- [ ] DNS configurado (markethubcrm.manus.space → IP)
-- [ ] Repositório clonado
-- [ ] Variáveis de ambiente configuradas (.env.production)
-- [ ] Imagem Docker buildada
-- [ ] Containers iniciados
-- [ ] SSL configurado (Certbot)
-- [ ] Site acessível via HTTPS
-- [ ] Login funcionando
-- [ ] Painel Master acessível
-- [ ] Mia de Vendas funcionando
-- [ ] Mia de Suporte funcionando
-- [ ] Firewall configurado
-- [ ] Fail2Ban instalado
-- [ ] Backup configurado
-- [ ] Monitoramento ativo
-- [ ] Script de atualização criado
+### Validações Críticas
+- [ ] CNPJ obrigatório e validado
+- [ ] Email obrigatório e validado
+- [ ] Integrações obrigatórias
+- [ ] Sem emails temporários gerados
+- [ ] Todos os links funcionais
 
 ---
 
 ## 📞 Suporte
 
-### Documentação
-
-- **Repositório:** https://github.com/danilolimaCabral/markethub-crm-v2
-- **Guias:** Veja pasta `/docs` no repositório
-
-### Logs
-
+### Logs Importantes
 ```bash
 # Aplicação
-docker logs markethub-app
+pm2 logs markethub-crm
 
 # Nginx
-sudo tail -f /var/log/nginx/access.log
-sudo tail -f /var/log/nginx/error.log
+sudo tail -f /var/log/nginx/markethub-crm-error.log
+
+# PostgreSQL
+sudo tail -f /var/log/postgresql/postgresql-14-main.log
 
 # Sistema
-sudo journalctl -u docker
+sudo journalctl -xe
+```
+
+### Comandos Úteis
+```bash
+# Reiniciar aplicação
+pm2 restart markethub-crm
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Reiniciar PostgreSQL
+sudo systemctl restart postgresql
+
+# Ver processos
+ps aux | grep node
+
+# Ver portas em uso
+sudo netstat -tulpn | grep :3000
 ```
 
 ---
 
-## 🎉 Conclusão
+## 🎯 Próximos Passos
 
-Seguindo este guia, o **Markthub CRM** estará rodando permanentemente em:
+### Melhorias Recomendadas
+1. **Backup Automático:** Configurar backup diário do banco de dados
+2. **Monitoramento Avançado:** Integrar com Datadog, New Relic ou similar
+3. **CDN:** Configurar CDN para assets estáticos
+4. **Cache:** Implementar Redis para cache
+5. **Rate Limiting:** Configurar rate limiting no Nginx
+6. **WAF:** Configurar Web Application Firewall
+7. **CI/CD:** Configurar pipeline de deploy automático
 
-**🌐 https://markethubcrm.manus.space**
-
-Com:
-- ✅ SSL/HTTPS habilitado
-- ✅ Docker containerizado
-- ✅ Nginx como proxy reverso
-- ✅ Renovação automática de SSL
-- ✅ Firewall configurado
-- ✅ Monitoramento ativo
-- ✅ Backup automatizado
-- ✅ Atualizações facilitadas
-
-**O sistema está pronto para produção!** 🚀
+### Segurança
+1. **Firewall:** Configurar UFW/iptables
+2. **Fail2Ban:** Proteger contra ataques de força bruta
+3. **Atualizações:** Manter sistema e dependências atualizadas
+4. **Audit Logs:** Implementar logs de auditoria
+5. **2FA:** Implementar autenticação de dois fatores
 
 ---
 
-**Desenvolvido com ❤️ usando Manus AI**  
-**Data:** 10 de novembro de 2025
+**Status:** ✅ **SISTEMA PRONTO PARA PRODUÇÃO**
+
+Todas as correções foram aplicadas, validações implementadas e o sistema está pronto para ser comercializado.
