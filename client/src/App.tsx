@@ -47,6 +47,8 @@ const NotasFiscais = lazy(() => import("@/pages/NotasFiscais"));
 
 // Páginas operacionais
 const Produtos = lazy(() => import("@/pages/Produtos"));
+const Clientes = lazy(() => import("@/pages/Clientes"));
+const Relatorios = lazy(() => import("@/pages/Relatorios"));
 const AnaliseVendas = lazy(() => import("@/pages/AnaliseVendas"));
 const Pedidos = lazy(() => import('./pages/Pedidos'));
 const Importacao = lazy(() => import('./pages/Importacao'));
@@ -206,14 +208,14 @@ function Router() {
           <Route path="/pedidos" component={Pedidos} />
           <Route path="/produtos" component={Produtos} />
           <Route path={"/anuncios"} component={Anuncios} />
-          <Route path={"/clientes"} component={API} />
+          <Route path={"/clientes"} component={Clientes} />
           <Route path="/entregas" component={Entregas} />
           <Route path="/notas-fiscais" component={NotasFiscais} />
           <Route path="/contas-pagar" component={ContasPagar} />
           <Route path="/contas-receber" component={ContasReceber} />
           <Route path="/fluxo-caixa" component={FluxoCaixa} />
-          <Route path={"/notas"} component={API} />
-          <Route path="/relatorios" component={API} />
+          {/* Rota removida - usar /notas-fiscais */}
+          <Route path="/relatorios" component={Relatorios} />
           <Route path="/vendas" component={AnaliseVendas} />
           <Route path="/configuracoes" component={Settings} />
           <Route path="/setup-2fa" component={Setup2FA} />

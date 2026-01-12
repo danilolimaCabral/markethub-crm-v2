@@ -149,8 +149,8 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
         { path: "/contas-pagar", icon: <DollarSign size={20} />, label: "Contas a Pagar", color: "text-red-600" },
         { path: "/contas-receber", icon: <DollarSign size={20} />, label: "Contas a Receber", color: "text-green-600" },
         { path: "/fluxo-caixa", icon: <TrendingUp size={20} />, label: "Fluxo de Caixa", color: "text-blue-600" },
-        { path: "/notas", icon: <FileText size={20} />, label: "Notas Fiscais", color: "text-slate-500" },
-        { path: "/precos", icon: <Calculator size={20} />, label: "Tabela de Preços", color: "text-yellow-600" },
+        { path: "/notas-fiscais", icon: <FileText size={20} />, label: "Notas Fiscais", color: "text-slate-500" },
+        { path: "/tabela-preco", icon: <Calculator size={20} />, label: "Tabela de Preços", color: "text-yellow-600" },
         { path: "/calculadora-taxas-ml", icon: <Calculator size={20} />, label: "Calculadora Taxas ML", color: "text-amber-600" },
       ]
     },

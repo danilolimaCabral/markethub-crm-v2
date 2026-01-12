@@ -26,30 +26,6 @@ function generateSlug(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-// Função para validar email
-function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-// Função para validar CNPJ (formato básico)
-function isValidCNPJ(cnpj: string): boolean {
-  // Remove caracteres não numéricos
-  const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
-  
-  // Verifica se tem 14 dígitos
-  if (cleanCNPJ.length !== 14) {
-    return false;
-  }
-  
-  // Verifica se não é uma sequência de números iguais
-  if (/^(\d)\1+$/.test(cleanCNPJ)) {
-    return false;
-  }
-  
-  return true;
-}
-
 // Listar todos os tenants
 router.get('/', async (req, res) => {
   try {
@@ -153,7 +129,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Criar novo tenant - VERSÃO CORRIGIDA
+// Criar novo tenant
 router.post('/', async (req, res) => {
   try {
     const {
@@ -165,46 +141,22 @@ router.post('/', async (req, res) => {
       integrations = []
     } = req.body;
     
-    // ===== VALIDAÇÕES OBRIGATÓRIAS - CORRIGIDO =====
-    
-    // 1. Nome da empresa é obrigatório
+    // Validações - apenas nome da empresa é obrigatório
     if (!nome_empresa || nome_empresa.trim() === '') {
       return res.status(400).json({ error: 'Nome da empresa é obrigatório' });
     }
     
-    // 2. CNPJ é obrigatório e deve ser válido
-    if (!cnpj || cnpj.trim() === '') {
-      return res.status(400).json({ error: 'CNPJ é obrigatório' });
+    // Verificar se CNPJ já existe (apenas se fornecido)
+    if (cnpj) {
+      const checkQuery = format('SELECT id FROM tenants WHERE cnpj = %L', cnpj);
+      const existingResult = await pool.query(checkQuery);
+      if (existingResult.rows && existingResult.rows.length > 0) {
+        return res.status(400).json({ error: 'CNPJ já cadastrado' });
+      }
     }
     
-    if (!isValidCNPJ(cnpj)) {
-      return res.status(400).json({ error: 'CNPJ inválido. Deve conter 14 dígitos numéricos.' });
-    }
-    
-    // 3. Email de contato é obrigatório e deve ser válido
-    if (!email_contato || email_contato.trim() === '') {
-      return res.status(400).json({ error: 'Email de contato é obrigatório' });
-    }
-    
-    if (!isValidEmail(email_contato)) {
-      return res.status(400).json({ error: 'Email de contato inválido' });
-    }
-    
-    // 4. Pelo menos uma integração deve ser especificada
-    if (!integrations || integrations.length === 0) {
-      return res.status(400).json({ 
-        error: 'É necessário especificar pelo menos uma integração (ex: MercadoLivre, Shopee, Amazon, Bling, Omie, Tiny)' 
-      });
-    }
-    
-    // ===== FIM DAS VALIDAÇÕES =====
-    
-    // Verificar se CNPJ já existe
-    const checkQuery = format('SELECT id FROM tenants WHERE cnpj = %L', cnpj);
-    const existingResult = await pool.query(checkQuery);
-    if (existingResult.rows && existingResult.rows.length > 0) {
-      return res.status(400).json({ error: 'CNPJ já cadastrado' });
-    }
+    // Gerar email temporário se não fornecido
+    const finalEmail = email_contato || `contato_${generateSlug(nome_empresa)}@temp.markethub.com`;
     
     // Gerar slug único
     let slug = generateSlug(nome_empresa);
@@ -226,14 +178,16 @@ router.post('/', async (req, res) => {
     
     // Log para debug
     const insertParams = [
-      nome_empresa, slug, cnpj, email_contato, telefone || null, plano,
+      nome_empresa, slug, cnpj || null, finalEmail, telefone || null, plano,
       planLimits.users, planLimits.products, planLimits.orders
     ];
-    console.log('=== CRIAÇÃO DE TENANT - VERSÃO CORRIGIDA ===');
+    console.log('=== DEBUG INSERT TENANT - BUILD WORKAROUND - 20:45 ===');
     console.log('Parâmetros:', JSON.stringify(insertParams, null, 2));
-    console.log('Integrações solicitadas:', integrations);
+    console.log('Tipos:', insertParams.map(p => typeof p));
+    console.log('USANDO PG-FORMAT PARA ESCAPE SEGURO');
     
     // Criar tenant usando pg-format para escape seguro
+    // QueryTypes não é mais necessário com pg
     const insertQuery = format(
       `INSERT INTO tenants (
         nome_empresa, slug, cnpj, email_contato, telefone, plano,
@@ -256,25 +210,28 @@ router.post('/', async (req, res) => {
     const adminUsername = `admin_${slug}`;
     const adminPassword = generatePassword();
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    const adminEmail = email_contato || `${adminUsername}@temp.com`;
     
     const userQuery = format(
       `INSERT INTO users (
         tenant_id, username, email, password_hash, full_name, role, created_at
       ) VALUES (%L, %L, %L, %L, %L, 'admin', NOW())`,
-      tenantId, adminUsername, email_contato, hashedPassword, nome_empresa
+      tenantId, adminUsername, adminEmail, hashedPassword, nome_empresa
     );
     
     await pool.query(userQuery);
     
     // Salvar integrações configuradas
-    for (const integration of integrations) {
-      const integrationQuery = format(
-        `INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
-        VALUES (%L, %L, 1, NOW())`,
-        tenantId, integration
-      );
-      
-      await pool.query(integrationQuery);
+    if (integrations.length > 0) {
+      for (const integration of integrations) {
+        const integrationQuery = format(
+          `INSERT INTO tenant_integrations (tenant_id, integration_name, enabled, criado_em)
+          VALUES (%L, %L, 1, NOW())`,
+          tenantId, integration
+        );
+        
+        await pool.query(integrationQuery);
+      }
     }
     
     res.status(201).json({
@@ -284,11 +241,9 @@ router.post('/', async (req, res) => {
       admin_credentials: {
         username: adminUsername,
         password: adminPassword,
-        email: email_contato
+        email: adminEmail
       },
-      integrations: integrations,
-      message: 'Tenant criado com sucesso! Guarde as credenciais do admin e configure as integrações especificadas.',
-      next_step: 'Acesse o painel de integrações para configurar as APIs: ' + integrations.join(', ')
+      message: 'Tenant criado com sucesso! Guarde as credenciais do admin.'
     });
   } catch (error: any) {
     console.error('Erro ao criar tenant:', error);
